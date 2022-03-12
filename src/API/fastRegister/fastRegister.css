@@ -1,0 +1,8 @@
+.confirm-container {
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(37, 7, 117, 0.1);
+  display: flex;
+  flex-direction: column;
+  /* align-items: center; */
+}

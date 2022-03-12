@@ -1,0 +1,126 @@
+@media only screen and (max-width: 1023px) {
+  .delete-btn {
+    width: 95%;
+    height: 20px;
+    margin-top: 1rem;
+  }
+
+  input {
+    border-radius: 0px;
+  }
+
+  .contact-input {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+  }
+
+  .edit-contact-form {
+    text-align: left;
+    padding: 10px;
+    width: 96%;
+    overflow-y: scroll;
+    height: 100%;
+  }
+
+  .field-add-btn {
+    width: 95%;
+    height: 30px;
+    font-size: 16px;
+    margin-bottom: 10px;
+    background-color: white;
+    color: rgb(47, 71, 137);
+  }
+
+  .field-add-btn:hover {
+    color: white;
+    background-color: rgb(47, 71, 137);
+  }
+
+  .edit-btn {
+    position: fixed;
+    right: 7rem;
+    top: -3.5rem;
+    width: 50px;
+    font-size: 14px;
+    height: 30px;
+    color: rgb(47, 71, 137);
+  }
+
+  .save-btn {
+    width: 95%;
+    margin-top: 1rem;
+  }
+
+  .multi-field {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    /* justify-content: center; */
+    align-items: center;
+  }
+
+  .multi-field-input {
+    width: 100%;
+  }
+
+  .multi-field-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+
+  .multi-field-btn:hover {
+    background-color: rgb(47, 71, 137);
+    color: white;
+  }
+
+  .button {
+    font-family: "Open Sans";
+    font-size: 16px;
+    font-weight: 400;
+    display: inline-block;
+    color: #fff;
+    /* border-radius: 0.25em; */
+    /* text-shadow: -1px -1px 0px rgba(0, 0, 0, 0.4); */
+  }
+
+  .touch {
+    transition: ease-in-out 0.2s;
+    line-height: 40px;
+    width: 40px;
+    padding: 0px;
+    text-align: center;
+  }
+
+  .delete {
+    background: orange;
+    border-radius: 50%;
+  }
+
+  .inlineIcon.delete:before {
+    color: orange;
+  }
+
+  .btn {
+    margin-bottom: 5px;
+    padding: none;
+  }
+
+  .makeStyles-card-1 {
+    margin-top: 1rem;
+    width: 95%;
+    overflow: scroll;
+    box-shadow: 0 8px 16px 0 #bdc9d7;
+    border-radius: 16px;
+    height: 95%;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+  }
+  .back-btn {
+    position: fixed;
+    top: -3.5rem;
+    right: 7rem;
+  }
+}

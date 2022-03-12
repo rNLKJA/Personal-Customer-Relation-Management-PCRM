@@ -1,0 +1,295 @@
+@media only screen and (max-width: 1023px) {
+  .profile-container{
+    display:flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1rem;
+    height: calc(100% - 200px);
+  }
+
+  .person-details{
+    display: block;
+    justify-content: center;
+    width: 95%;
+  }
+
+  .person-container {
+    height: 100%;
+    left: 0;
+    top: 0;
+    bottom: 20px;
+    
+    margin-block-end: 5%;
+  }
+
+  
+
+  .edit-profile-btn{
+    right: 12rem;
+    top: -3.2rem;
+    position: absolute;
+  }
+  .person-heading{
+    position: fixed;
+    top: -4.8rem;
+    color: rgb(47, 71, 137);
+  }
+  .basicInformation {
+
+    width: 90%;
+    height: 100%;
+    float: left;
+    /* border-radius: 5px; */
+    border: 1px solid rgba(136, 136, 138,0.5);
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+		margin-bottom: 20px;
+  }
+  .contactInformation {
+    width: 90%;
+    height: 100%;
+    float: right;
+    /* border-radius: 5px; */
+    border: 1px solid rgba(136, 136, 138,0.5);
+    padding-left: 8px;
+    padding-right: 8px;
+    padding-bottom: 8px;
+  }
+
+  .contact-heading{
+    display: flex;
+    font-size: 20px;
+    flex-direction: column;
+  }
+
+  .information-container {
+    display: flex;
+    flex-direction: column;
+		align-items: center;
+  }
+
+  .Value {
+    float: left;
+    text-align: center;
+    vertical-align: center;
+    padding-top: 10px;
+  }
+
+
+  .statusValue {
+    float: left;
+  }
+
+  .emailTitle {
+    color: black;
+    float: left;
+  }
+
+  .delEmail {
+    float: right;
+  }
+
+  .email{
+    float: left;
+  }
+
+  .phoneTitle {
+    float: left;
+    font-weight: bold;
+  }
+
+  /* .newPhone {
+  } */
+
+  .delPhone {
+    float: right;
+  }
+  .phone{
+    float: left;
+  }
+
+  /* .delPhone-btn {
+  } */
+
+  .logout-btn {
+    top: -3.2rem;
+    right: 1rem;
+    position: fixed;
+    font-size: 16px;
+    height: 30px;
+    border-radius: 5px;
+  }
+
+  .info-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 0.5rem;
+		overflow: scroll;
+  }
+
+  .del-btn{
+    position: relative;
+    right: -5px;
+
+  }
+
+  .Label {
+    border-radius: 5px;
+    border:1px solid white;
+    background-color: white;
+    color: black;
+    text-align: center;
+    vertical-align: center;
+    width: 100px;
+    padding-top: 10px;
+    font-weight: bold;
+  }
+
+  .qr-code{
+    top: -3.2rem;
+    right: 6.5rem;
+    position: fixed;
+    font-size: 16px;
+    height: 30px;
+    border-radius: 5px;
+  }
+
+  .makeStyles-card-2 {
+    width: 100%;
+    overflow: scroll;
+    box-shadow: 0 8px 16px 0 #bdc9d7;
+    border-radius: 16px;
+    
+  }
+
+
+	
+
+
+}
+@media only screen and (min-width: 1024px){
+  .qr-code{
+    position: absolute;
+    font-size: 16px;
+    height: 30px;
+    border-radius: 5px;
+  }
+
+
+  .profile-container{
+    display:flex;
+    flex-direction: column;
+    overflow-y: scroll;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 1rem;
+    height: 100%;
+  }
+  .basicInformation {
+    width: 100%;
+    height: 100%;
+    float: left;
+    border-radius: 5px;
+    border: 1px solid black;
+  }
+  .contactInformation {
+    width: 100%;
+    height: 100%;
+    float: right;
+    border-radius: 5px;
+    border: 1px solid black;
+  }
+
+  .information-container {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .firstValue {
+    float: left;
+  }
+  .lastValue {
+    float: left;
+  }
+  .occupationValue {
+    float: left;
+  }
+
+  .statusValue {
+    float: left;
+  }
+
+  .emailTitle {
+    float: left;
+  }
+
+  .email {
+    float: left;
+  }
+
+  .phoneTitle {
+    float: left;
+  }
+
+  /* .newPhone {
+  } */
+
+  .phone {
+    float: left;
+  }
+
+  /* .delPhone-btn {
+  } */
+
+  .logout-btn {
+    top: -3.2rem;
+    right: 1rem;
+    position: fixed;
+    font-size: 16px;
+    height: 75px;
+    height: 30px;
+  }
+
+  .info-container {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .Label {
+    background-color: royalblue;
+    color: white;
+  }
+
+  .makeStyles-card-2 {
+    width: 100%;
+    box-shadow: 0 8px 16px 0 #bdc9d7;
+    border-radius: 16px;
+    
+    padding: 1.5rem;
+    
+    
+  }
+
+  .div-center {
+    width: 60%;
+    overflow-y: scroll;
+    align-items: flex-start;
+  }
+
+  .person-details{
+  
+    width: 60%;
+  }
+
+  .person-container {
+    height: calc(100% - 4rem)
+  }
+  
+
+
+}
+
