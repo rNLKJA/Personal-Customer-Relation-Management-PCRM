@@ -5,6 +5,8 @@ This repository is created for [University of Melbourne](https://www.unimelb.edu
 
 **Personal Customer Relation Management (PCRM)** project development.
 
+This repository is a copy of 2022 S2 COMP30022 repo, the original one is available at https://github.com/Harrison-Huang666/COMP30022-49/tree/Front-Endz
+
 ---
 
 ## Deployment Access Link and Working Branches
