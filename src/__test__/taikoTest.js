@@ -28,39 +28,39 @@ var testUser = new Date().toISOString();
 
     await LoginTest(
       testNum,
-      "Check web application localhost accessibility and login the taiko test account:",
+      "Check web application localhost accessibility and login the taiko test account:"
     );
     NEXT(1500);
 
     // check all links are functional
     await routingTest(
       testNum,
-      "Check Routing functionalities, all routes should be accessible and test end up at personal setting page:",
+      "Check Routing functionalities, all routes should be accessible and test end up at personal setting page:"
     );
     NEXT(1500);
 
     // testing update personal information
     await personInfoTest(
       testNum,
-      "Updating personal information, check all buttons and input field are working properly:",
+      "Updating personal information, check all buttons and input field are working properly:"
     );
     NEXT(1500);
 
     await mapTest(
       testNum,
-      "Map functional testing, all search box are clickable.",
+      "Map functional testing, all search box are clickable."
     );
     NEXT(1500);
 
     await ManualInputTest(
       testNum,
-      "Manual Contact Input test, added a test user.",
+      "Manual Contact Input test, added a test user."
     );
     NEXT(1500);
 
     await recordTest(
       testNum,
-      "Add a new record and check it is shown on the map.",
+      "Add a new record and check it is shown on the map."
     );
     // NEXT(1500);
 
@@ -72,7 +72,7 @@ var testUser = new Date().toISOString();
     console.log(
       `All tests PASSED. Execution Time: [${
         endTime - startTime
-      }] close the browser in 3 seconds`,
+      }] close the browser in 3 seconds`
     );
     setTimeout(() => {
       closeBrowser();
@@ -99,7 +99,7 @@ const personInfoTest = async (testNum, description) => {
   await clear(textBox(below("Last Name")));
   await write(
     `TaikoTest ${new Date().toISOString()}`,
-    into(textBox(below("Last Name"))),
+    into(textBox(below("Last Name")))
   );
 
   await clear(textBox(below("Occupation")));
@@ -187,7 +187,7 @@ const ManualInputTest = async (testNum, description) => {
   // write testing notes
   await write(
     "This is the testing message automatically created by Taiko.",
-    into(textBox(below("Notes"))),
+    into(textBox(below("Notes")))
   );
 
   // added one custom field
@@ -221,7 +221,7 @@ const recordTest = async (testNum, description) => {
   // update notes
   await write(
     `Map function testing, testing time ${new Date().toISOString()}`,
-    "Add-Notes",
+    "Add-Notes"
   );
 
   // update custom field

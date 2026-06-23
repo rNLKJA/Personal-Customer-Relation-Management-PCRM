@@ -5,6 +5,7 @@
 A mobile-first web app for managing your personal network — contacts, interactions and where you met them.
 
 <!-- badges -->
+
 ![React](https://img.shields.io/badge/React-16-61DAFB?logo=react&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)
 ![Material UI](https://img.shields.io/badge/Material%20UI-5-007FFF?logo=mui&logoColor=white)
@@ -36,18 +37,18 @@ This repository holds the **front-end client** (a Create React App single-page a
 
 ## Tech Stack
 
-| Layer | Technology |
-| --- | --- |
-| Framework | React 16 (Create React App, `react-scripts`) |
-| Routing | React Router DOM 5 |
-| UI | Material UI (MUI 5 + Material-UI 4), React Bootstrap, Emotion, Font Awesome |
-| Maps | Google Maps via `@react-google-maps/api` and `use-places-autocomplete` |
-| QR codes | `qrcode`, `react-qr-reader`, `react-qr-scanner` |
-| HTTP client | Axios (with a JWT request interceptor) |
-| Auth | JWT stored in `localStorage` |
-| Testing | Jest, React Testing Library, Enzyme, Taiko (end-to-end) |
-| Back-end (separate repo) | Node.js, Express, MongoDB |
-| Hosting | Heroku (original deployment) |
+| Layer                    | Technology                                                                  |
+| ------------------------ | --------------------------------------------------------------------------- |
+| Framework                | React 16 (Create React App, `react-scripts`)                                |
+| Routing                  | React Router DOM 5                                                          |
+| UI                       | Material UI (MUI 5 + Material-UI 4), React Bootstrap, Emotion, Font Awesome |
+| Maps                     | Google Maps via `@react-google-maps/api` and `use-places-autocomplete`      |
+| QR codes                 | `qrcode`, `react-qr-reader`, `react-qr-scanner`                             |
+| HTTP client              | Axios (with a JWT request interceptor)                                      |
+| Auth                     | JWT stored in `localStorage`                                                |
+| Testing                  | Jest, React Testing Library, Enzyme, Taiko (end-to-end)                     |
+| Back-end (separate repo) | Node.js, Express, MongoDB                                                   |
+| Hosting                  | Heroku (original deployment)                                                |
 
 ## Project Structure
 

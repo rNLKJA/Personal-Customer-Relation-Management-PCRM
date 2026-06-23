@@ -39,14 +39,14 @@ const UpdatePassword = ({ email }) => {
     // check password match the pattern or not
     if (
       /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z'";\-^%$#@!+=_<>,\\.:~`\d]{8,}$/.test(
-        newPassword1,
+        newPassword1
       ) !== true
     ) {
       console.log(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
       return alert(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
     }
 

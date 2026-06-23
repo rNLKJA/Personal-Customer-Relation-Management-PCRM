@@ -40,14 +40,14 @@ class Registration extends React.Component {
     // check password match the pattern or not
     if (
       /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z'";\-^%$#@!+=_<>,\\.:~`\d]{8,}$/.test(
-        this.state.password,
+        this.state.password
       ) !== true
     ) {
       console.log(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
       return alert(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
     }
 
@@ -164,7 +164,7 @@ class Registration extends React.Component {
         onUploadProgress: (progressEvent) => {
           this.setState({
             uploadPercentage: parseInt(
-              Math.round((progressEvent.loaded * 100) / progressEvent.total),
+              Math.round((progressEvent.loaded * 100) / progressEvent.total)
             ),
           });
         },

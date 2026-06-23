@@ -58,7 +58,7 @@ const Record = () => {
   const [recordList, setRecordList] = useState();
   const [count, setCount] = useState(9);
   records.sort((b, a) =>
-    convert(a.dateTime).localeCompare(convert(b.dateTime)),
+    convert(a.dateTime).localeCompare(convert(b.dateTime))
   );
   if (false) {
     console.log(recordList);
@@ -233,32 +233,32 @@ export const RecordList = (prop) => {
           return prop.records.filter((record) =>
             record.meetingPerson.firstName
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "lastName":
           return prop.records.filter((record) =>
             record.meetingPerson.lastName
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "location":
           return prop.records.filter((record) =>
             record.location
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "notes":
           return prop.records.filter((record) =>
-            record.notes.toLowerCase().includes(prop.search_key.toLowerCase()),
+            record.notes.toLowerCase().includes(prop.search_key.toLowerCase())
           );
         case "time":
           return prop.records.filter((record) =>
             convert(record.dateTime)
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
         case null:
           // console.log("NULL")
@@ -275,7 +275,7 @@ export const RecordList = (prop) => {
               record.location
             )
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
         default:
           break;
@@ -377,12 +377,12 @@ const sortRecord = (records, setRecordList, type) => {
     switch (type) {
       case "firstName":
         records.sort((a, b) =>
-          a.meetingPerson.firstName.localeCompare(b.meetingPerson.firstName),
+          a.meetingPerson.firstName.localeCompare(b.meetingPerson.firstName)
         );
         break;
       case "lastName":
         records.sort((a, b) =>
-          a.meetingPerson.lastName.localeCompare(b.meetingPerson.lastName),
+          a.meetingPerson.lastName.localeCompare(b.meetingPerson.lastName)
         );
         break;
       case "location":
@@ -394,7 +394,7 @@ const sortRecord = (records, setRecordList, type) => {
       case "time":
         console.log(records[0].dateTime);
         records.sort((a, b) =>
-          convert(a.dateTime).localeCompare(convert(b.dateTime)),
+          convert(a.dateTime).localeCompare(convert(b.dateTime))
         );
         for (let i of records) {
           console.log(i.notes);

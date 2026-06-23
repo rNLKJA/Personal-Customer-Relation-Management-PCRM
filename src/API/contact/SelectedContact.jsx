@@ -92,15 +92,15 @@ export const DisplayContact = ({
 
   // window size
   const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions(),
+    getWindowDimensions()
   );
   const [contact, setContact] = useState(selectedContact);
 
   const [phones, setPhones] = useState(
-    ConvertListStringToListObject(contact.phone, "phone"),
+    ConvertListStringToListObject(contact.phone, "phone")
   );
   const [emails, setEmails] = useState(
-    ConvertListStringToListObject(contact.email, "email"),
+    ConvertListStringToListObject(contact.email, "email")
   );
 
   //hooks for avatar upload
@@ -240,10 +240,8 @@ export const DisplayContact = ({
             onUploadProgress: (progressEvent) => {
               setProgress(
                 parseInt(
-                  Math.round(
-                    (progressEvent.loaded * 100) / progressEvent.total,
-                  ),
-                ),
+                  Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                )
               );
             },
           })
@@ -360,8 +358,8 @@ export const DisplayContact = ({
           onUploadProgress: (progressEvent) => {
             setUploadPercentage(
               parseInt(
-                Math.round((progressEvent.loaded * 100) / progressEvent.total),
-              ),
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
             );
           },
         })
@@ -828,7 +826,7 @@ export const DisplayContact = ({
                 onClick={(e) => {
                   if (
                     window.confirm(
-                      "Are you sure you wanna delete this contact?",
+                      "Are you sure you wanna delete this contact?"
                     )
                   ) {
                     deleteHandler(e);

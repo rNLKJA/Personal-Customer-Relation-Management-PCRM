@@ -71,10 +71,8 @@
   margin-top: 10px;
 }
 
-.google-map-1{
-   height: "65vh";
+.google-map-1 {
+  height: "65vh";
   width: "100%";
-  top: '10vh';
+  top: "10vh";
 }
-
-

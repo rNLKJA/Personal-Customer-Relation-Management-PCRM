@@ -57,7 +57,7 @@
     justify-content: flex-start;
   }
 
-  .back-button-add{
+  .back-button-add {
     position: fixed;
     width: 100px;
     top: 1.5rem;
@@ -270,7 +270,7 @@
     top: -3.6rem;
   }
 
-  .back-button-add{
+  .back-button-add {
     position: fixed;
     width: 100px;
     top: 40rem;
@@ -282,7 +282,7 @@
     width: 94%;
     height: 100%;
     background-color: white;
-/*    border: 1px black solid;*/
+    /*    border: 1px black solid;*/
     top: 1rem;
     right: 1rem;
 
@@ -303,7 +303,6 @@
     border-radius: 15px;
     /* justify-content: space-around; */
     overflow: auto;
-
   }
 
   .contactDetail > img {

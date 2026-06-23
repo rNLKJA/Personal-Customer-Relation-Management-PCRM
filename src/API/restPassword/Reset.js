@@ -45,14 +45,14 @@ const Reset = () => {
 
     if (
       /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z'";\-^%$#@!+=_<>,\\.:~`\d]{8,}$/.test(
-        password1,
+        password1
       ) !== true
     ) {
       console.log(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
       return alert(
-        "Password need to contain at lest one digit or character, please try again.",
+        "Password need to contain at lest one digit or character, please try again."
       );
     }
 

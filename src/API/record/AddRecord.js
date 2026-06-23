@@ -101,67 +101,60 @@ const CreateRecord = () => {
       notes: notes,
       customField,
     };
-    
 
-    setValid(true)
-    
-    for (let i of customField){
-      if (i.field === '' | i.value === ''){
+    setValid(true);
+
+    for (let i of customField) {
+      if ((i.field === "") | (i.value === "")) {
         setValid(false);
-        setError1('please fill the customField')
+        setError1("please fill the customField");
         setTimeout(() => {
           setError1("");
         }, 2000);
-        return
+        return;
       }
     }
 
     if (!recordInfo.contact_id) {
-
       setError1("Please select a contact!");
       setValid(false);
       setTimeout(() => {
         setError1("");
       }, 2000);
-      return
+      return;
     }
 
-    console.log(valid)
-
-
+    console.log(valid);
 
     if (!valid) {
       setTimeout(() => {
         setError1("");
       }, 200);
       setLoading1(false);
-      
     } else {
       setLoading1(true);
       await fetchClient
-      .post("/record/createRecord", recordInfo, {
-        onUploadProgress: (progressEvent) => {
-          setProgress(
-            parseInt(
-              Math.round((progressEvent.loaded * 100) / progressEvent.total)
-            )
-          );
-        },
-      })
-      .then(() => setSuccess(true))
-      .catch((err) => {
-        alert(err);
-        console.error(err);
-      });
-    setLocation("");
-    setSelected("");
-    setLoading1(false);
-    setTimeout(() => {
-      history.push("/record");
-    }, 1000);
+        .post("/record/createRecord", recordInfo, {
+          onUploadProgress: (progressEvent) => {
+            setProgress(
+              parseInt(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
+            );
+          },
+        })
+        .then(() => setSuccess(true))
+        .catch((err) => {
+          alert(err);
+          console.error(err);
+        });
+      setLocation("");
+      setSelected("");
+      setLoading1(false);
+      setTimeout(() => {
+        history.push("/record");
+      }, 1000);
     }
-
-    
   };
 
   const setFieldValue = (value) => {
@@ -390,7 +383,7 @@ const CreateRecord = () => {
               {error1 ? (
                 <>
                   <Alert severity="error">{error1}</Alert>
-                  <br /> 
+                  <br />
                 </>
               ) : null}
               {!loading1 && success ? (
@@ -398,7 +391,7 @@ const CreateRecord = () => {
                   <Alert severity="success">
                     {"Successfully save, the page will redirect in 3s"}
                   </Alert>
-                  <br /> 
+                  <br />
                 </>
               ) : null}
               {loading1 && !success ? (

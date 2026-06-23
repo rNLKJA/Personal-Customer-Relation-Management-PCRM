@@ -9,7 +9,7 @@ test("Navigation bar component testing, check the render ability of the app", ()
   render(
     <BrowserRouter>
       <Navbar />
-    </BrowserRouter>,
+    </BrowserRouter>
   );
 
   // obtain the headerElement

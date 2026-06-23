@@ -60,10 +60,10 @@ export const DisplayPerson = ({
   const [valid, setValid] = useState(true);
 
   const [phones, setPhones] = useState(
-    ConvertListStringToListObject(person.phone, "phone"),
+    ConvertListStringToListObject(person.phone, "phone")
   );
   const [emails, setEmails] = useState(
-    ConvertListStringToListObject(person.email, "email"),
+    ConvertListStringToListObject(person.email, "email")
   );
 
   const [error, setError] = useState("");
@@ -133,10 +133,8 @@ export const DisplayPerson = ({
             onUploadProgress: (progressEvent) => {
               setProgress(
                 parseInt(
-                  Math.round(
-                    (progressEvent.loaded * 100) / progressEvent.total,
-                  ),
-                ),
+                  Math.round((progressEvent.loaded * 100) / progressEvent.total)
+                )
               );
             },
           })

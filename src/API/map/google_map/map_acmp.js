@@ -91,7 +91,7 @@ const Map = () => {
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
       },
-      setAddress,
+      setAddress
     );
   }, []);
 
@@ -138,9 +138,8 @@ const Map = () => {
       (record) =>
         convert(record.dateTime).split(" ")[0] >=
           convert(startDate).split(" ")[0] &&
-        convert(record.dateTime).split(" ")[0] <=
-          convert(endDate).split(" ")[0],
-    ),
+        convert(record.dateTime).split(" ")[0] <= convert(endDate).split(" ")[0]
+    )
   );
 
   // return component
@@ -243,15 +242,15 @@ const Map = () => {
                     if (window.confirm("Do you want to create a new record?")) {
                       sessionStorage.setItem(
                         "selected-lat",
-                        selectedAddress.lat,
+                        selectedAddress.lat
                       );
                       sessionStorage.setItem(
                         "selected-lng",
-                        selectedAddress.lng,
+                        selectedAddress.lng
                       );
                       sessionStorage.setItem(
                         "selected-text",
-                        selectedAddress.text,
+                        selectedAddress.text
                       );
                     }
                     routeChange();
@@ -383,7 +382,7 @@ const Locate = ({ panTo, setAddress }) => {
             });
           },
           () => null,
-          options,
+          options
         );
       }}
     >
@@ -462,7 +461,7 @@ const fetchAddress = (position, setAddress) => {
   fetch(url)
     .then((response) => response.json())
     .then((data) =>
-      setAddress({ ...position, text: data.results[0].formatted_address }),
+      setAddress({ ...position, text: data.results[0].formatted_address })
     );
 };
 

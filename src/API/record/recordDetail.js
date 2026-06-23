@@ -30,8 +30,6 @@ export const ExpandMore1 = styled((props) => {
   }),
 }));
 
-
-
 const RecordDetail = (prop) => {
   const [expand, setExpand] = useState(false);
   // const onExpandClick = () => {
@@ -165,47 +163,42 @@ const RecordDetail = (prop) => {
                   }}
                   onClose={handlePopoverClose}
                   disableRestoreFocus
-
                 >
                   <Typography sx={{ p: 1 }}>{prop.record.location}</Typography>
                 </Popover>
-                
               </div>
             </CardContent>
           </IconButton>
-          
         </div>
         <div data-testid="test_btn">
-                  <ExpandMore1
-                    expand={expanded}
-                    onClick={handleExpandClick}
-                    aria-expanded={expanded}
-                    aria-label="show more"
-
-                  >
-                    <ExpandMoreIcon />
-                  </ExpandMore1>
-          </div>
-
+          <ExpandMore1
+            expand={expanded}
+            onClick={handleExpandClick}
+            aria-expanded={expanded}
+            aria-label="show more"
+          >
+            <ExpandMoreIcon />
+          </ExpandMore1>
+        </div>
       </CardActions>
 
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <hr />
 
-        {prop.record.meetingPerson.phone[0] === '' ? null : (
-          <div style={{ 'marginLeft': '10px' }}>
+        {prop.record.meetingPerson.phone[0] === "" ? null : (
+          <div style={{ marginLeft: "10px" }}>
             <IconButton aria-label="phone">
               <PhoneIcon />
-              <Typography variant="body2" color="text.secondary" sx={{ marginLeft: 2 }}>
-
-                <Link to={phoneUrl} >
-                  {prop.record.meetingPerson.phone[0]}
-                </Link>
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ marginLeft: 2 }}
+              >
+                <Link to={phoneUrl}>{prop.record.meetingPerson.phone[0]}</Link>
               </Typography>
             </IconButton>
           </div>
-        )
-        }
+        )}
 
         <hr />
 

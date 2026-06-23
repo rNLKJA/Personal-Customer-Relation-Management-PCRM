@@ -1,12 +1,7 @@
+const LogoutUser = async () => {
+  localStorage.removeItem("jwt");
 
-    const LogoutUser = async () => {
-        
-            
-        localStorage.removeItem('jwt')
-                 
-        window.location.href = "/login"
-    }    
+  window.location.href = "/login";
+};
 
-    export default LogoutUser;
-
-
+export default LogoutUser;

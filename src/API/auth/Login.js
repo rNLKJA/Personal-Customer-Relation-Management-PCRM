@@ -6,7 +6,7 @@ import useAuth from "../../hooks/useAuth";
 import welcome from "./welcome.png";
 import Error from "../error/Error";
 import { Link } from "react-router-dom";
-import Typography from '@mui/material/Typography';
+import Typography from "@mui/material/Typography";
 
 Axios.defaults.withCredentials = true;
 
@@ -53,20 +53,20 @@ const Login = () => {
         <img className="welcome-img" src={welcome} alt="welcome logo" />
         <h1>CRM Login</h1>
 
-        <div style={{width: "97%"}}>
+        <div style={{ width: "97%" }}>
           <label style={{ color: "rgb(47, 71, 137)" }}>Username :</label>
           <input
             type="text"
-						className='form-control'
+            className="form-control"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
         </div>
-        <div style={{width: "97%"}}>
+        <div style={{ width: "97%" }}>
           <label style={{ color: "rgb(47, 71, 137)" }}>Password :</label>
           <input
             type="password"
-						className='form-control'
+            className="form-control"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -79,19 +79,13 @@ const Login = () => {
         </div>
 
         <div style={{ width: "100%" }}>
-          <Link to="/signup">
-            
-              Create a new account!
-            
-          </Link>
+          <Link to="/signup">Create a new account!</Link>
         </div>
 
         <div style={{ width: "100%", display: "inline" }}>
           Forget password?
           <Link to="/resetPassword">
-          <Typography variant="body2">
-             Click here!
-          </Typography>      
+            <Typography variant="body2">Click here!</Typography>
           </Link>
         </div>
       </div>

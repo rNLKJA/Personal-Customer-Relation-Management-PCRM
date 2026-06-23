@@ -67,8 +67,8 @@ const Person = ({ contact, setOneContact }) => {
             <div
               style={{
                 overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  width: "8rem",
+                textOverflow: "ellipsis",
+                width: "8rem",
               }}
             >
               {contact.contact.firstName + " " + contact.contact.lastName}
@@ -78,11 +78,10 @@ const Person = ({ contact, setOneContact }) => {
             <div
               style={{
                 overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  width: "8rem",
+                textOverflow: "ellipsis",
+                width: "8rem",
               }}
             >
-              
               {"Job: " + contact.contact.occupation}
             </div>
           </div>

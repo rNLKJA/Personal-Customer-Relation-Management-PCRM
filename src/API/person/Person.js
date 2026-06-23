@@ -147,8 +147,8 @@ const Person = () => {
         onUploadProgress: (progressEvent) => {
           setUploadPercentage(
             parseInt(
-              Math.round((progressEvent.loaded * 100) / progressEvent.total),
-            ),
+              Math.round((progressEvent.loaded * 100) / progressEvent.total)
+            )
           );
         },
       });

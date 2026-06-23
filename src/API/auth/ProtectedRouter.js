@@ -8,7 +8,7 @@ export default function ProtectedRouters(props) {
   // console.log(user, isLoading);
 
   const { component: Component, ...rest } = props;
-	
+
   if (isLoading) {
     return <Loading />;
   }

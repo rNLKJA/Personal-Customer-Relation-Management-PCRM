@@ -47,7 +47,7 @@ const Map = React.memo(() => {
       // change the geolocation valeu
       setCoords({ ...coords, [name]: value });
     },
-    [coords],
+    [coords]
   );
 
   // handle geolocation update function
@@ -60,7 +60,7 @@ const Map = React.memo(() => {
   return (
     // Important! Always set the container height explicitly
     <div className="map-container">
-      <div  className="google-map-1">
+      <div className="google-map-1">
         {/* google map api connection setup */}
         <GoogleMapReact
           bootstrapURLKeys={{ key: "AIza-REMOVED-API-KEY" }}

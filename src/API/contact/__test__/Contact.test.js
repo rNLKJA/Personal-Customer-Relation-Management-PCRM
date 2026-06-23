@@ -9,7 +9,7 @@ test("Contact component testing, check the render ability of the app", () => {
   render(
     <BrowserRouter>
       <Contact />
-    </BrowserRouter>,
+    </BrowserRouter>
   );
 
   // obtain the headerElement

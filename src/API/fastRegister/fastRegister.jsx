@@ -116,7 +116,7 @@ export const passwordValidation = (password, password1) => {
   const regex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z'";\-^%$#@!+=_<>,\\.:~`\d]{8,}$/;
   if (regex.test(password) !== true) {
     return alert(
-      "Password need to contain at lest one digit or character, please try again.",
+      "Password need to contain at lest one digit or character, please try again."
     );
   }
 

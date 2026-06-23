@@ -1,4 +1,4 @@
-import React, { useState} from "react";
+import React, { useState } from "react";
 import "./contact.css";
 import fetchClient from "../axiosClient/axiosClient";
 // import qr_code from "./qr-code.png";

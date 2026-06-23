@@ -17,8 +17,8 @@ import Button from "@mui/material/Button";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Link from "@mui/material/Link";
 import Alert from "@mui/material/Alert";
-import Box from '@mui/material/Box';
-import LinearProgress from '@mui/material/LinearProgress';
+import Box from "@mui/material/Box";
+import LinearProgress from "@mui/material/LinearProgress";
 
 const EditRecord = (prop) => {
   useEffect(() => {
@@ -43,10 +43,10 @@ const EditRecord = (prop) => {
   const [notes, setNotes] = useState(prop.record.notes);
   const [customField, setCustomField] = useState([]);
   const [redirect, setRedirect] = useState(false);
-  const [error, setError] = useState("")
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [success,setSuccess] = useState(false);
-  const [progress, setProgress] = useState(0)
+  const [success, setSuccess] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (prop.record.customField !== undefined) {
@@ -79,47 +79,43 @@ const EditRecord = (prop) => {
       customField,
     };
 
-    let valid = true
+    let valid = true;
 
-    for (let i of customField){
-      if (i.field === '' || i.value === ''){
+    for (let i of customField) {
+      if (i.field === "" || i.value === "") {
         if (valid === true) valid = false;
-        setError("please fill the field")
+        setError("please fill the field");
       }
-      console.log(i)
+      console.log(i);
     }
 
-    if (valid){
-      setError('')
+    if (valid) {
+      setError("");
       setLoading(true);
       setSuccess(false);
       await fetchClient
-      .post("/record/editRecord", recordInfo,{
-        onUploadProgress: (progressEvent) => {
-          setProgress(
-            parseInt(
-              Math.round((progressEvent.loaded * 100) / progressEvent.total),
-            ),
-          );
-        },
-      })
-      .then(() => setSuccess(true))
-      .catch((err) => {
-        alert(err);
-        console.error(err);
-      });
+        .post("/record/editRecord", recordInfo, {
+          onUploadProgress: (progressEvent) => {
+            setProgress(
+              parseInt(
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
+            );
+          },
+        })
+        .then(() => setSuccess(true))
+        .catch((err) => {
+          alert(err);
+          console.error(err);
+        });
       setLocation("");
       setSelected("");
       setLoading(false);
 
-      setTimeout(() => 3000)
+      setTimeout(() => 3000);
 
-
-      window.location.href = "/record"
+      window.location.href = "/record";
     }
-
-
-
   };
 
   const setFieldValue = (value) => {
@@ -170,7 +166,6 @@ const EditRecord = (prop) => {
 
   return (
     <div className="edit-record-container">
-
       <div
         style={{ justifyContent: "center", display: "flex", padding: "10px" }}
       >
@@ -323,14 +318,19 @@ const EditRecord = (prop) => {
           Add Field
         </Button>
 
-
         <hr />
 
-        {error? <Alert severity="error">{error}</Alert> : null}
-        {!loading && success ? <Alert severity="success">{'Successfully save, the page will redirect in 3s'}</Alert> : null}
-        {loading && !success ?<Box sx={{ width: '100%' }}>
-          <LinearProgress variant="determinate" value={progress} />
-        </Box> : null}
+        {error ? <Alert severity="error">{error}</Alert> : null}
+        {!loading && success ? (
+          <Alert severity="success">
+            {"Successfully save, the page will redirect in 3s"}
+          </Alert>
+        ) : null}
+        {loading && !success ? (
+          <Box sx={{ width: "100%" }}>
+            <LinearProgress variant="determinate" value={progress} />
+          </Box>
+        ) : null}
         <div
           style={{ justifyContent: "center", display: "flex", padding: "10px" }}
         >

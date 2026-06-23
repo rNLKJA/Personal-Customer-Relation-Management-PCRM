@@ -1,0 +1,9 @@
+node_modules
+build
+dist
+out
+_archive
+coverage
+*.min.*
+package-lock.json
+yarn.lock

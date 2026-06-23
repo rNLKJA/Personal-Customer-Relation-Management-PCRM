@@ -76,7 +76,7 @@ const Map = ({ setLocation, setGeoCoords, geoLocation, text }) => {
         lat: event.latLng.lat(),
         lng: event.latLng.lng(),
       },
-      setAddress,
+      setAddress
     );
 
     // console.log(selected, address);
@@ -199,7 +199,7 @@ const Locate = ({ panTo, setAddress }) => {
             // });
           },
           () => null,
-          options,
+          options
         );
       }}
     >
@@ -276,6 +276,6 @@ const fetchAddress = (position, setAddress) => {
   fetch(url)
     .then((response) => response.json())
     .then((data) =>
-      setAddress({ ...position, text: data.results[0].formatted_address }),
+      setAddress({ ...position, text: data.results[0].formatted_address })
     );
 };

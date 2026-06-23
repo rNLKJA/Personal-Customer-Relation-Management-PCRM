@@ -73,7 +73,7 @@ const AddUser = () => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions(),
+    getWindowDimensions()
   );
 
   // const [contact, setContact] = useState("");
@@ -173,8 +173,8 @@ const AddUser = () => {
           onUploadProgress: (progressEvent) => {
             setUploadPercentage(
               parseInt(
-                Math.round((progressEvent.loaded * 100) / progressEvent.total),
-              ),
+                Math.round((progressEvent.loaded * 100) / progressEvent.total)
+              )
             );
           },
         })

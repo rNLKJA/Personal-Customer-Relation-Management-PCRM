@@ -12,5 +12,5 @@ ReactDOM.render(
       <App />
     </StyledEngineProvider>
   </React.StrictMode>,
-  document.getElementById("4399CRM"),
+  document.getElementById("4399CRM")
 );

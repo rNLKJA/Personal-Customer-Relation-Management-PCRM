@@ -37,7 +37,7 @@ const Contact = () => {
   }, []);
 
   const [windowDimensions, setWindowDimensions] = useState(
-    getWindowDimensions(),
+    getWindowDimensions()
   );
   const [contactList, setContactList] = useState([]);
   const { loading, contacts, error } = useContacts();
@@ -51,7 +51,7 @@ const Contact = () => {
     selected: false,
   });
 
-/*  const [slice, setSlice] = useState(9); // define the number of records display in the contact list*/
+  /*  const [slice, setSlice] = useState(9); // define the number of records display in the contact list*/
   const [count, setCount] = useState(9);
 
   if (false) {
@@ -104,7 +104,7 @@ const Contact = () => {
         "/contact/deleteOneContact/" +
           localStorage.getItem("userName") +
           "/" +
-          oneContact._id,
+          oneContact._id
       )
       .then((response) => {
         if (response.data.status === "success") {
@@ -147,15 +147,15 @@ const Contact = () => {
   }
 
   const addCount = () => {
-/*    if (slice <= contacts.length) {
+    /*    if (slice <= contacts.length) {
       setCount(parseInt(count) + parseInt(slice));
     } else {
       setCount(contacts.length);
     }*/
-    setCount(count+9);
+    setCount(count + 9);
   };
 
-/*
+  /*
   const subCount = () => {
     if (parseInt(count) - parseInt(slice) <= 0) {
       setCount(5);
@@ -215,17 +215,16 @@ const Contact = () => {
                     setOneContact={setOneContact}
                     count={count}
                   />
-                  {count<contacts.length ? (
-                      <div className="change-slice">
-                        <button
-                            className="btn btn-primary add-slice"
-                            onClick={addCount}
-                        >
-                          More
-                        </button>
-                      </div>
-                  ):null}
-
+                  {count < contacts.length ? (
+                    <div className="change-slice">
+                      <button
+                        className="btn btn-primary add-slice"
+                        onClick={addCount}
+                      >
+                        More
+                      </button>
+                    </div>
+                  ) : null}
                 </div>
               </>
             )}
@@ -240,12 +239,12 @@ const Contact = () => {
 
                 <div
                   className="contactList-items"
-                  style={{ alignItems: "center"}}
+                  style={{ alignItems: "center" }}
                 >
                   <TextField
                     id="standard-basic"
                     label="Search by name/occupation/date"
-                    style={{ width: "90%"}}
+                    style={{ width: "90%" }}
                     value={searchTerm}
                     onChange={(e) => handleChange(e)}
                   />
@@ -265,20 +264,19 @@ const Contact = () => {
                     className="change-slice"
                     style={{ position: "fixed", bottom: 0, right: 0 }}
                   >
-                    {count<contacts.length ? (
-                        <div className="change-slice">
-                          <button
-                              className="btn btn-primary add-slice"
-                              onClick={() => {
-                                addCount();
-                                console.log(count);
-                              }}
-                          >
-                            More
-                          </button>
-                        </div>
-                    ):null}
-
+                    {count < contacts.length ? (
+                      <div className="change-slice">
+                        <button
+                          className="btn btn-primary add-slice"
+                          onClick={() => {
+                            addCount();
+                            console.log(count);
+                          }}
+                        >
+                          More
+                        </button>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               </>
@@ -330,35 +328,35 @@ export const People = (prop) => {
           return prop.contacts.filter((contact) =>
             contact.contact.firstName
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "lastName":
           return prop.contacts.filter((contact) =>
             contact.contact.lastName
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "occupation":
           return prop.contacts.filter((contact) =>
             contact.contact.occupation
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "notes":
           return prop.contacts.filter((contact) =>
             contact.contact.note
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case "addDate":
           return prop.contacts.filter((contact) =>
             convert(contact.contact.addDate)
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
 
         case null:
@@ -376,7 +374,7 @@ export const People = (prop) => {
               contact.contact.occupation
             )
               .toLowerCase()
-              .includes(prop.search_key.toLowerCase()),
+              .includes(prop.search_key.toLowerCase())
           );
         default:
           break;
@@ -479,19 +477,19 @@ const sortContact = (contacts, setContactList, type) => {
     switch (type) {
       case "firstName":
         contacts.sort((a, b) =>
-          a.contact.firstName.localeCompare(b.contact.firstName),
+          a.contact.firstName.localeCompare(b.contact.firstName)
         );
 
         break;
       case "lastName":
         contacts.sort((a, b) =>
-          a.contact.lastName.localeCompare(b.contact.lastName),
+          a.contact.lastName.localeCompare(b.contact.lastName)
         );
 
         break;
       case "occupation":
         contacts.sort((a, b) =>
-          a.contact.occupation.localeCompare(b.contact.occupation),
+          a.contact.occupation.localeCompare(b.contact.occupation)
         );
         for (let i = 0; i < contacts.length; i++) {}
         break;
@@ -503,7 +501,7 @@ const sortContact = (contacts, setContactList, type) => {
       case "addDate":
         console.log(contacts[0]);
         contacts.sort((a, b) =>
-          convert(a.contact.addDate).localeCompare(convert(b.contact.addDate)),
+          convert(a.contact.addDate).localeCompare(convert(b.contact.addDate))
         );
         for (let i = 0; i < contacts.length; i++) {
           console.log(contacts[i].contact.addDate);
