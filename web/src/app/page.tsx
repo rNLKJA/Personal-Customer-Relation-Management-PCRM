@@ -4,6 +4,8 @@ import {
   AtSign,
   BadgeCheck,
   CalendarDays,
+  ChartColumn,
+  FolderLock,
   Inbox,
   MapPinned,
   NotebookPen,
@@ -53,6 +55,21 @@ const FEATURES = [
     title: "Verified sign-up",
     body: "E-mail verification codes, password reset and invitations - delivered to an on-screen demo inbox instead of a real mailbox.",
   },
+  {
+    icon: ChartColumn,
+    title: "Insights with honest error bars",
+    body: "Meetings per week with a seeded bootstrap interval, a weekday-by-hour heatmap, and the people you have not seen in a while.",
+  },
+  {
+    icon: FolderLock,
+    title: "Your data, your call",
+    body: "Download everything as JSON or CSV, see every access in an append-only activity log, or delete the account and all of it for good.",
+  },
+  {
+    icon: Sparkles,
+    title: "Optional AI, your own key",
+    body: "Summarise a meeting note with Claude or OpenAI using your own key. Personal details are removed in your browser first, and nothing is saved until you accept it.",
+  },
 ];
 
 const NUMBERS = [
@@ -82,6 +99,7 @@ const STACKS = [
       "Signed httpOnly session cookies (jose), bcrypt",
       "MapLibre GL + OpenFreeMap tiles, Photon geocoding",
       "Demo inbox stored in the database",
+      "Optional bring-your-own-key AI with redaction and an audit log",
       "Vercel, with an offline basemap fallback",
     ],
   },
@@ -116,6 +134,12 @@ export default function LandingPage() {
             >
               About
             </a>
+            <Link
+              href="/methods"
+              className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline"
+            >
+              Methods
+            </Link>
             <ThemeIconButton />
             <Button asChild variant="ghost" size="sm">
               <Link href="/login">Sign in</Link>
@@ -215,11 +239,16 @@ export default function LandingPage() {
           <div className="max-w-2xl">
             <p className="text-sm font-medium text-primary">What you can do</p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight">
-              Everything from the original, working again
+              Everything from the original, working again, plus three additions
             </h2>
             <p className="mt-3 text-muted-foreground">
               The search, sorting, validation, duplicate detection and contact-sync rules are ported
-              from the 2021 code and covered by parity tests.
+              from the 2021 code and covered by parity tests. The 2026 additions (insights, data
+              rights and an optional AI assistant) are explained, with their weak spots, on the{" "}
+              <Link href="/methods" className="font-medium text-primary hover:underline">
+                methods page
+              </Link>
+              .
             </p>
           </div>
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -380,6 +409,9 @@ export default function LandingPage() {
             {SITE.name} · {SITE.team} · {SITE.university}
           </span>
           <span className="flex items-center gap-4">
+            <Link href="/methods" className="hover:text-foreground">
+              Methods and decisions
+            </Link>
             <a href={SITE.repo} className="inline-flex items-center gap-1 hover:text-foreground">
               <GithubIcon className="size-3.5" /> GitHub
             </a>
