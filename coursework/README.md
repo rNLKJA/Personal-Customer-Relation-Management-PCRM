@@ -30,6 +30,13 @@ personal photos:
 - `frontend/.env` – removed from the tree (it held a Google Maps key). See
   `frontend/.env.example` for the variable names.
 
+## How the revival uses this folder
+
+The revived app in [`../web`](../web) ports this code to TypeScript (Next.js + SQLite). Its parity tests
+(`web/src/lib/legacy/parity.test.ts`) load functions directly from these files - for example `convert()` from
+`frontend/src/API/record/Record.js` and `listCompare()` from `backend/controller/contactController.js` - and
+check that the ports behave identically, so please keep the contents unchanged.
+
 ## Running the original code (optional)
 
 Both apps target Node 16 / npm 6 (2021 toolchain). They are **not** needed for the
