@@ -5,7 +5,7 @@
 **A mobile-first personal CRM: contacts, geo-tagged meetings, a map, a calendar and QR-code contact exchange.**
 Built by Team 4399 for COMP30022 IT Project (The University of Melbourne, 2021 Semester 2), revived in 2026 as a single Next.js app.
 
-**Live demo:** _coming soon (Vercel: `comp30022-personal-crm`)_
+**Live demo: [comp30022-personal-crm.vercel.app](https://comp30022-personal-crm.vercel.app)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -120,10 +120,25 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
 
 ### Deployment notes
 
+- Production: <https://comp30022-personal-crm.vercel.app> (Vercel project `comp30022-personal-crm`, deployed from
+  `web/` with `vercel deploy --prod`).
 - Vercel project root: `web/`. Set `SESSION_SECRET` (required, 32+ characters), and for persistent shared data `DATABASE_URL` +
   `DATABASE_AUTH_TOKEN` of a Turso database (run `pnpm db:migrate && pnpm db:seed` against it once).
 - Without a database URL the app copies `data/seed.db` to `/tmp/app.db` on cold start (writable but ephemeral)
-  and shows a "demo storage resets periodically" notice.
+  and shows a "demo storage resets periodically" notice. Each serverless instance has its own copy, so a change
+  made in one request is not guaranteed to show up in the next one. The live demo currently runs in this mode
+  until a Turso database is attached.
+- The shared `demo` account's dates follow the calendar: on the first request of a new (UTC) day its meetings,
+  contacts and inbox slide forward so "Up next" and the calendar never go stale.
+
+### Viewing the records
+
+- **On the site:** sign in with the one-click **Demo admin** button (credentials are on the login page) and open
+  [`/admin/records`](https://comp30022-personal-crm.vercel.app/admin/records): every table with row counts, search,
+  pagination and a CSV export per table (password hashes and image/HTML blobs are redacted).
+- **Turso (when attached):** `turso db shell comp30022-personal-crm "select count(*) from contacts"`.
+- **Locally:** open `web/data/seed.db` (committed snapshot) or `web/data/app.db` (your local copy) in any SQLite
+  browser, or run `pnpm db:studio` in `web/`.
 
 ## How the data artefacts are generated
 
