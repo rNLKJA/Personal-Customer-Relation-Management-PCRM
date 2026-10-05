@@ -1,0 +1,59 @@
+{
+  "name": "comp30022-49",
+  "version": "1.0.0",
+  "description": "this package.json is for group 049, team 4399 to develop personal customer relationship management project",
+  "main": "index.js",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "express-handlebars": "^5.3.3",
+    "express-session": "^1.17.2",
+    "express-validator": "^6.12.1",
+    "jest": "^27.2.3",
+    "jsdoc": "^3.6.7",
+    "mongoose": "^5.13.7",
+    "multer": "^1.4.3",
+    "nodejs": "0.0.0",
+    "nodemailer": "^6.6.5",
+    "nodemailer-smtp-transport": "^2.7.4",
+    "nodemon": "^2.0.14",
+    "passport": "^0.4.1",
+    "passport-jwt": "^4.0.0",
+    "passport-local": "^1.0.0",
+    "path": "^0.12.7",
+    "react": "^17.0.2",
+    "react-native": "^0.64.2"
+  },
+  "scripts": {
+    "test": "jest",
+    "start": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Harrison-Huang666/COMP30022-49.git"
+  },
+  "keywords": [
+    "unimelb",
+    "comp30022",
+    "project"
+  ],
+  "author": "Harrison, H., Eric, B., Eric, W., Lydia, T., Rin, H.",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Harrison-Huang666/COMP30022-49/issues"
+  },
+  "homepage": "https://github.com/Harrison-Huang666/COMP30022-49#readme",
+  "devDependencies": {
+    "jest-html-reporter": "^3.4.1",
+    "supertest": "^6.1.6"
+  },
+  "jest-html-reporter": {
+    "pageTitle": "Test Report",
+    "outputPath": "./test-report.html",
+    "includeFailureMsg": true
+  }
+}
