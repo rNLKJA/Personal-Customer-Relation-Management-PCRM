@@ -8,6 +8,8 @@ import { mulberry32 } from "../random";
 
 export const DEFAULT_BOOTSTRAP_RESAMPLES = 2000;
 export const DEFAULT_SEED = 4399;
+/** Below this many observations a percentile interval is not reported as a 95% CI. */
+export const MIN_BOOTSTRAP_N = 5;
 
 export function mean(values: readonly number[]): number {
   if (values.length === 0) return Number.NaN;
@@ -38,6 +40,13 @@ export interface BootstrapResult {
   resamples: number;
   seed: number;
   n: number;
+  /**
+   * True when the interval should not be presented as a confidence interval:
+   * fewer than MIN_BOOTSTRAP_N observations, or every replicate was the same
+   * (e.g. 14 notes all scoring 100% give a zero-width "100-100%" interval,
+   * which says nothing about uncertainty). Show "no interval" instead.
+   */
+  degenerate: boolean;
 }
 
 export interface BootstrapOptions {
@@ -74,14 +83,17 @@ export function bootstrapCI(
     replicates[b] = statistic(sample);
   }
   const alpha = (1 - confidence) / 2;
+  const lower = quantile(replicates, alpha);
+  const upper = quantile(replicates, 1 - alpha);
   return {
     estimate: statistic(values),
-    lower: quantile(replicates, alpha),
-    upper: quantile(replicates, 1 - alpha),
+    lower,
+    upper,
     confidence,
     resamples,
     seed,
     n,
+    degenerate: n < MIN_BOOTSTRAP_N || lower === upper,
   };
 }
 

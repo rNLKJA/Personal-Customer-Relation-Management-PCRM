@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, ChartColumn, NotebookPen } from "lucide-react";
+import { ViewSwitch } from "@/components/records/view-switch";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 import { EmptyState } from "@/components/common/empty-state";
@@ -55,6 +56,7 @@ export default async function InsightsPage() {
           </Button>
         }
       />
+      <ViewSwitch current="/insights" />
 
       {records.length === 0 ? (
         <EmptyState
@@ -76,9 +78,13 @@ export default async function InsightsPage() {
               label="Meetings per week"
               value={rate ? f1(rate.estimate) : "-"}
               note={
-                rate
-                  ? `95% CI ${f1(rate.lower)}-${f1(rate.upper)} · n = ${rate.n} complete weeks`
-                  : "Needs one complete week"
+                !rate
+                  ? "Needs one complete week"
+                  : rate.n < WEEKLY_WINDOW
+                    ? `n = ${rate.n} complete ${rate.n === 1 ? "week" : "weeks"}; an interval needs ${WEEKLY_WINDOW}`
+                    : rate.degenerate
+                      ? `n = ${rate.n} complete weeks, all the same: no interval`
+                      : `95% CI ${f1(rate.lower)}-${f1(rate.upper)} · n = ${rate.n} complete weeks`
               }
             />
             <Tile
@@ -119,7 +125,11 @@ export default async function InsightsPage() {
                 formatWeek(p.weekStart),
                 String(p.count),
                 p.band ? f1(p.band.estimate) : "-",
-                p.band ? `${f1(p.band.lower)}-${f1(p.band.upper)}` : "-",
+                !p.band
+                  ? "-"
+                  : p.band.degenerate
+                    ? "no spread"
+                    : `${f1(p.band.lower)}-${f1(p.band.upper)}`,
               ])}
             />
           </Card>

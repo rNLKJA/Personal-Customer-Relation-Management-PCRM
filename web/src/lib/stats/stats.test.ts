@@ -124,6 +124,12 @@ describe("bootstrapCI (percentile)", () => {
   it("collapses to a point for a constant sample and returns null when empty", () => {
     const ci = bootstrapCI([3, 3, 3, 3])!;
     expect([ci.lower, ci.estimate, ci.upper]).toEqual([3, 3, 3]);
+    expect(ci.degenerate).toBe(true);
+    // No variation: a zero-width interval is flagged even with plenty of data.
+    expect(bootstrapCI(Array.from({ length: 14 }, () => 1))!.degenerate).toBe(true);
+    // Too few observations, even with variation.
+    expect(bootstrapCI([1, 2, 3, 4])!.degenerate).toBe(true);
+    expect(bootstrapCI([1, 2, 3, 4, 5, 6])!.degenerate).toBe(false);
     expect(bootstrapCI([])).toBeNull();
   });
 

@@ -7,6 +7,7 @@ export {
   quantile,
   DEFAULT_BOOTSTRAP_RESAMPLES,
   DEFAULT_SEED,
+  MIN_BOOTSTRAP_N,
   type BootstrapResult,
   type BootstrapOptions,
 } from "./bootstrap";
