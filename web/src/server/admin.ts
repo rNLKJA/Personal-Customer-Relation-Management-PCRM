@@ -69,7 +69,12 @@ function searchWhere(table: TableName, q: string): SQL | undefined {
     (c) => c.column.columnType === "SQLiteText" || c.column.columnType === "SQLiteTextJson",
   );
   const conds = textCols
-    .filter((c) => !(table === "users" && c.name === "password_hash") && c.name !== "portrait" && c.name !== "html")
+    .filter(
+      (c) =>
+        !(table === "users" && c.name === "password_hash") &&
+        c.name !== "portrait" &&
+        c.name !== "html",
+    )
     .map((c) => like(c.column, `%${term}%`));
   return conds.length ? or(...conds) : undefined;
 }
@@ -98,11 +103,20 @@ export async function tableCounts(): Promise<Record<TableName, number>> {
 export async function browseTable(
   name: TableName,
   opts: { page: number; pageSize: number; q: string },
-): Promise<{ columns: string[]; rows: Record<string, unknown>[]; total: number; page: number; pages: number }> {
+): Promise<{
+  columns: string[];
+  rows: Record<string, unknown>[];
+  total: number;
+  page: number;
+  pages: number;
+}> {
   const db = getDb();
   const table = TABLES[name] as SQLiteTable;
   const where = searchWhere(name, opts.q);
-  const [countRow] = await db.select({ n: sql<number>`count(*)` }).from(table).where(where);
+  const [countRow] = await db
+    .select({ n: sql<number>`count(*)` })
+    .from(table)
+    .where(where);
   const total = Number(countRow?.n ?? 0);
   const pages = Math.max(1, Math.ceil(total / opts.pageSize));
   const page = Math.min(Math.max(1, opts.page), pages);

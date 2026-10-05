@@ -56,8 +56,7 @@ export function extractFunction(source: string, name: string): string {
         else if (c === "]") inClass = false;
         else if (c === "/" && !inClass) break;
       }
-    }
-    else if (ch === "{") depth++;
+    } else if (ch === "{") depth++;
     else if (ch === "}") {
       depth--;
       if (depth === 0) return source.slice(start, j + 1).replace(/^\s*export\s+/, "");
@@ -67,10 +66,16 @@ export function extractFunction(source: string, name: string): string {
 }
 
 /** Evaluate an original function with the given free variables in scope. */
-export function loadOriginal<T>(relative: string, name: string, scope: Record<string, unknown> = {}): T {
+export function loadOriginal<T>(
+  relative: string,
+  name: string,
+  scope: Record<string, unknown> = {},
+): T {
   const src = extractFunction(originalSource(relative), name);
   const keys = Object.keys(scope);
-  const body = src.startsWith("function") ? `${src}\nreturn ${name};` : `return (${src.replace(/^const\s+\w+\s*=\s*/, "").replace(/;\s*$/, "")});`;
+  const body = src.startsWith("function")
+    ? `${src}\nreturn ${name};`
+    : `return (${src.replace(/^const\s+\w+\s*=\s*/, "").replace(/;\s*$/, "")});`;
   return new Function(...keys, body)(...keys.map((k) => scope[k])) as T;
 }
 

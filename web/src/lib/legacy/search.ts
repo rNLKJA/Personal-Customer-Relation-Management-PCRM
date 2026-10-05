@@ -185,7 +185,9 @@ export function sortRecords<T extends SearchableRecord>(
   const list = [...records];
   switch (option) {
     case "firstName":
-      return list.sort((a, b) => a.meetingPerson.firstName.localeCompare(b.meetingPerson.firstName));
+      return list.sort((a, b) =>
+        a.meetingPerson.firstName.localeCompare(b.meetingPerson.firstName),
+      );
     case "lastName":
       return list.sort((a, b) => a.meetingPerson.lastName.localeCompare(b.meetingPerson.lastName));
     case "location":

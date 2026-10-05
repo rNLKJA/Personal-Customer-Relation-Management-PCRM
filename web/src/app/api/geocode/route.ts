@@ -10,7 +10,8 @@ const allow = createRateLimiter(40, 60_000);
 export async function GET(req: NextRequest) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ error: "Sign in to search places" }, { status: 401 });
-  if (!allow(user.id)) return NextResponse.json({ error: "Too many searches - slow down a little" }, { status: 429 });
+  if (!allow(user.id))
+    return NextResponse.json({ error: "Too many searches - slow down a little" }, { status: 429 });
   const sp = req.nextUrl.searchParams;
   const q = sp.get("q") ?? "";
   const bias = { lat: Number(sp.get("lat")), lng: Number(sp.get("lng")) };

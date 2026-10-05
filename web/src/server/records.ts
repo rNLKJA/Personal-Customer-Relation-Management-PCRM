@@ -72,7 +72,10 @@ async function ownedContact(ownerId: string, contactId: string) {
 }
 
 /** `createRecord` */
-export async function createRecord(ownerId: string, body: RecordRequestBody): Promise<SaveRecordResult> {
+export async function createRecord(
+  ownerId: string,
+  body: RecordRequestBody,
+): Promise<SaveRecordResult> {
   const parsed = normaliseRecordRequest(body, { editing: false });
   if (!parsed.ok) return { ok: false, error: parsed.error };
   const person = await ownedContact(ownerId, parsed.value.contactId);
@@ -98,7 +101,10 @@ export async function createRecord(ownerId: string, body: RecordRequestBody): Pr
 }
 
 /** `editRecord` */
-export async function editRecord(ownerId: string, body: RecordRequestBody): Promise<SaveRecordResult> {
+export async function editRecord(
+  ownerId: string,
+  body: RecordRequestBody,
+): Promise<SaveRecordResult> {
   const parsed = normaliseRecordRequest(body, { editing: true });
   if (!parsed.ok) return { ok: false, error: parsed.error };
   const v = parsed.value;

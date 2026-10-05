@@ -23,7 +23,9 @@ export async function issueEmailCode(email: string, purpose: CodePurpose): Promi
   const now = Date.now();
   await db.batch([
     db.delete(emailCodes).where(lt(emailCodes.expiresAt, new Date(now))),
-    db.delete(emailCodes).where(and(eq(emailCodes.email, norm(email)), eq(emailCodes.purpose, purpose))),
+    db
+      .delete(emailCodes)
+      .where(and(eq(emailCodes.email, norm(email)), eq(emailCodes.purpose, purpose))),
     db.insert(emailCodes).values({
       id: newId(),
       email: norm(email),
@@ -58,6 +60,8 @@ export async function verifyEmailCode(
       .where(eq(emailCodes.id, row.id));
     return "wrong";
   }
-  await db.delete(emailCodes).where(and(eq(emailCodes.email, norm(email)), eq(emailCodes.purpose, purpose)));
+  await db
+    .delete(emailCodes)
+    .where(and(eq(emailCodes.email, norm(email)), eq(emailCodes.purpose, purpose)));
   return "ok";
 }

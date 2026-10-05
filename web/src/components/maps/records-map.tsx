@@ -61,11 +61,21 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
       case "past90":
         return filterRecordsByDayRange(located, now - 90 * DAY, now, APP_TIME_ZONE);
       case "custom":
-        return start && end ? filterRecordsByDayRange(located, `${start}T00:00:00Z`, `${end}T00:00:00Z`, APP_TIME_ZONE) : located;
+        return start && end
+          ? filterRecordsByDayRange(
+              located,
+              `${start}T00:00:00Z`,
+              `${end}T00:00:00Z`,
+              APP_TIME_ZONE,
+            )
+          : located;
     }
   }, [located, preset, start, end, now]);
 
-  const bounds = useMemo(() => boundsOf(filtered.map((r) => ({ lat: r.lat!, lng: r.lng! }))), [filtered]);
+  const bounds = useMemo(
+    () => boundsOf(filtered.map((r) => ({ lat: r.lat!, lng: r.lng! }))),
+    [filtered],
+  );
 
   useEffect(() => {
     if (!bounds || !mapRef.current) return;
@@ -78,8 +88,8 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
   return (
     <div className="grid grid-cols-1 gap-4 lg:h-[calc(100dvh-11rem)] lg:grid-cols-[320px_minmax(0,1fr)]">
       <div className="order-2 flex min-h-0 flex-col gap-3 lg:order-1">
-        <div className="bg-card rounded-2xl border p-3 shadow-(--shadow-soft)">
-          <p className="text-muted-foreground mb-2 flex items-center gap-1.5 text-xs font-medium">
+        <div className="rounded-2xl border bg-card p-3 shadow-(--shadow-soft)">
+          <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
             <CalendarRange className="size-3.5" aria-hidden="true" /> Show meetings
           </p>
           <div className="flex flex-wrap gap-1.5" role="group" aria-label="Date range">
@@ -91,7 +101,9 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                 onClick={() => setPreset(p.value)}
                 className={cn(
                   "rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
-                  preset === p.value ? "border-primary/30 bg-accent text-accent-foreground" : "text-muted-foreground hover:text-foreground",
+                  preset === p.value
+                    ? "border-primary/30 bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 {p.label}
@@ -101,18 +113,34 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
           {preset === "custom" && (
             <div className="mt-3 grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <Label htmlFor="map-start" className="text-xs">From</Label>
-                <Input id="map-start" type="date" value={start} max={end} onChange={(e) => setStart(e.target.value)} />
+                <Label htmlFor="map-start" className="text-xs">
+                  From
+                </Label>
+                <Input
+                  id="map-start"
+                  type="date"
+                  value={start}
+                  max={end}
+                  onChange={(e) => setStart(e.target.value)}
+                />
               </div>
               <div className="space-y-1">
-                <Label htmlFor="map-end" className="text-xs">To</Label>
-                <Input id="map-end" type="date" value={end} min={start} onChange={(e) => setEnd(e.target.value)} />
+                <Label htmlFor="map-end" className="text-xs">
+                  To
+                </Label>
+                <Input
+                  id="map-end"
+                  type="date"
+                  value={end}
+                  min={start}
+                  onChange={(e) => setEnd(e.target.value)}
+                />
               </div>
             </div>
           )}
         </div>
-        <div className="bg-card flex min-h-0 flex-1 flex-col rounded-2xl border shadow-(--shadow-soft)">
-          <p className="text-muted-foreground border-b px-4 py-2.5 text-xs" aria-live="polite">
+        <div className="flex min-h-0 flex-1 flex-col rounded-2xl border bg-card shadow-(--shadow-soft)">
+          <p className="border-b px-4 py-2.5 text-xs text-muted-foreground" aria-live="polite">
             {filtered.length} {filtered.length === 1 ? "meeting" : "meetings"} on the map
             {missing > 0 && ` · ${missing} without a pin`}
           </p>
@@ -126,21 +154,40 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                       type="button"
                       onClick={() => {
                         setSelected(r.id);
-                        mapRef.current?.flyTo({ center: [r.lng!, r.lat!], zoom: 15, duration: 700 });
+                        mapRef.current?.flyTo({
+                          center: [r.lng!, r.lat!],
+                          zoom: 15,
+                          duration: 700,
+                        });
                       }}
                       className={cn(
-                        "hover:bg-muted flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors",
+                        "flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left transition-colors hover:bg-muted",
                         selected === r.id && "bg-accent",
                       )}
                     >
-                      <PersonAvatar firstName={r.person.firstName} lastName={r.person.lastName} portrait={r.person.portrait} seed={r.person.id} size="sm" />
+                      <PersonAvatar
+                        firstName={r.person.firstName}
+                        lastName={r.person.lastName}
+                        portrait={r.person.portrait}
+                        seed={r.person.id}
+                        size="sm"
+                      />
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-medium">
                           {r.person.firstName} {r.person.lastName}
                         </span>
-                        <span className="text-muted-foreground block truncate text-xs">{cleanLocation(r.location)}</span>
+                        <span className="block truncate text-xs text-muted-foreground">
+                          {cleanLocation(r.location)}
+                        </span>
                       </span>
-                      <span className={cn("shrink-0 text-xs tabular", r.dateTime.getTime() > now ? "text-primary font-medium" : "text-muted-foreground")}>
+                      <span
+                        className={cn(
+                          "tabular shrink-0 text-xs",
+                          r.dateTime.getTime() > now
+                            ? "font-medium text-primary"
+                            : "text-muted-foreground",
+                        )}
+                      >
                         {formatShortDate(r.dateTime)}
                       </span>
                     </button>
@@ -148,7 +195,7 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                 ))}
             </ul>
           ) : (
-            <div className="text-muted-foreground flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-sm">
+            <div className="flex flex-1 flex-col items-center justify-center gap-2 p-8 text-center text-sm text-muted-foreground">
               <MapPinOff className="size-6 opacity-60" aria-hidden="true" />
               No meetings in this range.
               <Button asChild size="sm" variant="outline" className="mt-2">
@@ -168,7 +215,11 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
         initialViewState={
           bounds
             ? { bounds, fitBoundsOptions: { padding: 60, maxZoom: 14 } }
-            : { latitude: ORIGINAL_DEFAULT_CENTER.lat, longitude: ORIGINAL_DEFAULT_CENTER.lng, zoom: 12 }
+            : {
+                latitude: ORIGINAL_DEFAULT_CENTER.lat,
+                longitude: ORIGINAL_DEFAULT_CENTER.lng,
+                zoom: 12,
+              }
         }
         onClick={() => setSelected(null)}
       >
@@ -183,7 +234,11 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
               setSelected(r.id);
             }}
           >
-            <button type="button" aria-label={`${r.person.firstName} ${r.person.lastName}, ${formatShortDate(r.dateTime)}`} className="rounded-full">
+            <button
+              type="button"
+              aria-label={`${r.person.firstName} ${r.person.lastName}, ${formatShortDate(r.dateTime)}`}
+              className="rounded-full"
+            >
               <MeetingPin
                 firstName={r.person.firstName}
                 lastName={r.person.lastName}
@@ -207,16 +262,29 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
           >
             <div className="w-64 p-3.5">
               <div className="flex items-center gap-2.5">
-                <PersonAvatar firstName={active.person.firstName} lastName={active.person.lastName} portrait={active.person.portrait} seed={active.person.id} size="sm" />
+                <PersonAvatar
+                  firstName={active.person.firstName}
+                  lastName={active.person.lastName}
+                  portrait={active.person.portrait}
+                  seed={active.person.id}
+                  size="sm"
+                />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold">
                     {active.person.firstName} {active.person.lastName}
                   </p>
-                  <p className="text-muted-foreground text-xs tabular">{convert(active.dateTime, APP_TIME_ZONE)}</p>
+                  <p className="tabular text-xs text-muted-foreground">
+                    {convert(active.dateTime, APP_TIME_ZONE)}
+                  </p>
                 </div>
               </div>
-              <p className="text-muted-foreground mt-2 text-xs leading-relaxed">{cleanLocation(active.location)}</p>
-              <Link href={`/records/${active.id}`} className="text-primary mt-2 inline-block text-xs font-medium hover:underline">
+              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                {cleanLocation(active.location)}
+              </p>
+              <Link
+                href={`/records/${active.id}`}
+                className="mt-2 inline-block text-xs font-medium text-primary hover:underline"
+              >
                 Open meeting →
               </Link>
             </div>

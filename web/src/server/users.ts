@@ -55,7 +55,8 @@ export async function checkUserName(
   if (!USERNAME_PATTERN.test(name)) {
     return {
       status: false,
-      message: "Use 3-32 letters, numbers, dots, dashes or underscores (start with a letter or number).",
+      message:
+        "Use 3-32 letters, numbers, dots, dashes or underscores (start with a letter or number).",
     };
   }
   const existing = await findUserByUserName(name);
@@ -90,9 +91,7 @@ export async function register(input: {
     return {
       ok: false,
       error:
-        verified === "expired"
-          ? "That code has expired - send a new one."
-          : MESSAGES.wrongCode,
+        verified === "expired" ? "That code has expired - send a new one." : MESSAGES.wrongCode,
     };
   }
   if (input.password !== input.re_password) return { ok: false, error: MESSAGES.passwordsDiffer };
@@ -185,7 +184,8 @@ export async function setNewPassword(
   if (password !== rePassword) return { ok: false, error: MESSAGES.passwordsDiffer };
   const user = await getUserById(userId);
   if (!user) return { ok: false, error: MESSAGES.resetUnknownUser };
-  if (user.isDemo) return { ok: false, error: "Passwords of the shared demo accounts cannot be changed." };
+  if (user.isDemo)
+    return { ok: false, error: "Passwords of the shared demo accounts cannot be changed." };
   // The original compared bcrypt hashes with ===, which never matched; the
   // intended "new password must differ" rule is enforced with bcrypt.compare.
   if (user.passwordHash !== NO_PASSWORD && (await bcrypt.compare(password, user.passwordHash))) {
@@ -228,7 +228,8 @@ export async function changePassword(
   if (verified !== "ok") {
     return {
       ok: false,
-      error: verified === "expired" ? "That code has expired - send a new one." : MESSAGES.wrongCode,
+      error:
+        verified === "expired" ? "That code has expired - send a new one." : MESSAGES.wrongCode,
     };
   }
   return setNewPassword(user.id, input.newPassword1, input.newPassword2);
@@ -281,7 +282,8 @@ export async function prepareFastRegister(
   if (!contact) return { ok: false, error: "Contact not found." };
   if (contact.linkedUserId) return { ok: false, error: "This contact already has an account." };
   const email = contact.emails[0];
-  if (!email) return { ok: false, error: "Unable to invite this user, need set email for contact." };
+  if (!email)
+    return { ok: false, error: "Unable to invite this user, need set email for contact." };
 
   await purgeExpiredUsers(db);
   const now = Date.now();
@@ -385,7 +387,12 @@ export async function confirmFastRegister(input: {
   const candidates = await db
     .select()
     .from(contacts)
-    .where(and(eq(contacts.firstName, account.firstName ?? ""), eq(contacts.lastName, account.lastName ?? "")));
+    .where(
+      and(
+        eq(contacts.firstName, account.firstName ?? ""),
+        eq(contacts.lastName, account.lastName ?? ""),
+      ),
+    );
   for (const c of candidates) {
     if (!c.linkedUserId && sameLinkIdentity(c, account)) {
       await db.update(contacts).set({ linkedUserId: account.id }).where(eq(contacts.id, c.id));

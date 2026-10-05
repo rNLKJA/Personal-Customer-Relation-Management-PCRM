@@ -28,7 +28,9 @@ function secretKey(): Uint8Array {
   if (!secret || secret.length < 32) {
     if (process.env.NODE_ENV === "production") {
       if (!warned) {
-        console.warn("[pcrm] SESSION_SECRET is missing or too short; using a random per-instance secret.");
+        console.warn(
+          "[pcrm] SESSION_SECRET is missing or too short; using a random per-instance secret.",
+        );
         warned = true;
       }
       secret = fallbackSecret;
@@ -74,7 +76,9 @@ async function readKnownAccounts(): Promise<string[]> {
   if (!token) return [];
   try {
     const { payload } = await jwtVerify(token, secretKey(), { algorithms: ["HS256"] });
-    return Array.isArray(payload.ids) ? payload.ids.filter((x): x is string => typeof x === "string") : [];
+    return Array.isArray(payload.ids)
+      ? payload.ids.filter((x): x is string => typeof x === "string")
+      : [];
   } catch {
     return [];
   }
@@ -109,7 +113,9 @@ async function readSession(): Promise<SessionPayload | null> {
   const token = (await cookies()).get(SESSION_COOKIE)?.value;
   if (!token) return null;
   try {
-    const { payload } = await jwtVerify<SessionPayload>(token, secretKey(), { algorithms: ["HS256"] });
+    const { payload } = await jwtVerify<SessionPayload>(token, secretKey(), {
+      algorithms: ["HS256"],
+    });
     return payload.sub ? payload : null;
   } catch {
     return null;

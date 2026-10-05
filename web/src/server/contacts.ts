@@ -40,8 +40,12 @@ export async function listContacts(ownerId: string): Promise<ContactListItem[]> 
       contact: contacts,
       linkedUserName: users.userName,
       meetingCount: sql<number>`(select count(*) from ${records} r where r.contact_id = ${contacts.id})`,
-      lastMeeting: sql<number | null>`(select max(r.date_time) from ${records} r where r.contact_id = ${contacts.id} and r.date_time <= ${now})`,
-      nextMeeting: sql<number | null>`(select min(r.date_time) from ${records} r where r.contact_id = ${contacts.id} and r.date_time > ${now})`,
+      lastMeeting: sql<
+        number | null
+      >`(select max(r.date_time) from ${records} r where r.contact_id = ${contacts.id} and r.date_time <= ${now})`,
+      nextMeeting: sql<
+        number | null
+      >`(select min(r.date_time) from ${records} r where r.contact_id = ${contacts.id} and r.date_time > ${now})`,
     })
     .from(contacts)
     .leftJoin(users, eq(users.id, contacts.linkedUserId))
@@ -70,7 +74,9 @@ export async function getContact(ownerId: string, id: string) {
   return { contact, linked, pendingSync };
 }
 
-async function findAccountWithIdentity(input: Pick<ContactInput, "firstName" | "lastName" | "phones" | "emails">) {
+async function findAccountWithIdentity(
+  input: Pick<ContactInput, "firstName" | "lastName" | "phones" | "emails">,
+) {
   const candidates = await getDb()
     .select()
     .from(users)
@@ -110,7 +116,9 @@ async function insertContact(ownerId: string, values: Omit<Contact, "id" | "owne
     .values({ ...values, id, ownerId, addDate: now })
     .returning();
   // ContactList sub-document: { contact, addSince }
-  await db.insert(contactLinks).values({ id: newId(), userId: ownerId, contactId: id, addSince: now });
+  await db
+    .insert(contactLinks)
+    .values({ id: newId(), userId: ownerId, contactId: id, addSince: now });
   return row;
 }
 
@@ -125,7 +133,10 @@ export type CreateContactResult =
  *    account's details and linked to it (`status: false`);
  *  - otherwise created from the form (`status: true`).
  */
-export async function createContact(ownerId: string, input: ContactInput): Promise<CreateContactResult> {
+export async function createContact(
+  ownerId: string,
+  input: ContactInput,
+): Promise<CreateContactResult> {
   const dup = await findDuplicate(ownerId, input);
   if (dup) return { status: false, msg: "dupcontact/createProblem", contactId: dup.id };
   const account = await findAccountWithIdentity(input);
@@ -166,7 +177,8 @@ export async function createContactByUserName(
 ): Promise<CreateContactResult> {
   const account = await findUserByUserName(userName);
   if (!account || account.status !== "active") return { status: false, msg: "Cannot find user!" };
-  if (account.id === owner.id) return { status: false, msg: "That's you - share your code with someone else!" };
+  if (account.id === owner.id)
+    return { status: false, msg: "That's you - share your code with someone else!" };
   const identity = {
     firstName: account.firstName ?? "",
     lastName: account.lastName ?? "",

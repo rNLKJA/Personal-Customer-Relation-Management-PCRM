@@ -5,7 +5,13 @@ import { useMemo, useState } from "react";
 import { NotebookPen, Search, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { EmptyState } from "@/components/common/empty-state";
 import { MeetingRow, type MeetingRowData } from "./meeting-row";
 import {
@@ -33,7 +39,9 @@ export function RecordsBrowser({ records, now }: { records: BrowserRecord[]; now
   const [limit, setLimit] = useState(LEGACY_PAGE_SIZE * 2);
 
   const list = useMemo(() => {
-    const found = query.trim() ? searchRecords(records, query.trim(), field, APP_TIME_ZONE) : records;
+    const found = query.trim()
+      ? searchRecords(records, query.trim(), field, APP_TIME_ZONE)
+      : records;
     return sortRecords(found, sort);
   }, [records, query, field, sort]);
 
@@ -75,7 +83,10 @@ export function RecordsBrowser({ records, now }: { records: BrowserRecord[]; now
     <div>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" aria-hidden="true" />
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             type="search"
             aria-label="Search meetings"
@@ -115,7 +126,7 @@ export function RecordsBrowser({ records, now }: { records: BrowserRecord[]; now
           </Select>
         </div>
       </div>
-      <p className="text-muted-foreground mt-3 text-xs" aria-live="polite">
+      <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
         {list.length === 0 ? "No matches" : `Showing ${shown.length} of ${list.length} meetings`}
       </p>
 
@@ -134,9 +145,13 @@ export function RecordsBrowser({ records, now }: { records: BrowserRecord[]; now
       ) : (
         <div className="mt-3 space-y-5">
           {groups.map((g, i) => (
-            <section key={`${g.title}-${i}`} className="bg-card rounded-2xl border px-4 py-2 shadow-(--shadow-soft)" aria-label={g.title ?? "Meetings"}>
+            <section
+              key={`${g.title}-${i}`}
+              className="rounded-2xl border bg-card px-4 py-2 shadow-(--shadow-soft)"
+              aria-label={g.title ?? "Meetings"}
+            >
               {g.title && (
-                <h2 className="text-muted-foreground px-0 pt-2 pb-1 text-xs font-semibold tracking-wide uppercase">
+                <h2 className="px-0 pt-2 pb-1 text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                   {g.title}
                 </h2>
               )}

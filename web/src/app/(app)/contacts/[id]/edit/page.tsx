@@ -16,12 +16,15 @@ export default async function EditContactPage({ params }: PageProps<"/contacts/[
   if (!found) notFound();
   const c = found.contact;
   return (
-    <div className="animate-fade-up mx-auto max-w-2xl">
-      <Link href={`/contacts/${c.id}`} className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 rounded-md text-sm">
+    <div className="mx-auto max-w-2xl animate-fade-up">
+      <Link
+        href={`/contacts/${c.id}`}
+        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> {c.firstName} {c.lastName}
       </Link>
       <PageHeader title="Edit contact" />
-      <div className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft) sm:p-6">
+      <div className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft) sm:p-6">
         <ContactForm
           id={c.id}
           initial={{

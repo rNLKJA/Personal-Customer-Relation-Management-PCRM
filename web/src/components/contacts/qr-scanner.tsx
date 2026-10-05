@@ -18,17 +18,26 @@ let detectorPromise: Promise<Detector> | null = null;
  */
 function getDetector(): Promise<Detector> {
   detectorPromise ??= (async () => {
-    const Native = (globalThis as { BarcodeDetector?: { new (o: { formats: string[] }): Detector; getSupportedFormats(): Promise<string[]> } }).BarcodeDetector;
+    const Native = (
+      globalThis as {
+        BarcodeDetector?: {
+          new (o: { formats: string[] }): Detector;
+          getSupportedFormats(): Promise<string[]>;
+        };
+      }
+    ).BarcodeDetector;
     if (Native) {
       try {
-        if ((await Native.getSupportedFormats()).includes("qr_code")) return new Native({ formats: ["qr_code"] });
+        if ((await Native.getSupportedFormats()).includes("qr_code"))
+          return new Native({ formats: ["qr_code"] });
       } catch {
         // fall back to the ponyfill
       }
     }
     const mod = await import("barcode-detector/ponyfill");
     mod.setZXingModuleOverrides({
-      locateFile: (path: string, prefix: string) => (path.endsWith(".wasm") ? "/vendor/zxing/zxing_reader.wasm" : prefix + path),
+      locateFile: (path: string, prefix: string) =>
+        path.endsWith(".wasm") ? "/vendor/zxing/zxing_reader.wasm" : prefix + path,
     });
     return new mod.BarcodeDetector({ formats: ["qr_code"] }) as Detector;
   })();
@@ -40,7 +49,13 @@ function getDetector(): Promise<Detector> {
  * QR code with the camera or from an uploaded image, then hand the user name
  * to `onUserName` (which adds the contact by user name, as before).
  */
-export function QrScanner({ onUserName, busy }: { onUserName: (userName: string) => void; busy?: boolean }) {
+export function QrScanner({
+  onUserName,
+  busy,
+}: {
+  onUserName: (userName: string) => void;
+  busy?: boolean;
+}) {
   const video = useRef<HTMLVideoElement>(null);
   const stream = useRef<MediaStream | null>(null);
   const timer = useRef<number | null>(null);
@@ -137,16 +152,25 @@ export function QrScanner({ onUserName, busy }: { onUserName: (userName: string)
 
   return (
     <div className="space-y-4">
-      <div className="bg-muted relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border">
-        <video ref={video} className={scanning ? "size-full object-cover" : "hidden"} playsInline muted aria-label="Camera preview" />
+      <div className="relative mx-auto aspect-square w-full max-w-sm overflow-hidden rounded-3xl border bg-muted">
+        <video
+          ref={video}
+          className={scanning ? "size-full object-cover" : "hidden"}
+          playsInline
+          muted
+          aria-label="Camera preview"
+        />
         {!scanning && (
-          <div className="text-muted-foreground absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6 text-center text-muted-foreground">
             <ScanLine className="size-10 opacity-60" aria-hidden="true" />
             <p className="text-sm">Point your camera at someone&apos;s 4399 CRM code.</p>
           </div>
         )}
         {scanning && (
-          <div className="pointer-events-none absolute inset-8 rounded-2xl border-2 border-white/80 shadow-[0_0_0_9999px_rgb(0_0_0/0.35)]" aria-hidden="true" />
+          <div
+            className="pointer-events-none absolute inset-8 rounded-2xl border-2 border-white/80 shadow-[0_0_0_9999px_rgb(0_0_0/0.35)]"
+            aria-hidden="true"
+          />
         )}
       </div>
       <div className="flex flex-wrap justify-center gap-2">
@@ -156,7 +180,12 @@ export function QrScanner({ onUserName, busy }: { onUserName: (userName: string)
           </Button>
         ) : (
           <Button onClick={start} disabled={starting || busy}>
-            {starting ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Camera aria-hidden="true" />} Start camera
+            {starting ? (
+              <Loader2 className="animate-spin" aria-hidden="true" />
+            ) : (
+              <Camera aria-hidden="true" />
+            )}{" "}
+            Start camera
           </Button>
         )}
         <Button variant="outline" asChild disabled={busy}>
@@ -175,7 +204,11 @@ export function QrScanner({ onUserName, busy }: { onUserName: (userName: string)
           </label>
         </Button>
       </div>
-      <p className="text-muted-foreground min-h-5 text-center text-sm" role="status" aria-live="polite">
+      <p
+        className="min-h-5 text-center text-sm text-muted-foreground"
+        role="status"
+        aria-live="polite"
+      >
         {busy ? "Adding contact…" : message}
       </p>
     </div>

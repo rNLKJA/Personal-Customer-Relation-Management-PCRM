@@ -1,13 +1,6 @@
 import { inArray, or } from "drizzle-orm";
 import type { Db } from "./client-core";
-import {
-  contactLinks,
-  contacts,
-  emailOutbox,
-  fastRegisterCodes,
-  records,
-  users,
-} from "./schema";
+import { contactLinks, contacts, emailOutbox, fastRegisterCodes, records, users } from "./schema";
 
 /**
  * Explicit cascades. SQLite only enforces foreign keys when

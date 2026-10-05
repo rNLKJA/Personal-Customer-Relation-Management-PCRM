@@ -39,7 +39,13 @@ export function directoryAsLinkable(): LinkableAccount[] {
  */
 export async function populateAddressBook(
   db: Db,
-  opts: { ownerId: string; seed: number; anchor: Date; contactCount?: number; recordCount?: number },
+  opts: {
+    ownerId: string;
+    seed: number;
+    anchor: Date;
+    contactCount?: number;
+    recordCount?: number;
+  },
 ): Promise<{ contacts: number; records: number }> {
   const rng = mulberry32(opts.seed);
   const linkable = directoryAsLinkable();
@@ -135,7 +141,9 @@ export async function seedDatabase(db: Db, anchor: Date = startOfUtcDay()): Prom
     await db.insert(users).values({
       id: `dir_${u.userName.replace(/[^a-z]/g, "")}`,
       userName: u.userName,
-      passwordHash: await hashPassword(`locked-${hashString(u.userName + anchor.toISOString())}-${i}x`),
+      passwordHash: await hashPassword(
+        `locked-${hashString(u.userName + anchor.toISOString())}-${i}x`,
+      ),
       firstName: u.firstName,
       lastName: u.lastName,
       occupation: u.occupation,
@@ -204,7 +212,9 @@ export async function purgeExpiredUsers(db: Db, now = new Date()): Promise<numbe
     .select({ id: users.id, expiresAt: users.expiresAt })
     .from(users)
     .where(eq(users.isDemo, false));
-  const expired = all.filter((u) => u.expiresAt && u.expiresAt.getTime() < now.getTime()).map((u) => u.id);
+  const expired = all
+    .filter((u) => u.expiresAt && u.expiresAt.getTime() < now.getTime())
+    .map((u) => u.id);
   await deleteUsersCascade(db, expired);
   return expired.length;
 }

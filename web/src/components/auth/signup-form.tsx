@@ -64,7 +64,13 @@ export function SignupForm() {
       return;
     }
     startSubmitting(async () => {
-      const res = await registerAction({ email, authCode, userName, password, re_password: rePassword });
+      const res = await registerAction({
+        email,
+        authCode,
+        userName,
+        password,
+        re_password: rePassword,
+      });
       if (res && !res.ok) setError(res.error);
     });
   }
@@ -73,9 +79,12 @@ export function SignupForm() {
 
   return (
     <div className="space-y-5">
-      <ol className="text-muted-foreground flex items-center gap-2 text-xs font-medium" aria-label="Steps">
+      <ol
+        className="flex items-center gap-2 text-xs font-medium text-muted-foreground"
+        aria-label="Steps"
+      >
         <StepPill n={1} active={!step2} done={step2} label="Verify e-mail" />
-        <span className="bg-border h-px w-6" aria-hidden="true" />
+        <span className="h-px w-6 bg-border" aria-hidden="true" />
         <StepPill n={2} active={step2} done={false} label="Choose a user name" />
       </ol>
 
@@ -97,17 +106,32 @@ export function SignupForm() {
               }
             }}
           />
-          <Button type="button" variant={step2 ? "outline" : "default"} onClick={sendCode} disabled={sending} className="h-10 shrink-0">
-            {sending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Mail aria-hidden="true" />}
+          <Button
+            type="button"
+            variant={step2 ? "outline" : "default"}
+            onClick={sendCode}
+            disabled={sending}
+            className="h-10 shrink-0"
+          >
+            {sending ? (
+              <Loader2 className="animate-spin" aria-hidden="true" />
+            ) : (
+              <Mail aria-hidden="true" />
+            )}
             {step2 ? "Resend" : "Send code"}
           </Button>
         </div>
-        <p className="text-muted-foreground text-xs">We send a 6-digit code, valid for 5 minutes.</p>
+        <p className="text-xs text-muted-foreground">
+          We send a 6-digit code, valid for 5 minutes.
+        </p>
       </div>
 
       <InlineInbox kind="verification" since={codeSentAt} onUseCode={setAuthCode} />
 
-      <form onSubmit={submit} className={cn("space-y-4 transition-opacity", !step2 && "pointer-events-none opacity-50")}>
+      <form
+        onSubmit={submit}
+        className={cn("space-y-4 transition-opacity", !step2 && "pointer-events-none opacity-50")}
+      >
         <fieldset disabled={!step2} className="space-y-4">
           <div className="space-y-1.5">
             <Label htmlFor="authCode">Verification code</Label>
@@ -135,15 +159,21 @@ export function SignupForm() {
               }}
               aria-describedby="userName-status"
             />
-            <p id="userName-status" className="flex min-h-4 items-center gap-1 text-xs" aria-live="polite">
-              {nameState.status === "checking" && <span className="text-muted-foreground">Checking…</span>}
+            <p
+              id="userName-status"
+              className="flex min-h-4 items-center gap-1 text-xs"
+              aria-live="polite"
+            >
+              {nameState.status === "checking" && (
+                <span className="text-muted-foreground">Checking…</span>
+              )}
               {nameState.status === "ok" && (
-                <span className="text-success inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 text-success">
                   <Check className="size-3.5" aria-hidden="true" /> {nameState.message}
                 </span>
               )}
               {nameState.status === "bad" && (
-                <span className="text-destructive inline-flex items-center gap-1">
+                <span className="inline-flex items-center gap-1 text-destructive">
                   <X className="size-3.5" aria-hidden="true" /> {nameState.message}
                 </span>
               )}
@@ -152,26 +182,45 @@ export function SignupForm() {
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="password">Password</Label>
-              <Input id="password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+              <Input
+                id="password"
+                type="password"
+                autoComplete="new-password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="rePassword">Confirm password</Label>
-              <Input id="rePassword" type="password" autoComplete="new-password" value={rePassword} onChange={(e) => setRePassword(e.target.value)} />
+              <Input
+                id="rePassword"
+                type="password"
+                autoComplete="new-password"
+                value={rePassword}
+                onChange={(e) => setRePassword(e.target.value)}
+              />
             </div>
           </div>
-          <p className="text-muted-foreground -mt-2 text-xs">At least 8 characters, with a letter and a digit.</p>
+          <p className="-mt-2 text-xs text-muted-foreground">
+            At least 8 characters, with a letter and a digit.
+          </p>
           {error && (
-            <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+            <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
               <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
             </p>
           )}
-          <Button type="submit" size="lg" className="w-full" disabled={submitting || nameState.status === "bad"}>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={submitting || nameState.status === "bad"}
+          >
             {submitting && <Loader2 className="animate-spin" aria-hidden="true" />} Create account
           </Button>
         </fieldset>
       </form>
       {!step2 && error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}
@@ -179,9 +228,22 @@ export function SignupForm() {
   );
 }
 
-function StepPill({ n, label, active, done }: { n: number; label: string; active: boolean; done: boolean }) {
+function StepPill({
+  n,
+  label,
+  active,
+  done,
+}: {
+  n: number;
+  label: string;
+  active: boolean;
+  done: boolean;
+}) {
   return (
-    <li className={cn("flex items-center gap-1.5", active && "text-foreground")} aria-current={active ? "step" : undefined}>
+    <li
+      className={cn("flex items-center gap-1.5", active && "text-foreground")}
+      aria-current={active ? "step" : undefined}
+    >
       <span
         className={cn(
           "flex size-5 items-center justify-center rounded-full border text-[11px]",

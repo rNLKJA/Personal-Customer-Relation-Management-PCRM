@@ -30,28 +30,36 @@ export function InlineInbox({
     <section
       aria-label="Demo inbox"
       aria-live="polite"
-      className={cn("bg-card overflow-hidden rounded-xl border shadow-(--shadow-soft)", className)}
+      className={cn("overflow-hidden rounded-xl border bg-card shadow-(--shadow-soft)", className)}
     >
-      <div className="bg-muted/50 flex items-center gap-2 border-b px-3.5 py-2 text-xs font-medium">
-        <Inbox className="text-primary size-3.5" aria-hidden="true" /> Demo inbox
-        <span className="text-muted-foreground ml-auto font-normal">replaces Gmail SMTP</span>
+      <div className="flex items-center gap-2 border-b bg-muted/50 px-3.5 py-2 text-xs font-medium">
+        <Inbox className="size-3.5 text-primary" aria-hidden="true" /> Demo inbox
+        <span className="ml-auto font-normal text-muted-foreground">replaces Gmail SMTP</span>
       </div>
       {latest ? (
         <div className="flex items-center gap-3 px-3.5 py-3">
-          <span className="bg-accent text-accent-foreground flex size-9 shrink-0 items-center justify-center rounded-full">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-accent text-accent-foreground">
             <Mail className="size-4" aria-hidden="true" />
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-sm font-medium">{latest.subject}</p>
-            <p className="text-muted-foreground truncate text-xs">
+            <p className="truncate text-xs text-muted-foreground">
               to {latest.to} · {formatRelative(latest.createdAt)}
             </p>
           </div>
           {latest.code && (
             <div className="text-right">
-              <p className="font-mono text-lg font-semibold tracking-[0.2em] tabular">{latest.code}</p>
+              <p className="tabular font-mono text-lg font-semibold tracking-[0.2em]">
+                {latest.code}
+              </p>
               {onUseCode && (
-                <Button type="button" size="xs" variant="link" className="h-auto p-0" onClick={() => onUseCode(latest.code!)}>
+                <Button
+                  type="button"
+                  size="xs"
+                  variant="link"
+                  className="h-auto p-0"
+                  onClick={() => onUseCode(latest.code!)}
+                >
                   Use this code
                 </Button>
               )}
@@ -59,7 +67,7 @@ export function InlineInbox({
           )}
         </div>
       ) : (
-        <p className="text-muted-foreground px-3.5 py-3 text-sm">
+        <p className="px-3.5 py-3 text-sm text-muted-foreground">
           {since ? "Waiting for the e-mail…" : "Codes you request will appear here instantly."}
         </p>
       )}

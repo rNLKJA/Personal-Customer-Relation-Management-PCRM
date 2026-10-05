@@ -24,7 +24,13 @@ export function PortraitPicker({
   const [error, setError] = useState<string | null>(null);
   return (
     <div className="flex items-center gap-4">
-      <PersonAvatar firstName={firstName || "?"} lastName={lastName} seed={seed} portrait={value} size="xl" />
+      <PersonAvatar
+        firstName={firstName || "?"}
+        lastName={lastName}
+        seed={seed}
+        portrait={value}
+        size="xl"
+      />
       <div className="space-y-1.5">
         <div className="flex flex-wrap gap-2">
           <Button type="button" variant="outline" size="sm" onClick={() => input.current?.click()}>
@@ -36,9 +42,11 @@ export function PortraitPicker({
             </Button>
           )}
         </div>
-        <p className="text-muted-foreground text-xs">Optional. Without a photo we show generated initials.</p>
+        <p className="text-xs text-muted-foreground">
+          Optional. Without a photo we show generated initials.
+        </p>
         {error && (
-          <p role="alert" className="text-destructive text-xs">
+          <p role="alert" className="text-xs text-destructive">
             {error}
           </p>
         )}

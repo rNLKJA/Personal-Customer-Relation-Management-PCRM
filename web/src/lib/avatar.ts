@@ -2,12 +2,7 @@ import { hashString } from "./random";
 
 /** Up to two initials from a display name ("Ava Nguyen" -> "AN"). */
 export function initialsOf(...names: (string | null | undefined)[]): string {
-  const words = names
-    .filter(Boolean)
-    .join(" ")
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean);
+  const words = names.filter(Boolean).join(" ").trim().split(/\s+/).filter(Boolean);
   if (words.length === 0) return "?";
   const first = Array.from(words[0])[0] ?? "";
   const last = words.length > 1 ? (Array.from(words[words.length - 1])[0] ?? "") : "";

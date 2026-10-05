@@ -65,7 +65,8 @@ const monthFmt = new Intl.DateTimeFormat("en-AU", {
 });
 
 export const formatDate = (d: Date | string | number) => dateFmt.format(new Date(d));
-export const formatTime = (d: Date | string | number) => timeFmt.format(new Date(d)).replace(/\s?([ap])\.?m\.?/i, " $1m");
+export const formatTime = (d: Date | string | number) =>
+  timeFmt.format(new Date(d)).replace(/\s?([ap])\.?m\.?/i, " $1m");
 export const formatShortDate = (d: Date | string | number) => shortDateFmt.format(new Date(d));
 export const formatMonth = (d: Date | string | number) => monthFmt.format(new Date(d));
 export const formatDateTime = (d: Date | string | number) => `${formatDate(d)} · ${formatTime(d)}`;

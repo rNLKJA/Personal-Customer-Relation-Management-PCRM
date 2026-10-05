@@ -32,7 +32,9 @@ export function DeleteRecordButton({ id }: { id: string }) {
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>(ｏ・_・)ノ Delete this record?</AlertDialogTitle>
-          <AlertDialogDescription>The meeting is removed from your list, map and calendar.</AlertDialogDescription>
+          <AlertDialogDescription>
+            The meeting is removed from your list, map and calendar.
+          </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Keep</AlertDialogCancel>

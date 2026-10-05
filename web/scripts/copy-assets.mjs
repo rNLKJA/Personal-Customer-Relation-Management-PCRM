@@ -24,7 +24,11 @@ try {
   // package.json is not in zxing-wasm's export map; derive its directory from an entry point.
   const entry = require.resolve("zxing-wasm/reader");
   const pkgDir = entry.slice(0, entry.lastIndexOf(`${sep}dist${sep}`));
-  copy(join(pkgDir, "dist", "reader", "zxing_reader.wasm"), join(vendor, "zxing"), "zxing_reader.wasm");
+  copy(
+    join(pkgDir, "dist", "reader", "zxing_reader.wasm"),
+    join(vendor, "zxing"),
+    "zxing_reader.wasm",
+  );
 } catch (err) {
   console.warn("[copy-assets] zxing skipped:", err instanceof Error ? err.message : err);
 }

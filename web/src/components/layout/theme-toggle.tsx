@@ -16,12 +16,16 @@ const subscribe = () => () => {};
 /** Segmented light / dark / system switch. */
 export function ThemeToggle({ className }: { className?: string }) {
   const { theme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
   return (
     <div
       role="radiogroup"
       aria-label="Colour theme"
-      className={cn("bg-muted inline-flex rounded-lg p-0.5", className)}
+      className={cn("inline-flex rounded-lg bg-muted p-0.5", className)}
     >
       {OPTIONS.map((o) => {
         const active = mounted && theme === o.value;
@@ -35,7 +39,7 @@ export function ThemeToggle({ className }: { className?: string }) {
             title={o.label}
             onClick={() => setTheme(o.value)}
             className={cn(
-              "text-muted-foreground inline-flex h-7 w-8 items-center justify-center rounded-md transition-colors",
+              "inline-flex h-7 w-8 items-center justify-center rounded-md text-muted-foreground transition-colors",
               active && "bg-card text-foreground shadow-(--shadow-soft)",
             )}
           >
@@ -50,7 +54,11 @@ export function ThemeToggle({ className }: { className?: string }) {
 /** Single icon button that flips between light and dark. */
 export function ThemeIconButton({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
-  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
   const dark = mounted && resolvedTheme === "dark";
   return (
     <button
@@ -58,7 +66,7 @@ export function ThemeIconButton({ className }: { className?: string }) {
       onClick={() => setTheme(dark ? "light" : "dark")}
       aria-label={dark ? "Switch to light theme" : "Switch to dark theme"}
       className={cn(
-        "text-muted-foreground hover:bg-muted hover:text-foreground inline-flex size-9 items-center justify-center rounded-lg transition-colors",
+        "inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
         className,
       )}
     >

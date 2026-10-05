@@ -6,7 +6,13 @@ import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/page-header";
 import { getStorageMode } from "@/db/client";
 import type { TableName } from "@/db/schema";
-import { TABLE_DESCRIPTIONS, TABLE_NAMES, browseTable, isTableName, tableCounts } from "@/server/admin";
+import {
+  TABLE_DESCRIPTIONS,
+  TABLE_NAMES,
+  browseTable,
+  isTableName,
+  tableCounts,
+} from "@/server/admin";
 import { requireAdmin } from "@/server/session";
 import { cn } from "@/lib/utils";
 
@@ -29,10 +35,14 @@ function formatCell(value: unknown): string {
 export default async function AdminRecordsPage({ searchParams }: PageProps<"/admin/records">) {
   await requireAdmin();
   const sp = await searchParams;
-  const table: TableName = typeof sp.table === "string" && isTableName(sp.table) ? sp.table : "users";
+  const table: TableName =
+    typeof sp.table === "string" && isTableName(sp.table) ? sp.table : "users";
   const q = typeof sp.q === "string" ? sp.q.slice(0, 80) : "";
   const page = Math.max(1, Number(sp.page) || 1);
-  const [counts, data] = await Promise.all([tableCounts(), browseTable(table, { page, pageSize: PAGE_SIZE, q })]);
+  const [counts, data] = await Promise.all([
+    tableCounts(),
+    browseTable(table, { page, pageSize: PAGE_SIZE, q }),
+  ]);
   const link = (params: { table?: string; page?: number; q?: string }) => {
     const s = new URLSearchParams();
     s.set("table", params.table ?? table);
@@ -68,22 +78,35 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
             aria-current={name === table ? "page" : undefined}
             className={cn(
               "inline-flex shrink-0 items-center gap-2 rounded-full border px-3 py-1.5 text-sm font-medium transition-colors",
-              name === table ? "border-primary/30 bg-accent text-accent-foreground" : "bg-card text-muted-foreground hover:text-foreground",
+              name === table
+                ? "border-primary/30 bg-accent text-accent-foreground"
+                : "bg-card text-muted-foreground hover:text-foreground",
             )}
           >
             <span className="font-mono text-[13px]">{name}</span>
-            <span className="bg-muted text-muted-foreground rounded-full px-1.5 text-[11px] leading-5 tabular">{counts[name]}</span>
+            <span className="tabular rounded-full bg-muted px-1.5 text-[11px] leading-5 text-muted-foreground">
+              {counts[name]}
+            </span>
           </Link>
         ))}
       </nav>
 
-      <div className="bg-card rounded-2xl border shadow-(--shadow-soft)">
+      <div className="rounded-2xl border bg-card shadow-(--shadow-soft)">
         <div className="flex flex-col gap-3 border-b p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-muted-foreground text-sm">{TABLE_DESCRIPTIONS[table]}</p>
+          <p className="text-sm text-muted-foreground">{TABLE_DESCRIPTIONS[table]}</p>
           <form className="relative sm:w-72" action="/admin/records" role="search">
             <input type="hidden" name="table" value={table} />
-            <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" aria-hidden="true" />
-            <Input name="q" defaultValue={q} placeholder={`Search ${table}`} aria-label={`Search ${table}`} className="pl-9" />
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
+            />
+            <Input
+              name="q"
+              defaultValue={q}
+              placeholder={`Search ${table}`}
+              aria-label={`Search ${table}`}
+              className="pl-9"
+            />
           </form>
         </div>
         <div className="overflow-x-auto">
@@ -91,7 +114,11 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
             <thead className="bg-surface text-muted-foreground">
               <tr>
                 {data.columns.map((c) => (
-                  <th key={c} scope="col" className="px-3 py-2 font-mono text-xs font-medium whitespace-nowrap">
+                  <th
+                    key={c}
+                    scope="col"
+                    className="px-3 py-2 font-mono text-xs font-medium whitespace-nowrap"
+                  >
                     {c}
                   </th>
                 ))}
@@ -103,8 +130,16 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
                   {data.columns.map((c) => {
                     const text = formatCell(row[c]);
                     return (
-                      <td key={c} className="max-w-72 truncate px-3 py-2 align-top whitespace-nowrap" title={text}>
-                        {text === "" ? <span className="text-muted-foreground/60">null</span> : text}
+                      <td
+                        key={c}
+                        className="max-w-72 truncate px-3 py-2 align-top whitespace-nowrap"
+                        title={text}
+                      >
+                        {text === "" ? (
+                          <span className="text-muted-foreground/60">null</span>
+                        ) : (
+                          text
+                        )}
                       </td>
                     );
                   })}
@@ -112,7 +147,10 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
               ))}
               {data.rows.length === 0 && (
                 <tr>
-                  <td colSpan={data.columns.length} className="text-muted-foreground px-3 py-10 text-center">
+                  <td
+                    colSpan={data.columns.length}
+                    className="px-3 py-10 text-center text-muted-foreground"
+                  >
                     {q ? `No rows match "${q}".` : "This table is empty."}
                   </td>
                 </tr>
@@ -120,18 +158,32 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
             </tbody>
           </table>
         </div>
-        <div className="text-muted-foreground flex items-center justify-between border-t px-4 py-3 text-sm">
+        <div className="flex items-center justify-between border-t px-4 py-3 text-sm text-muted-foreground">
           <span className="tabular">
             {data.total} {data.total === 1 ? "row" : "rows"}
             {q && ` matching "${q}"`} · page {data.page} of {data.pages}
           </span>
           <div className="flex gap-1">
-            <Button asChild variant="ghost" size="icon" aria-label="Previous page" aria-disabled={data.page <= 1} className={cn(data.page <= 1 && "pointer-events-none opacity-40")}>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              aria-label="Previous page"
+              aria-disabled={data.page <= 1}
+              className={cn(data.page <= 1 && "pointer-events-none opacity-40")}
+            >
               <Link href={link({ page: data.page - 1, q })}>
                 <ChevronLeft />
               </Link>
             </Button>
-            <Button asChild variant="ghost" size="icon" aria-label="Next page" aria-disabled={data.page >= data.pages} className={cn(data.page >= data.pages && "pointer-events-none opacity-40")}>
+            <Button
+              asChild
+              variant="ghost"
+              size="icon"
+              aria-label="Next page"
+              aria-disabled={data.page >= data.pages}
+              className={cn(data.page >= data.pages && "pointer-events-none opacity-40")}
+            >
               <Link href={link({ page: data.page + 1, q })}>
                 <ChevronRight />
               </Link>

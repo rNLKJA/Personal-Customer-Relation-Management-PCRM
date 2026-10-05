@@ -2,7 +2,17 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowLeft, Check, Copy, ExternalLink, Inbox, KeyRound, Mail, MailOpen, UserPlus } from "lucide-react";
+import {
+  ArrowLeft,
+  Check,
+  Copy,
+  ExternalLink,
+  Inbox,
+  KeyRound,
+  Mail,
+  MailOpen,
+  UserPlus,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/common/empty-state";
@@ -45,7 +55,11 @@ export function InboxView() {
     );
   }
   if (error) {
-    return <p className="text-destructive text-sm">Couldn&apos;t load the demo inbox. It will retry automatically.</p>;
+    return (
+      <p className="text-sm text-destructive">
+        Couldn&apos;t load the demo inbox. It will retry automatically.
+      </p>
+    );
   }
   if (messages.length === 0) {
     return (
@@ -59,7 +73,13 @@ export function InboxView() {
 
   return (
     <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
-      <ul className={cn("bg-card divide-y overflow-hidden rounded-2xl border shadow-(--shadow-soft)", open && "hidden lg:block")} aria-label="Messages">
+      <ul
+        className={cn(
+          "divide-y overflow-hidden rounded-2xl border bg-card shadow-(--shadow-soft)",
+          open && "hidden lg:block",
+        )}
+        aria-label="Messages"
+      >
         {messages.map((m) => {
           const Icon = KIND_ICON[m.kind] ?? Mail;
           return (
@@ -69,38 +89,63 @@ export function InboxView() {
                 onClick={() => select(m)}
                 aria-current={openId === m.id ? "true" : undefined}
                 className={cn(
-                  "hover:bg-muted/60 flex w-full items-start gap-3 px-4 py-3 text-left transition-colors",
+                  "flex w-full items-start gap-3 px-4 py-3 text-left transition-colors hover:bg-muted/60",
                   openId === m.id && "bg-accent/60",
                 )}
               >
-                <span className={cn("mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full", m.read ? "bg-muted text-muted-foreground" : "bg-primary/12 text-primary")}>
+                <span
+                  className={cn(
+                    "mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-full",
+                    m.read ? "bg-muted text-muted-foreground" : "bg-primary/12 text-primary",
+                  )}
+                >
                   <Icon className="size-4" aria-hidden="true" />
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className={cn("truncate text-sm", !m.read && "font-semibold")}>{m.subject}</span>
-                    {!m.read && <span className="bg-primary size-2 shrink-0 rounded-full" aria-label="unread" />}
+                    <span className={cn("truncate text-sm", !m.read && "font-semibold")}>
+                      {m.subject}
+                    </span>
+                    {!m.read && (
+                      <span
+                        className="size-2 shrink-0 rounded-full bg-primary"
+                        aria-label="unread"
+                      />
+                    )}
                   </span>
-                  <span className="text-muted-foreground block truncate text-xs">
+                  <span className="block truncate text-xs text-muted-foreground">
                     to {m.to} · {formatRelative(m.createdAt)}
                   </span>
                 </span>
-                {m.code && <span className="text-muted-foreground font-mono text-xs tracking-wider">{m.code}</span>}
+                {m.code && (
+                  <span className="font-mono text-xs tracking-wider text-muted-foreground">
+                    {m.code}
+                  </span>
+                )}
               </button>
             </li>
           );
         })}
       </ul>
 
-      <section className={cn("bg-card min-h-96 overflow-hidden rounded-2xl border shadow-(--shadow-soft)", !open && "hidden lg:flex lg:items-center lg:justify-center")}>
+      <section
+        className={cn(
+          "min-h-96 overflow-hidden rounded-2xl border bg-card shadow-(--shadow-soft)",
+          !open && "hidden lg:flex lg:items-center lg:justify-center",
+        )}
+      >
         {open ? (
           <div className="flex h-full flex-col">
             <div className="border-b p-4 sm:p-5">
-              <button type="button" onClick={() => setOpenId(null)} className="text-muted-foreground hover:text-foreground mb-3 inline-flex items-center gap-1.5 text-sm lg:hidden">
+              <button
+                type="button"
+                onClick={() => setOpenId(null)}
+                className="mb-3 inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground lg:hidden"
+              >
                 <ArrowLeft className="size-4" aria-hidden="true" /> All messages
               </button>
               <h2 className="text-lg font-semibold tracking-tight">{open.subject}</h2>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 From 4399 CRM · to {open.to} · {formatDateTime(open.createdAt)}
               </p>
               <div className="mt-3 flex flex-wrap gap-2">
@@ -127,7 +172,7 @@ export function InboxView() {
                 )}
               </div>
               {open.actionPath && (
-                <p className="text-muted-foreground mt-2 text-xs">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Completing the invitation signs this browser in as the new account.
                 </p>
               )}
@@ -140,7 +185,7 @@ export function InboxView() {
             />
           </div>
         ) : (
-          <p className="text-muted-foreground flex items-center gap-2 text-sm">
+          <p className="flex items-center gap-2 text-sm text-muted-foreground">
             <MailOpen className="size-4" aria-hidden="true" /> Select a message to read it.
           </p>
         )}

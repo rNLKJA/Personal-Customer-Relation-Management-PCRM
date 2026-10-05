@@ -28,7 +28,11 @@ export const SIDEBAR_NAV: NavItem[] = [
   { href: "/profile", label: "Profile", icon: CircleUser },
 ];
 
-export const ADMIN_NAV: NavItem = { href: "/admin/records", label: "Records admin", icon: Database };
+export const ADMIN_NAV: NavItem = {
+  href: "/admin/records",
+  label: "Records admin",
+  icon: Database,
+};
 
 export const MOBILE_TABS: NavItem[] = [
   { href: "/home", label: "Home", icon: House },

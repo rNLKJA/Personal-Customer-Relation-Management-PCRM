@@ -48,7 +48,13 @@ type Filter = "all" | "linked";
  * Client-side search / sort / "More" paging, ported from `Contact.js`
  * (`searchContacts`, `sortContact`, 9 contacts per page).
  */
-export function ContactsBrowser({ contacts, initialFilter }: { contacts: BrowserContact[]; initialFilter: Filter }) {
+export function ContactsBrowser({
+  contacts,
+  initialFilter,
+}: {
+  contacts: BrowserContact[];
+  initialFilter: Filter;
+}) {
   const [query, setQuery] = useState("");
   const [field, setField] = useState<ContactSearchOption>("all");
   const [sort, setSort] = useState<ContactSortOption>("added");
@@ -87,7 +93,10 @@ export function ContactsBrowser({ contacts, initialFilter }: { contacts: Browser
     <div>
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
         <div className="relative flex-1">
-          <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" aria-hidden="true" />
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
           <Input
             type="search"
             placeholder="Search contacts"
@@ -147,14 +156,16 @@ export function ContactsBrowser({ contacts, initialFilter }: { contacts: Browser
               "rounded-full border px-3 py-1 text-xs font-medium transition-colors",
               filter === value
                 ? "border-primary/30 bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:text-foreground bg-card",
+                : "bg-card text-muted-foreground hover:text-foreground",
             )}
           >
             {label}
           </button>
         ))}
-        <span className="text-muted-foreground ml-auto text-xs" aria-live="polite">
-          {visible.length === 0 ? "No matches" : `Showing ${Math.min(limit, visible.length)} of ${visible.length}`}
+        <span className="ml-auto text-xs text-muted-foreground" aria-live="polite">
+          {visible.length === 0
+            ? "No matches"
+            : `Showing ${Math.min(limit, visible.length)} of ${visible.length}`}
         </span>
       </div>
 
@@ -195,24 +206,37 @@ function ContactCard({ contact: c }: { contact: BrowserContact }) {
   return (
     <Link
       href={`/contacts/${c.id}`}
-      className="bg-card group flex h-full flex-col rounded-2xl border p-4 shadow-(--shadow-soft) transition-all hover:-translate-y-px hover:shadow-(--shadow-lifted)"
+      className="group flex h-full flex-col rounded-2xl border bg-card p-4 shadow-(--shadow-soft) transition-all hover:-translate-y-px hover:shadow-(--shadow-lifted)"
     >
       <div className="flex items-start gap-3">
-        <PersonAvatar firstName={c.firstName} lastName={c.lastName} portrait={c.portrait} seed={c.id} size="lg" />
+        <PersonAvatar
+          firstName={c.firstName}
+          lastName={c.lastName}
+          portrait={c.portrait}
+          seed={c.id}
+          size="lg"
+        />
         <div className="min-w-0 flex-1 pt-0.5">
           <p className="flex items-center gap-1.5 font-medium">
             <span className="truncate">
               {c.firstName} {c.lastName}
             </span>
-            {c.linkedUserId && <BadgeCheck className="text-primary size-4 shrink-0" aria-label="Has a 4399 CRM account" />}
+            {c.linkedUserId && (
+              <BadgeCheck
+                className="size-4 shrink-0 text-primary"
+                aria-label="Has a 4399 CRM account"
+              />
+            )}
           </p>
-          <p className="text-muted-foreground truncate text-sm">{c.occupation}</p>
-          {c.linkedUserName && <p className="text-primary/80 truncate text-xs">@{c.linkedUserName}</p>}
+          <p className="truncate text-sm text-muted-foreground">{c.occupation}</p>
+          {c.linkedUserName && (
+            <p className="truncate text-xs text-primary/80">@{c.linkedUserName}</p>
+          )}
         </div>
       </div>
-      <div className="text-muted-foreground mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-3 text-xs">
+      <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 border-t pt-3 text-xs text-muted-foreground">
         {c.phones[0] && (
-          <span className="inline-flex items-center gap-1 tabular">
+          <span className="tabular inline-flex items-center gap-1">
             <Phone className="size-3" aria-hidden="true" /> {c.phones[0]}
           </span>
         )}
@@ -220,7 +244,7 @@ function ContactCard({ contact: c }: { contact: BrowserContact }) {
           {c.meetingCount} {c.meetingCount === 1 ? "meeting" : "meetings"}
         </span>
         {c.nextMeeting && (
-          <span className="text-primary inline-flex items-center gap-1 font-medium">
+          <span className="inline-flex items-center gap-1 font-medium text-primary">
             <CalendarClock className="size-3" aria-hidden="true" /> {formatShortDate(c.nextMeeting)}
           </span>
         )}

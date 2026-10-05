@@ -17,12 +17,15 @@ export default async function EditRecordPage({ params }: PageProps<"/records/[id
   const [record, contacts] = await Promise.all([getRecord(user.id, id), contactOptions(user.id)]);
   if (!record) notFound();
   return (
-    <div className="animate-fade-up mx-auto max-w-3xl">
-      <Link href={`/records/${record.id}`} className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 rounded-md text-sm">
+    <div className="mx-auto max-w-3xl animate-fade-up">
+      <Link
+        href={`/records/${record.id}`}
+        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> Meeting
       </Link>
       <PageHeader title="Edit meeting" />
-      <div className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft) sm:p-6">
+      <div className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft) sm:p-6">
         <RecordForm
           id={record.id}
           contacts={contacts}

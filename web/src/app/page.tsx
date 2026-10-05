@@ -97,17 +97,23 @@ const PREVIEW_PEOPLE = [
 
 export default function LandingPage() {
   return (
-    <div className="bg-background min-h-dvh">
-      <header className="bg-background/80 sticky top-0 z-30 border-b backdrop-blur-xl">
+    <div className="min-h-dvh bg-background">
+      <header className="sticky top-0 z-30 border-b bg-background/80 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
           <Link href="/" className="rounded-md" aria-label="4399 CRM home">
             <Logo />
           </Link>
           <nav aria-label="Site" className="flex items-center gap-1 sm:gap-2">
-            <a href="#features" className="text-muted-foreground hover:text-foreground hidden rounded-md px-3 py-2 text-sm sm:inline">
+            <a
+              href="#features"
+              className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline"
+            >
               Features
             </a>
-            <a href="#about" className="text-muted-foreground hover:text-foreground hidden rounded-md px-3 py-2 text-sm sm:inline">
+            <a
+              href="#about"
+              className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline"
+            >
               About
             </a>
             <ThemeIconButton />
@@ -121,30 +127,42 @@ export default function LandingPage() {
       <main id="main">
         {/* Hero */}
         <section className="relative overflow-hidden">
-          <div className="bg-dots absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" aria-hidden="true" />
+          <div
+            className="bg-dots absolute inset-0 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]"
+            aria-hidden="true"
+          />
           <div
             className="absolute top-[-200px] left-1/2 h-[520px] w-[900px] -translate-x-1/2 rounded-full opacity-70 blur-3xl"
-            style={{ background: "radial-gradient(closest-side, oklch(0.78 0.12 285 / 0.45), transparent)" }}
+            style={{
+              background: "radial-gradient(closest-side, oklch(0.78 0.12 285 / 0.45), transparent)",
+            }}
             aria-hidden="true"
           />
           <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pt-14 pb-20 sm:px-8 lg:grid-cols-[1.05fr_1fr] lg:pt-20">
             <div className="animate-fade-up">
-              <p className="bg-card text-muted-foreground inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-medium shadow-(--shadow-soft)">
-                <span className="bg-primary size-1.5 rounded-full" aria-hidden="true" />
+              <p className="inline-flex items-center gap-2 rounded-full border bg-card px-3 py-1 text-xs font-medium text-muted-foreground shadow-(--shadow-soft)">
+                <span className="size-1.5 rounded-full bg-primary" aria-hidden="true" />
                 {SITE.subject} · {SITE.university} · 2021 → revived 2026
               </p>
               <h1 className="mt-6 text-[44px] leading-[1.02] font-semibold tracking-tight text-balance sm:text-6xl">
                 Remember the people you meet,{" "}
-                <span className="font-display text-primary font-normal italic">and where you met them.</span>
+                <span className="font-display font-normal text-primary italic">
+                  and where you met them.
+                </span>
               </h1>
-              <p className="text-muted-foreground mt-5 max-w-xl text-lg text-pretty">
-                4399 CRM is a mobile-first personal CRM: an address book, a log of every meeting with a place on the map,
-                and QR codes for swapping details in person. Built by Team 4399 for the University of Melbourne&apos;s IT
-                Project, now running again on a modern, free stack.
+              <p className="mt-5 max-w-xl text-lg text-pretty text-muted-foreground">
+                4399 CRM is a mobile-first personal CRM: an address book, a log of every meeting
+                with a place on the map, and QR codes for swapping details in person. Built by Team
+                4399 for the University of Melbourne&apos;s IT Project, now running again on a
+                modern, free stack.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <form action={guestLoginAction}>
-                  <SubmitButton size="lg" className="h-11 px-5 text-[15px]" pendingLabel="Preparing your sandbox…">
+                  <SubmitButton
+                    size="lg"
+                    className="h-11 px-5 text-[15px]"
+                    pendingLabel="Preparing your sandbox…"
+                  >
                     <Sparkles aria-hidden="true" /> Try it as a guest
                   </SubmitButton>
                 </form>
@@ -154,9 +172,9 @@ export default function LandingPage() {
                   </Link>
                 </Button>
               </div>
-              <p className="text-muted-foreground mt-3 text-xs">
-                No sign-up needed: the guest sandbox is a private copy of 25 contacts and 40 Melbourne meetings, deleted
-                after 24 hours.
+              <p className="mt-3 text-xs text-muted-foreground">
+                No sign-up needed: the guest sandbox is a private copy of 25 contacts and 40
+                Melbourne meetings, deleted after 24 hours.
               </p>
             </div>
 
@@ -168,22 +186,25 @@ export default function LandingPage() {
         <section className="border-y bg-surface/60">
           <div className="mx-auto grid max-w-6xl gap-10 px-5 py-16 sm:px-8 lg:grid-cols-3">
             <div>
-              <p className="text-primary text-sm font-medium">The brief</p>
-              <h2 className="mt-2 text-2xl font-semibold tracking-tight">What the coursework asked for</h2>
+              <p className="text-sm font-medium text-primary">The brief</p>
+              <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+                What the coursework asked for
+              </h2>
             </div>
-            <div className="text-muted-foreground space-y-4 lg:col-span-2">
+            <div className="space-y-4 text-muted-foreground lg:col-span-2">
               <p>
-                COMP30022 is the University of Melbourne&apos;s capstone IT Project. In Semester 2, 2021, teams of five
-                worked with a client to design, build, test and deploy a <em>personal customer relationship
-                manager</em>: a web app where someone can keep track of the people in their network and their
-                interactions with them, with secure accounts, search, and a deployment the client can actually use.
-                Teams ran the project in Scrum sprints and handed in the code, tests and documentation.
+                COMP30022 is the University of Melbourne&apos;s capstone IT Project. In Semester 2,
+                2021, teams of five worked with a client to design, build, test and deploy a{" "}
+                <em>personal customer relationship manager</em>: a web app where someone can keep
+                track of the people in their network and their interactions with them, with secure
+                accounts, search, and a deployment the client can actually use. Teams ran the
+                project in Scrum sprints and handed in the code, tests and documentation.
               </p>
               <p>
-                Team 4399 built a phone-first single-page app (designed at 375 × 812, iPhone X) backed by a REST API:
-                contacts with any number of phones and e-mails, meeting records pinned on Google Maps, QR-code contact
-                exchange, e-mail verification and &ldquo;fast register&rdquo; invitations for contacts who weren&apos;t
-                users yet.
+                Team 4399 built a phone-first single-page app (designed at 375 × 812, iPhone X)
+                backed by a REST API: contacts with any number of phones and e-mails, meeting
+                records pinned on Google Maps, QR-code contact exchange, e-mail verification and
+                &ldquo;fast register&rdquo; invitations for contacts who weren&apos;t users yet.
               </p>
             </div>
           </div>
@@ -192,21 +213,23 @@ export default function LandingPage() {
         {/* Features */}
         <section id="features" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-20 sm:px-8">
           <div className="max-w-2xl">
-            <p className="text-primary text-sm font-medium">What you can do</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">Everything from the original, working again</h2>
-            <p className="text-muted-foreground mt-3">
-              The search, sorting, validation, duplicate detection and contact-sync rules are ported from the 2021
-              code and covered by parity tests.
+            <p className="text-sm font-medium text-primary">What you can do</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">
+              Everything from the original, working again
+            </h2>
+            <p className="mt-3 text-muted-foreground">
+              The search, sorting, validation, duplicate detection and contact-sync rules are ported
+              from the 2021 code and covered by parity tests.
             </p>
           </div>
           <ul className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {FEATURES.map((f) => (
-              <li key={f.title} className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)">
-                <span className="bg-accent text-accent-foreground flex size-10 items-center justify-center rounded-xl">
+              <li key={f.title} className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft)">
+                <span className="flex size-10 items-center justify-center rounded-xl bg-accent text-accent-foreground">
                   <f.icon className="size-5" aria-hidden="true" />
                 </span>
                 <h3 className="mt-4 font-semibold tracking-tight">{f.title}</h3>
-                <p className="text-muted-foreground mt-1.5 text-sm leading-relaxed">{f.body}</p>
+                <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">{f.body}</p>
               </li>
             ))}
           </ul>
@@ -214,11 +237,14 @@ export default function LandingPage() {
 
         {/* Numbers */}
         <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8">
-          <div className="bg-card grid overflow-hidden rounded-3xl border shadow-(--shadow-soft) sm:grid-cols-2 lg:grid-cols-4">
+          <div className="grid overflow-hidden rounded-3xl border bg-card shadow-(--shadow-soft) sm:grid-cols-2 lg:grid-cols-4">
             {NUMBERS.map((n, i) => (
-              <div key={n.label} className={`p-6 ${i > 0 ? "border-t sm:border-t-0 sm:border-l" : ""} ${i === 2 ? "sm:border-l-0 sm:border-t lg:border-t-0 lg:border-l" : ""} ${i === 3 ? "sm:border-t lg:border-t-0" : ""}`}>
-                <p className="text-4xl font-semibold tracking-tight tabular">{n.value}</p>
-                <p className="text-muted-foreground mt-2 text-sm">{n.label}</p>
+              <div
+                key={n.label}
+                className={`p-6 ${i > 0 ? "border-t sm:border-t-0 sm:border-l" : ""} ${i === 2 ? "sm:border-t sm:border-l-0 lg:border-t-0 lg:border-l" : ""} ${i === 3 ? "sm:border-t lg:border-t-0" : ""}`}
+              >
+                <p className="tabular text-4xl font-semibold tracking-tight">{n.value}</p>
+                <p className="mt-2 text-sm text-muted-foreground">{n.label}</p>
               </div>
             ))}
           </div>
@@ -232,17 +258,27 @@ export default function LandingPage() {
               <div>
                 <h2 className="text-3xl font-semibold tracking-tight">Take it for a spin</h2>
                 <p className="mt-3 max-w-xl text-white/80">
-                  Open your own guest sandbox, add someone by scanning a QR code, log a meeting on the map, then check
-                  the demo inbox when you sign up or invite a contact.
+                  Open your own guest sandbox, add someone by scanning a QR code, log a meeting on
+                  the map, then check the demo inbox when you sign up or invite a contact.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 lg:justify-end">
                 <form action={guestLoginAction}>
-                  <SubmitButton size="lg" variant="secondary" className="h-11 px-5" pendingLabel="Preparing…">
+                  <SubmitButton
+                    size="lg"
+                    variant="secondary"
+                    className="h-11 px-5"
+                    pendingLabel="Preparing…"
+                  >
                     <Sparkles aria-hidden="true" /> Try as guest
                   </SubmitButton>
                 </form>
-                <Button asChild size="lg" variant="ghost" className="h-11 px-5 text-white hover:bg-white/10 hover:text-white">
+                <Button
+                  asChild
+                  size="lg"
+                  variant="ghost"
+                  className="h-11 px-5 text-white hover:bg-white/10 hover:text-white"
+                >
                   <Link href="/signup">Create an account</Link>
                 </Button>
               </div>
@@ -254,15 +290,19 @@ export default function LandingPage() {
         <section id="about" className="scroll-mt-20 border-t">
           <div className="mx-auto grid max-w-6xl gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[1fr_1.2fr]">
             <div>
-              <p className="text-primary text-sm font-medium">About this project</p>
+              <p className="text-sm font-medium text-primary">About this project</p>
               <h2 className="mt-2 text-3xl font-semibold tracking-tight">{SITE.subject}</h2>
               <dl className="mt-6 space-y-3 text-sm">
                 <AboutRow label="University">{SITE.university}</AboutRow>
                 <AboutRow label="Offering">{SITE.term}</AboutRow>
                 <AboutRow label="Team">{SITE.team}</AboutRow>
                 <AboutRow label="Source">
-                  <a href={SITE.repo} className="text-primary inline-flex items-center gap-1 font-medium hover:underline">
-                    <GithubIcon className="size-3.5" /> rNLKJA/Personal-Customer-Relation-Management-PCRM
+                  <a
+                    href={SITE.repo}
+                    className="inline-flex items-center gap-1 font-medium text-primary hover:underline"
+                  >
+                    <GithubIcon className="size-3.5" />{" "}
+                    rNLKJA/Personal-Customer-Relation-Management-PCRM
                   </a>
                 </AboutRow>
               </dl>
@@ -270,7 +310,12 @@ export default function LandingPage() {
               <ul className="mt-3 space-y-2.5">
                 {TEAM.map((m) => (
                   <li key={m.name} className="flex items-center gap-3">
-                    <PersonAvatar firstName={m.name.split(" ")[0]} lastName={m.name.split(" ").at(-1)} seed={m.name} size="sm" />
+                    <PersonAvatar
+                      firstName={m.name.split(" ")[0]}
+                      lastName={m.name.split(" ").at(-1)}
+                      seed={m.name}
+                      size="sm"
+                    />
                     <span className="text-sm">
                       <span className="font-medium">{m.name}</span>
                       <span className="text-muted-foreground"> · {m.role}</span>
@@ -278,37 +323,50 @@ export default function LandingPage() {
                   </li>
                 ))}
               </ul>
-              <p className="text-muted-foreground mt-8 text-xs leading-relaxed">
-                Academic integrity: the original 2021 submission is preserved unchanged (apart from removed credentials)
-                in the repository&apos;s <code className="font-mono">coursework/</code> folder for reference. This revival
-                is a portfolio piece, not a resubmission.
+              <p className="mt-8 text-xs leading-relaxed text-muted-foreground">
+                Academic integrity: the original 2021 submission is preserved unchanged (apart from
+                removed credentials) in the repository&apos;s{" "}
+                <code className="font-mono">coursework/</code> folder for reference. This revival is
+                a portfolio piece, not a resubmission.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
               {STACKS.map((s, i) => (
-                <div key={s.title} className={`rounded-2xl border p-5 ${i === 1 ? "bg-card shadow-(--shadow-soft)" : "bg-surface"}`}>
+                <div
+                  key={s.title}
+                  className={`rounded-2xl border p-5 ${i === 1 ? "bg-card shadow-(--shadow-soft)" : "bg-surface"}`}
+                >
                   <h3 className="flex items-center gap-2 text-sm font-semibold">
-                    {i === 1 ? <Sparkles className="text-primary size-4" aria-hidden="true" /> : <CalendarDays className="text-muted-foreground size-4" aria-hidden="true" />}
+                    {i === 1 ? (
+                      <Sparkles className="size-4 text-primary" aria-hidden="true" />
+                    ) : (
+                      <CalendarDays className="size-4 text-muted-foreground" aria-hidden="true" />
+                    )}
                     {s.title}
                   </h3>
                   <ul className="mt-4 space-y-2.5">
                     {s.items.map((item) => (
-                      <li key={item} className="text-muted-foreground flex gap-2 text-sm">
-                        <span className={`mt-2 size-1.5 shrink-0 rounded-full ${i === 1 ? "bg-primary" : "bg-muted-foreground/50"}`} aria-hidden="true" />
+                      <li key={item} className="flex gap-2 text-sm text-muted-foreground">
+                        <span
+                          className={`mt-2 size-1.5 shrink-0 rounded-full ${i === 1 ? "bg-primary" : "bg-muted-foreground/50"}`}
+                          aria-hidden="true"
+                        />
                         {item}
                       </li>
                     ))}
                   </ul>
                 </div>
               ))}
-              <div className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft) sm:col-span-2">
+              <div className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft) sm:col-span-2">
                 <h3 className="flex items-center gap-2 text-sm font-semibold">
-                  <Inbox className="text-primary size-4" aria-hidden="true" /> What changed on the way back
+                  <Inbox className="size-4 text-primary" aria-hidden="true" /> What changed on the
+                  way back
                 </h3>
-                <p className="text-muted-foreground mt-2 text-sm leading-relaxed">
-                  The MongoDB Atlas cluster, Gmail account and Google Maps key are gone (and their old credentials are
-                  never used). Data now lives in SQLite, e-mails go to a demo inbox, maps use free OpenStreetMap-based
-                  services, and avatars are generated initials instead of uploaded photos.
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  The MongoDB Atlas cluster, Gmail account and Google Maps key are gone (and their
+                  old credentials are never used). Data now lives in SQLite, e-mails go to a demo
+                  inbox, maps use free OpenStreetMap-based services, and avatars are generated
+                  initials instead of uploaded photos.
                 </p>
               </div>
             </div>
@@ -317,12 +375,12 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t">
-        <div className="text-muted-foreground mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-6 text-xs sm:px-8">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-3 px-5 py-6 text-xs text-muted-foreground sm:px-8">
           <span>
             {SITE.name} · {SITE.team} · {SITE.university}
           </span>
           <span className="flex items-center gap-4">
-            <a href={SITE.repo} className="hover:text-foreground inline-flex items-center gap-1">
+            <a href={SITE.repo} className="inline-flex items-center gap-1 hover:text-foreground">
               <GithubIcon className="size-3.5" /> GitHub
             </a>
             <span>Map data © OpenStreetMap contributors</span>
@@ -345,18 +403,20 @@ function AboutRow({ label, children }: { label: string; children: React.ReactNod
 function HeroPreview() {
   return (
     <div className="relative mx-auto w-full max-w-[520px] lg:mx-0" aria-hidden="true">
-      <div className="bg-card absolute top-6 right-0 left-10 overflow-hidden rounded-3xl border shadow-(--shadow-soft)">
-        <MelbourneSketch className="text-foreground h-auto w-full" />
+      <div className="absolute top-6 right-0 left-10 overflow-hidden rounded-3xl border bg-card shadow-(--shadow-soft)">
+        <MelbourneSketch className="h-auto w-full text-foreground" />
       </div>
-      <div className="bg-background relative z-10 mt-24 ml-0 w-[250px] overflow-hidden rounded-[34px] border-[6px] border-[oklch(0.25_0.02_275)] shadow-(--shadow-lifted) sm:w-[270px]">
+      <div className="relative z-10 mt-24 ml-0 w-[250px] overflow-hidden rounded-[34px] border-[6px] border-[oklch(0.25_0.02_275)] bg-background shadow-(--shadow-lifted) sm:w-[270px]">
         <div className="flex items-center justify-between px-5 pt-3 pb-1 text-[10px] font-semibold">
           <span>9:41</span>
-          <span className="bg-foreground/80 h-1.5 w-14 rounded-full" />
+          <span className="h-1.5 w-14 rounded-full bg-foreground/80" />
           <span>5G</span>
         </div>
         <div className="px-4 pt-2 pb-3">
           <p className="text-[15px] font-semibold tracking-tight">Contacts</p>
-          <div className="bg-muted text-muted-foreground mt-2 rounded-lg px-2.5 py-1.5 text-[11px]">Search contacts</div>
+          <div className="mt-2 rounded-lg bg-muted px-2.5 py-1.5 text-[11px] text-muted-foreground">
+            Search contacts
+          </div>
           <ul className="mt-2">
             {PREVIEW_PEOPLE.map((p) => (
               <li key={p.first} className="flex items-center gap-2.5 py-1.5">
@@ -364,31 +424,36 @@ function HeroPreview() {
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-1 text-[12px] font-medium">
                     {p.first} {p.last}
-                    {p.linked && <BadgeCheck className="text-primary size-3" />}
+                    {p.linked && <BadgeCheck className="size-3 text-primary" />}
                   </span>
-                  <span className="text-muted-foreground block text-[10px]">{p.role}</span>
+                  <span className="block text-[10px] text-muted-foreground">{p.role}</span>
                 </span>
               </li>
             ))}
           </ul>
         </div>
-        <div className="bg-background grid grid-cols-5 border-t px-1 py-2">
+        <div className="grid grid-cols-5 border-t bg-background px-1 py-2">
           {[Users, NotebookPen, MapPinned, CalendarDays, AtSign].map((Icon, i) => (
-            <span key={i} className={`flex justify-center ${i === 0 ? "text-primary" : "text-muted-foreground"}`}>
+            <span
+              key={i}
+              className={`flex justify-center ${i === 0 ? "text-primary" : "text-muted-foreground"}`}
+            >
               <Icon className="size-4" />
             </span>
           ))}
         </div>
       </div>
-      <div className="bg-card absolute right-2 bottom-10 z-20 w-[230px] rounded-2xl border p-3 shadow-(--shadow-lifted) sm:right-6">
+      <div className="absolute right-2 bottom-10 z-20 w-[230px] rounded-2xl border bg-card p-3 shadow-(--shadow-lifted) sm:right-6">
         <div className="flex items-center gap-2">
           <PersonAvatar firstName="Ava" lastName="Chen" seed="dir_avachen" size="sm" />
           <div className="min-w-0">
             <p className="text-[12px] font-semibold">Coffee with Ava</p>
-            <p className="text-muted-foreground text-[10px]">Thu 14:30 · State Library Victoria</p>
+            <p className="text-[10px] text-muted-foreground">Thu 14:30 · State Library Victoria</p>
           </div>
         </div>
-        <p className="text-muted-foreground mt-2 text-[10px] leading-snug">Talked UX research methods - send the slides by Friday.</p>
+        <p className="mt-2 text-[10px] leading-snug text-muted-foreground">
+          Talked UX research methods - send the slides by Friday.
+        </p>
       </div>
     </div>
   );

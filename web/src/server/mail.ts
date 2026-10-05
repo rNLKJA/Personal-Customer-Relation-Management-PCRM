@@ -31,7 +31,9 @@ export async function sendEmail(opts: {
           await db
             .select({ id: users.id })
             .from(users)
-            .where(sql`exists (select 1 from json_each(${users.emails}) where lower(value) = lower(${opts.to}))`)
+            .where(
+              sql`exists (select 1 from json_each(${users.emails}) where lower(value) = lower(${opts.to}))`,
+            )
             .limit(1)
         )[0]?.id ?? null);
   const [row] = await db
@@ -66,7 +68,12 @@ function inboxFilter(user: User | null, browserKey: string | null) {
 export async function listInbox(user: User | null, browserKey: string | null, limit = 50) {
   const where = inboxFilter(user, browserKey);
   if (!where) return [];
-  return getDb().select().from(emailOutbox).where(where).orderBy(desc(emailOutbox.createdAt)).limit(limit);
+  return getDb()
+    .select()
+    .from(emailOutbox)
+    .where(where)
+    .orderBy(desc(emailOutbox.createdAt))
+    .limit(limit);
 }
 
 export async function getInboxMessage(id: string, user: User | null, browserKey: string | null) {

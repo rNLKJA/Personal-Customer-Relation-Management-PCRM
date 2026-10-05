@@ -21,13 +21,15 @@ export default async function ProfilePage() {
   const guest = Boolean(user.expiresAt && !user.isDemo);
 
   return (
-    <div className="animate-fade-up mx-auto max-w-4xl">
+    <div className="mx-auto max-w-4xl animate-fade-up">
       <PageHeader
         title="Profile"
         description={
           <>
             @{user.userName} · member since {formatDate(user.createdAt)}
-            {guest && user.expiresAt ? ` · guest sandbox deleted ${formatRelative(user.expiresAt)}` : ""}
+            {guest && user.expiresAt
+              ? ` · guest sandbox deleted ${formatRelative(user.expiresAt)}`
+              : ""}
           </>
         }
       />
@@ -47,7 +49,10 @@ export default async function ProfilePage() {
               }}
             />
           </Card>
-          <Card title="Password" description="Changing your password needs a code from your e-mail.">
+          <Card
+            title="Password"
+            description="Changing your password needs a code from your e-mail."
+          >
             <ChangePassword
               disabledReason={
                 isSharedDemo(user)
@@ -73,7 +78,7 @@ export default async function ProfilePage() {
           </Card>
           <Card title="Appearance">
             <div className="flex items-center justify-between">
-              <span className="text-muted-foreground text-sm">Theme</span>
+              <span className="text-sm text-muted-foreground">Theme</span>
               <ThemeToggle />
             </div>
           </Card>
@@ -85,7 +90,11 @@ export default async function ProfilePage() {
                 </Link>
               </Button>
               <form action={logoutAction}>
-                <SubmitButton variant="ghost" className="text-destructive w-full justify-start" pendingLabel="Signing out…">
+                <SubmitButton
+                  variant="ghost"
+                  className="w-full justify-start text-destructive"
+                  pendingLabel="Signing out…"
+                >
                   <LogOut /> Sign out
                 </SubmitButton>
               </form>
@@ -97,11 +106,19 @@ export default async function ProfilePage() {
   );
 }
 
-function Card({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
+function Card({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft) sm:p-6">
+    <section className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft) sm:p-6">
       <h2 className="text-base font-semibold tracking-tight">{title}</h2>
-      {description && <p className="text-muted-foreground mt-0.5 text-sm">{description}</p>}
+      {description && <p className="mt-0.5 text-sm text-muted-foreground">{description}</p>}
       <div className="mt-4">{children}</div>
     </section>
   );

@@ -91,16 +91,31 @@ export function ContactForm({ id, initial }: { id?: string; initial?: ContactFor
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="firstName">First name</Label>
-          <Input id="firstName" autoComplete="off" value={values.firstName} onChange={(e) => set("firstName", e.target.value)} />
+          <Input
+            id="firstName"
+            autoComplete="off"
+            value={values.firstName}
+            onChange={(e) => set("firstName", e.target.value)}
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="lastName">Last name</Label>
-          <Input id="lastName" autoComplete="off" value={values.lastName} onChange={(e) => set("lastName", e.target.value)} />
+          <Input
+            id="lastName"
+            autoComplete="off"
+            value={values.lastName}
+            onChange={(e) => set("lastName", e.target.value)}
+          />
         </div>
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="occupation">Occupation</Label>
-        <Input id="occupation" value={values.occupation} onChange={(e) => set("occupation", e.target.value)} placeholder="e.g. UX researcher" />
+        <Input
+          id="occupation"
+          value={values.occupation}
+          onChange={(e) => set("occupation", e.target.value)}
+          placeholder="e.g. UX researcher"
+        />
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         <ListEditor
@@ -126,16 +141,22 @@ export function ContactForm({ id, initial }: { id?: string; initial?: ContactFor
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="note">Notes</Label>
-        <Textarea id="note" rows={3} value={values.note} onChange={(e) => set("note", e.target.value)} placeholder="How you met, what they care about…" />
+        <Textarea
+          id="note"
+          rows={3}
+          value={values.note}
+          onChange={(e) => set("note", e.target.value)}
+          placeholder="How you met, what they care about…"
+        />
       </div>
       <CustomFieldsEditor fields={values.customFields} onChange={(f) => set("customFields", f)} />
 
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}
-      <div className="bg-background/90 sticky bottom-20 flex justify-end gap-2 border-t py-3 backdrop-blur lg:bottom-0">
+      <div className="sticky bottom-20 flex justify-end gap-2 border-t bg-background/90 py-3 backdrop-blur lg:bottom-0">
         <Button type="button" variant="ghost" onClick={() => router.back()}>
           Cancel
         </Button>

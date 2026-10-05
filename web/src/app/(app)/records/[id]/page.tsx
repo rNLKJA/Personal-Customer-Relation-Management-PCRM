@@ -24,22 +24,35 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
   const hasPin = r.lat != null && r.lng != null;
 
   return (
-    <div className="animate-fade-up mx-auto max-w-3xl">
-      <Link href="/records" className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 rounded-md text-sm">
+    <div className="mx-auto max-w-3xl animate-fade-up">
+      <Link
+        href="/records"
+        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> Meetings
       </Link>
 
-      <article className="bg-card overflow-hidden rounded-3xl border shadow-(--shadow-soft)">
+      <article className="overflow-hidden rounded-3xl border bg-card shadow-(--shadow-soft)">
         <header className="p-5 sm:p-7">
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div>
-              <p className={upcoming ? "text-primary text-sm font-medium" : "text-muted-foreground text-sm"}>
+              <p
+                className={
+                  upcoming ? "text-sm font-medium text-primary" : "text-sm text-muted-foreground"
+                }
+              >
                 {upcoming ? "Upcoming" : "Met"} {formatRelative(r.dateTime)}
               </p>
               <h1 className="mt-1 text-2xl font-semibold tracking-tight">
-                {formatDate(r.dateTime)} <span className="text-muted-foreground font-normal">· {formatTime(r.dateTime)}</span>
+                {formatDate(r.dateTime)}{" "}
+                <span className="font-normal text-muted-foreground">
+                  · {formatTime(r.dateTime)}
+                </span>
               </h1>
-              <p className="text-muted-foreground mt-1 font-mono text-xs" title="Original 2021 timestamp format">
+              <p
+                className="mt-1 font-mono text-xs text-muted-foreground"
+                title="Original 2021 timestamp format"
+              >
                 {convert(r.dateTime, APP_TIME_ZONE)}
               </p>
             </div>
@@ -53,13 +66,22 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
             </div>
           </div>
 
-          <div className="bg-surface hover:bg-muted relative mt-6 flex items-center gap-3 rounded-2xl border p-3 transition-colors">
-            <PersonAvatar firstName={p.firstName} lastName={p.lastName} portrait={p.portrait} seed={p.id} size="lg" />
+          <div className="relative mt-6 flex items-center gap-3 rounded-2xl border bg-surface p-3 transition-colors hover:bg-muted">
+            <PersonAvatar
+              firstName={p.firstName}
+              lastName={p.lastName}
+              portrait={p.portrait}
+              seed={p.id}
+              size="lg"
+            />
             <div className="min-w-0 flex-1">
-              <Link href={`/contacts/${p.id}`} className="font-medium after:absolute after:inset-0 after:rounded-2xl">
+              <Link
+                href={`/contacts/${p.id}`}
+                className="font-medium after:absolute after:inset-0 after:rounded-2xl"
+              >
                 {p.firstName} {p.lastName}
               </Link>
-              <p className="text-muted-foreground truncate text-sm">{p.occupation}</p>
+              <p className="truncate text-sm text-muted-foreground">{p.occupation}</p>
             </div>
             <div className="relative z-10 flex gap-1">
               {p.phones[0] && (
@@ -82,15 +104,19 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
 
         <div className="space-y-6 border-t p-5 sm:p-7">
           <section aria-labelledby="where">
-            <h2 id="where" className="text-muted-foreground mb-2 flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase">
+            <h2
+              id="where"
+              className="mb-2 flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+            >
               <MapPin className="size-3.5" aria-hidden="true" /> Where
             </h2>
             <p className="text-sm">{r.location}</p>
             {hasPin ? (
               <>
-                <p className="text-muted-foreground mt-1 text-xs tabular">
+                <p className="tabular mt-1 text-xs text-muted-foreground">
                   {formatCoords({ lat: r.lat!, lng: r.lng! }, 4)} ·{" "}
-                  {formatDistance(haversineKm(MELBOURNE_CBD, { lat: r.lat!, lng: r.lng! }))} from the CBD
+                  {formatDistance(haversineKm(MELBOURNE_CBD, { lat: r.lat!, lng: r.lng! }))} from
+                  the CBD
                 </p>
                 <div className="mt-3">
                   <StaticPinMap
@@ -105,20 +131,30 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
                 </div>
               </>
             ) : (
-              <p className="text-muted-foreground mt-1 text-xs">No map pin for this meeting.</p>
+              <p className="mt-1 text-xs text-muted-foreground">No map pin for this meeting.</p>
             )}
           </section>
 
           <section aria-labelledby="notes">
-            <h2 id="notes" className="text-muted-foreground mb-2 flex items-center gap-1.5 text-xs font-medium tracking-wide uppercase">
+            <h2
+              id="notes"
+              className="mb-2 flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+            >
               <Clock className="size-3.5" aria-hidden="true" /> Notes
             </h2>
-            {r.notes ? <p className="text-sm leading-relaxed whitespace-pre-line">{r.notes}</p> : <p className="text-muted-foreground text-sm">No notes.</p>}
+            {r.notes ? (
+              <p className="text-sm leading-relaxed whitespace-pre-line">{r.notes}</p>
+            ) : (
+              <p className="text-sm text-muted-foreground">No notes.</p>
+            )}
           </section>
 
           {r.customFields.length > 0 && (
             <section aria-labelledby="fields">
-              <h2 id="fields" className="text-muted-foreground mb-2 text-xs font-medium tracking-wide uppercase">
+              <h2
+                id="fields"
+                className="mb-2 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+              >
                 Custom fields
               </h2>
               <dl className="grid grid-cols-[auto_1fr] gap-x-4 gap-y-1.5 text-sm">
@@ -132,8 +168,9 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
             </section>
           )}
         </div>
-        <footer className="bg-surface text-muted-foreground flex items-center gap-1.5 border-t px-5 py-3 text-xs sm:px-7">
-          <CalendarClock className="size-3.5" aria-hidden="true" /> Logged {formatRelative(r.createdAt)}
+        <footer className="flex items-center gap-1.5 border-t bg-surface px-5 py-3 text-xs text-muted-foreground sm:px-7">
+          <CalendarClock className="size-3.5" aria-hidden="true" /> Logged{" "}
+          {formatRelative(r.createdAt)}
         </footer>
       </article>
     </div>

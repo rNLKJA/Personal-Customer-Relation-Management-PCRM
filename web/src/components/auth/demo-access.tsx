@@ -8,9 +8,16 @@ export function DemoAccess() {
   return (
     <div className="space-y-3">
       <form action={guestLoginAction}>
-        <SubmitButton variant="secondary" size="lg" className="w-full" pendingLabel="Preparing your sandbox…">
+        <SubmitButton
+          variant="secondary"
+          size="lg"
+          className="w-full"
+          pendingLabel="Preparing your sandbox…"
+        >
           <Sparkles aria-hidden="true" /> Try as guest
-          <span className="text-muted-foreground ml-1 text-xs font-normal">private sandbox, 24 h</span>
+          <span className="ml-1 text-xs font-normal text-muted-foreground">
+            private sandbox, 24 h
+          </span>
         </SubmitButton>
       </form>
       <div className="grid grid-cols-2 gap-2">
@@ -27,8 +34,8 @@ export function DemoAccess() {
           </SubmitButton>
         </form>
       </div>
-      <details className="bg-muted/60 group rounded-xl px-3.5 py-2.5 text-xs">
-        <summary className="text-muted-foreground cursor-pointer font-medium select-none">
+      <details className="group rounded-xl bg-muted/60 px-3.5 py-2.5 text-xs">
+        <summary className="cursor-pointer font-medium text-muted-foreground select-none">
           Demo credentials
         </summary>
         <dl className="mt-2 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
@@ -41,8 +48,9 @@ export function DemoAccess() {
             </div>
           ))}
         </dl>
-        <p className="text-muted-foreground mt-2">
-          The demo user is shared with other visitors; &ldquo;Try as guest&rdquo; gives you a private copy.
+        <p className="mt-2 text-muted-foreground">
+          The demo user is shared with other visitors; &ldquo;Try as guest&rdquo; gives you a
+          private copy.
         </p>
       </details>
     </div>

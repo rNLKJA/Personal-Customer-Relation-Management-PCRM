@@ -25,13 +25,7 @@ export interface CustomField {
   value: string;
 }
 
-export type ValidatorType =
-  | "firstName"
-  | "lastName"
-  | "occupation"
-  | "phone"
-  | "email"
-  | "field";
+export type ValidatorType = "firstName" | "lastName" | "occupation" | "phone" | "email" | "field";
 
 /**
  * Faithful port of `dataValidator(items, type, ...)`. Note the original phone

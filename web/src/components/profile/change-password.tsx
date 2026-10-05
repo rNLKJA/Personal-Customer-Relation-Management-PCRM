@@ -20,10 +20,10 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
   const [done, setDone] = useState(false);
   const [pending, start] = useTransition();
 
-  if (disabledReason) return <p className="text-muted-foreground text-sm">{disabledReason}</p>;
+  if (disabledReason) return <p className="text-sm text-muted-foreground">{disabledReason}</p>;
   if (done) {
     return (
-      <p className="text-success flex items-center gap-2 text-sm" role="status">
+      <p className="flex items-center gap-2 text-sm text-success" role="status">
         <CheckCircle2 className="size-4" aria-hidden="true" /> Password changed.
       </p>
     );
@@ -33,7 +33,9 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
     <div className="space-y-4">
       {!sentAt ? (
         <div>
-          <p className="text-muted-foreground mb-3 text-sm">We&apos;ll e-mail a 6-digit code to your first address to confirm it&apos;s you.</p>
+          <p className="mb-3 text-sm text-muted-foreground">
+            We&apos;ll e-mail a 6-digit code to your first address to confirm it&apos;s you.
+          </p>
           <Button
             variant="outline"
             disabled={pending}
@@ -47,7 +49,12 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
               })
             }
           >
-            {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Mail aria-hidden="true" />} Send code
+            {pending ? (
+              <Loader2 className="animate-spin" aria-hidden="true" />
+            ) : (
+              <Mail aria-hidden="true" />
+            )}{" "}
+            Send code
           </Button>
         </div>
       ) : (
@@ -59,7 +66,11 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
             if (msg) return setError(msg);
             setError(null);
             start(async () => {
-              const res = await changePasswordAction({ authCode: code, newPassword1: p1, newPassword2: p2 });
+              const res = await changePasswordAction({
+                authCode: code,
+                newPassword1: p1,
+                newPassword2: p2,
+              });
               if (!res.ok) return setError(res.error);
               setDone(true);
             });
@@ -71,16 +82,35 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
           <InlineInbox kind="change-password" since={sentAt} onUseCode={setCode} />
           <div className="space-y-1.5">
             <Label htmlFor="cp-code">Code</Label>
-            <Input id="cp-code" inputMode="numeric" maxLength={6} className="font-mono tracking-[0.3em]" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))} />
+            <Input
+              id="cp-code"
+              inputMode="numeric"
+              maxLength={6}
+              className="font-mono tracking-[0.3em]"
+              value={code}
+              onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
+            />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-1.5">
               <Label htmlFor="cp-1">New password</Label>
-              <Input id="cp-1" type="password" autoComplete="new-password" value={p1} onChange={(e) => setP1(e.target.value)} />
+              <Input
+                id="cp-1"
+                type="password"
+                autoComplete="new-password"
+                value={p1}
+                onChange={(e) => setP1(e.target.value)}
+              />
             </div>
             <div className="space-y-1.5">
               <Label htmlFor="cp-2">Confirm new password</Label>
-              <Input id="cp-2" type="password" autoComplete="new-password" value={p2} onChange={(e) => setP2(e.target.value)} />
+              <Input
+                id="cp-2"
+                type="password"
+                autoComplete="new-password"
+                value={p2}
+                onChange={(e) => setP2(e.target.value)}
+              />
             </div>
           </div>
           <Button type="submit" disabled={pending || code.length !== 6}>
@@ -89,7 +119,7 @@ export function ChangePassword({ disabledReason }: { disabledReason?: string }) 
         </form>
       )}
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}

@@ -12,16 +12,16 @@ export default async function SignupPage() {
   return (
     <div className="animate-fade-up">
       <h1 className="text-2xl font-semibold tracking-tight">Create your account</h1>
-      <p className="text-muted-foreground mt-1 text-sm">
+      <p className="mt-1 text-sm text-muted-foreground">
         Verify an e-mail address, pick a user name, and you&apos;re in.
       </p>
       <DemoDataBanner className="mt-5" />
       <div className="mt-6">
         <SignupForm />
       </div>
-      <p className="text-muted-foreground mt-6 text-center text-sm">
+      <p className="mt-6 text-center text-sm text-muted-foreground">
         Already registered?{" "}
-        <Link href="/login" className="text-primary font-medium hover:underline">
+        <Link href="/login" className="font-medium text-primary hover:underline">
           Sign in
         </Link>
       </p>

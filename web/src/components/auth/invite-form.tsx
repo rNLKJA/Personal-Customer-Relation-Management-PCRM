@@ -25,25 +25,52 @@ export function InviteForm({ id, code }: { id: string; code: string }) {
         if (msg) return setError(msg);
         setError(null);
         start(async () => {
-          const res = await confirmInviteAction({ id, fastRegisterCode: code, userName, password, re_password: rePassword });
+          const res = await confirmInviteAction({
+            id,
+            fastRegisterCode: code,
+            userName,
+            password,
+            re_password: rePassword,
+          });
           if (res && !res.ok) setError(res.error);
         });
       }}
     >
       <div className="space-y-1.5">
         <Label htmlFor="userName">Choose a user name</Label>
-        <Input id="userName" autoComplete="username" autoCapitalize="none" value={userName} onChange={(e) => setUserName(e.target.value)} required />
+        <Input
+          id="userName"
+          autoComplete="username"
+          autoCapitalize="none"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          required
+        />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="password">Password</Label>
-        <Input id="password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <Input
+          id="password"
+          type="password"
+          autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
       </div>
       <div className="space-y-1.5">
         <Label htmlFor="rePassword">Confirm password</Label>
-        <Input id="rePassword" type="password" autoComplete="new-password" value={rePassword} onChange={(e) => setRePassword(e.target.value)} required />
+        <Input
+          id="rePassword"
+          type="password"
+          autoComplete="new-password"
+          value={rePassword}
+          onChange={(e) => setRePassword(e.target.value)}
+          required
+        />
       </div>
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}

@@ -29,7 +29,13 @@ const fetcher = (url: string) =>
  * in `AddRecord.js` / `record/map.js`: search places (Photon via our API),
  * click the map to drop a pin (reverse geocoded), or use the device location.
  */
-export function LocationPicker({ value, onChange }: { value: LocationValue; onChange: (v: LocationValue) => void }) {
+export function LocationPicker({
+  value,
+  onChange,
+}: {
+  value: LocationValue;
+  onChange: (v: LocationValue) => void;
+}) {
   const mapRef = useRef<MapRef>(null);
   const listId = useId();
   const [query, setQuery] = useState("");
@@ -98,7 +104,10 @@ export function LocationPicker({ value, onChange }: { value: LocationValue; onCh
   return (
     <div className="space-y-3">
       <div className="relative">
-        <Search className="text-muted-foreground pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2" aria-hidden="true" />
+        <Search
+          className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-muted-foreground"
+          aria-hidden="true"
+        />
         <Input
           role="combobox"
           aria-expanded={open && results.length > 0}
@@ -132,12 +141,17 @@ export function LocationPicker({ value, onChange }: { value: LocationValue; onCh
             }
           }}
         />
-        {isLoading && <Loader2 className="text-muted-foreground absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin" aria-hidden="true" />}
+        {isLoading && (
+          <Loader2
+            className="absolute top-1/2 right-3 size-4 -translate-y-1/2 animate-spin text-muted-foreground"
+            aria-hidden="true"
+          />
+        )}
         {open && debounced.length >= 2 && (
           <ul
             id={listId}
             role="listbox"
-            className="bg-popover absolute inset-x-0 top-full z-20 mt-1 max-h-72 overflow-y-auto rounded-xl border p-1 shadow-(--shadow-lifted)"
+            className="absolute inset-x-0 top-full z-20 mt-1 max-h-72 overflow-y-auto rounded-xl border bg-popover p-1 shadow-(--shadow-lifted)"
           >
             {results.map((r, i) => (
               <li
@@ -150,20 +164,30 @@ export function LocationPicker({ value, onChange }: { value: LocationValue; onCh
                   choose(r);
                 }}
                 onMouseEnter={() => setHighlight(i)}
-                className={cn("flex cursor-pointer items-start gap-2 rounded-lg px-2.5 py-2 text-sm", i === highlight && "bg-accent")}
+                className={cn(
+                  "flex cursor-pointer items-start gap-2 rounded-lg px-2.5 py-2 text-sm",
+                  i === highlight && "bg-accent",
+                )}
               >
-                <MapPin className="text-muted-foreground mt-0.5 size-4 shrink-0" aria-hidden="true" />
+                <MapPin
+                  className="mt-0.5 size-4 shrink-0 text-muted-foreground"
+                  aria-hidden="true"
+                />
                 <span className="min-w-0">
                   <span className="block truncate font-medium">{r.name}</span>
-                  <span className="text-muted-foreground block truncate text-xs">{r.label}</span>
+                  <span className="block truncate text-xs text-muted-foreground">{r.label}</span>
                 </span>
               </li>
             ))}
             {!isLoading && results.length === 0 && (
-              <li className="text-muted-foreground px-2.5 py-2 text-sm">{error ? String(error.message) : "No places found."}</li>
+              <li className="px-2.5 py-2 text-sm text-muted-foreground">
+                {error ? String(error.message) : "No places found."}
+              </li>
             )}
             {data?.fallback && (
-              <li className="text-muted-foreground border-t px-2.5 pt-2 pb-1 text-[11px]">Offline results from the bundled Melbourne gazetteer.</li>
+              <li className="border-t px-2.5 pt-2 pb-1 text-[11px] text-muted-foreground">
+                Offline results from the bundled Melbourne gazetteer.
+              </li>
             )}
           </ul>
         )}
@@ -189,20 +213,43 @@ export function LocationPicker({ value, onChange }: { value: LocationValue; onCh
             draggable
             onDragEnd={(e) => dropPin(e.lngLat.lat, e.lngLat.lng)}
           >
-            <MapPin className="fill-primary text-primary-foreground size-9 drop-shadow-md" strokeWidth={1.5} aria-hidden="true" />
+            <MapPin
+              className="size-9 fill-primary text-primary-foreground drop-shadow-md"
+              strokeWidth={1.5}
+              aria-hidden="true"
+            />
           </Marker>
         )}
       </BaseMap>
 
       <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
         <span className="text-muted-foreground" aria-live="polite">
-          {resolving ? "Looking up the address…" : center ? `Pinned at ${formatCoords(center, 4)}` : "No pin yet - search, tap the map, or use your location."}
+          {resolving
+            ? "Looking up the address…"
+            : center
+              ? `Pinned at ${formatCoords(center, 4)}`
+              : "No pin yet - search, tap the map, or use your location."}
         </span>
-        <Button type="button" variant="outline" size="sm" onClick={useMyLocation} disabled={locating}>
-          {locating ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Crosshair aria-hidden="true" />} Use my location
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={useMyLocation}
+          disabled={locating}
+        >
+          {locating ? (
+            <Loader2 className="animate-spin" aria-hidden="true" />
+          ) : (
+            <Crosshair aria-hidden="true" />
+          )}{" "}
+          Use my location
         </Button>
       </div>
-      {geoError && <p className="text-destructive text-xs" role="alert">{geoError}</p>}
+      {geoError && (
+        <p className="text-xs text-destructive" role="alert">
+          {geoError}
+        </p>
+      )}
     </div>
   );
 }

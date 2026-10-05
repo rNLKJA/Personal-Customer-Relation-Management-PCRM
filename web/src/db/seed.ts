@@ -14,11 +14,15 @@ async function main() {
   const { db, client } = createDb(target.url, target.authToken);
   const [{ n }] = await db.select({ n: sql<number>`count(*)` }).from(users);
   if (Number(n) > 0 && !process.argv.includes("--force")) {
-    console.log(`[db:seed] ${target.label} already has ${n} users - skipping (use --force to add anyway)`);
+    console.log(
+      `[db:seed] ${target.label} already has ${n} users - skipping (use --force to add anyway)`,
+    );
     client.close();
     return;
   }
-  const anchor = process.env.SEED_ANCHOR ? new Date(`${process.env.SEED_ANCHOR}T00:00:00Z`) : startOfUtcDay();
+  const anchor = process.env.SEED_ANCHOR
+    ? new Date(`${process.env.SEED_ANCHOR}T00:00:00Z`)
+    : startOfUtcDay();
   await seedDatabase(db, anchor);
   client.close();
   console.log(`[db:seed] seeded ${target.label} (anchor ${anchor.toISOString().slice(0, 10)})`);

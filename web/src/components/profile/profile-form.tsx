@@ -12,10 +12,21 @@ import { PortraitPicker } from "@/components/common/portrait-picker";
 import { setPortraitAction, updateProfileAction } from "@/server/actions/profile";
 import type { ProfileValues } from "@/lib/schemas";
 
-type Values = Required<Omit<ProfileValues, "phones" | "emails">> & { phones: string[]; emails: string[] };
+type Values = Required<Omit<ProfileValues, "phones" | "emails">> & {
+  phones: string[];
+  emails: string[];
+};
 
 /** Port of `person/Person1.js` (`/profile/editProfile`, add/del phone & e-mail, photo upload). */
-export function ProfileForm({ initial, userName, portrait }: { initial: Values; userName: string; portrait: string | null }) {
+export function ProfileForm({
+  initial,
+  userName,
+  portrait,
+}: {
+  initial: Values;
+  userName: string;
+  portrait: string | null;
+}) {
   const router = useRouter();
   const [values, setValues] = useState(initial);
   const [photo, setPhoto] = useState(portrait);
@@ -62,30 +73,68 @@ export function ProfileForm({ initial, userName, portrait }: { initial: Values; 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="p-first">First name</Label>
-          <Input id="p-first" value={values.firstName} onChange={(e) => set("firstName", e.target.value)} autoComplete="given-name" />
+          <Input
+            id="p-first"
+            value={values.firstName}
+            onChange={(e) => set("firstName", e.target.value)}
+            autoComplete="given-name"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="p-last">Last name</Label>
-          <Input id="p-last" value={values.lastName} onChange={(e) => set("lastName", e.target.value)} autoComplete="family-name" />
+          <Input
+            id="p-last"
+            value={values.lastName}
+            onChange={(e) => set("lastName", e.target.value)}
+            autoComplete="family-name"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="p-occupation">Occupation</Label>
-          <Input id="p-occupation" value={values.occupation} onChange={(e) => set("occupation", e.target.value)} autoComplete="organization-title" />
+          <Input
+            id="p-occupation"
+            value={values.occupation}
+            onChange={(e) => set("occupation", e.target.value)}
+            autoComplete="organization-title"
+          />
         </div>
         <div className="space-y-1.5">
           <Label htmlFor="p-status">Status</Label>
-          <Input id="p-status" value={values.statusMessage} onChange={(e) => set("statusMessage", e.target.value)} placeholder="e.g. Open to coffee chats" />
+          <Input
+            id="p-status"
+            value={values.statusMessage}
+            onChange={(e) => set("statusMessage", e.target.value)}
+            placeholder="e.g. Open to coffee chats"
+          />
         </div>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
-        <ListEditor id="p-phone" label="Phone" type="tel" inputMode="tel" autoComplete="tel" values={values.phones} onChange={(v) => set("phones", v)} addLabel="Add phone" />
-        <ListEditor id="p-email" label="E-mail" type="email" inputMode="email" autoComplete="email" values={values.emails} onChange={(v) => set("emails", v)} addLabel="Add e-mail" />
+        <ListEditor
+          id="p-phone"
+          label="Phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          values={values.phones}
+          onChange={(v) => set("phones", v)}
+          addLabel="Add phone"
+        />
+        <ListEditor
+          id="p-email"
+          label="E-mail"
+          type="email"
+          inputMode="email"
+          autoComplete="email"
+          values={values.emails}
+          onChange={(v) => set("emails", v)}
+          addLabel="Add e-mail"
+        />
       </div>
-      <p className="text-muted-foreground text-xs">
+      <p className="text-xs text-muted-foreground">
         People who add you by user name or QR code get these details, and can sync them later.
       </p>
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}

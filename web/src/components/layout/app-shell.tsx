@@ -46,16 +46,16 @@ export function AppShell({
   const displayName = [user.firstName, user.lastName].filter(Boolean).join(" ") || user.userName;
 
   return (
-    <div className="bg-background min-h-dvh lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
+    <div className="min-h-dvh bg-background lg:grid lg:grid-cols-[248px_minmax(0,1fr)]">
       <a
         href="#main"
-        className="bg-primary text-primary-foreground sr-only z-50 rounded-md px-3 py-2 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+        className="sr-only z-50 rounded-md bg-primary px-3 py-2 text-primary-foreground focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
       >
         Skip to content
       </a>
 
       {/* Desktop sidebar */}
-      <aside className="bg-sidebar border-sidebar-border sticky top-0 hidden h-dvh flex-col border-r lg:flex">
+      <aside className="sticky top-0 hidden h-dvh flex-col border-r border-sidebar-border bg-sidebar lg:flex">
         <div className="flex h-16 items-center px-5">
           <Link href="/home" className="rounded-md" aria-label="4399 CRM home">
             <Logo />
@@ -72,9 +72,9 @@ export function AppShell({
             />
           ))}
         </nav>
-        <div className="border-sidebar-border space-y-3 border-t p-3">
+        <div className="space-y-3 border-t border-sidebar-border p-3">
           <div className="flex items-center justify-between px-1">
-            <span className="text-muted-foreground text-xs">Theme</span>
+            <span className="text-xs text-muted-foreground">Theme</span>
             <ThemeToggle />
           </div>
           <UserMenu user={user} displayName={displayName} />
@@ -83,7 +83,7 @@ export function AppShell({
 
       <div className="flex min-w-0 flex-col">
         {/* Mobile top bar */}
-        <header className="bg-background/85 sticky top-0 z-30 flex h-14 items-center justify-between border-b px-4 backdrop-blur-xl lg:hidden">
+        <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b bg-background/85 px-4 backdrop-blur-xl lg:hidden">
           <Link href="/home" aria-label="4399 CRM home" className="rounded-md">
             <Logo />
           </Link>
@@ -92,11 +92,11 @@ export function AppShell({
             <Link
               href="/inbox"
               aria-label={unreadLive ? `Demo inbox, ${unreadLive} unread` : "Demo inbox"}
-              className="text-muted-foreground hover:bg-muted hover:text-foreground relative inline-flex size-9 items-center justify-center rounded-lg"
+              className="relative inline-flex size-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
             >
               <Inbox className="size-4" />
               {unreadLive > 0 && (
-                <span className="bg-primary text-primary-foreground absolute top-1 right-1 min-w-4 rounded-full px-1 text-center text-[10px] leading-4 font-semibold">
+                <span className="absolute top-1 right-1 min-w-4 rounded-full bg-primary px-1 text-center text-[10px] leading-4 font-semibold text-primary-foreground">
                   {unreadLive}
                 </span>
               )}
@@ -107,7 +107,10 @@ export function AppShell({
 
         {notice}
 
-        <main id="main" className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-28 sm:px-6 lg:px-10 lg:pt-10 lg:pb-16">
+        <main
+          id="main"
+          className="mx-auto w-full max-w-6xl flex-1 px-4 pt-5 pb-28 sm:px-6 lg:px-10 lg:pt-10 lg:pb-16"
+        >
           {children}
         </main>
       </div>
@@ -115,7 +118,7 @@ export function AppShell({
       {/* Mobile bottom tabs */}
       <nav
         aria-label="Main"
-        className="bg-background/90 pb-safe fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t px-1 pt-1.5 backdrop-blur-xl lg:hidden"
+        className="pb-safe fixed inset-x-0 bottom-0 z-30 grid grid-cols-5 border-t bg-background/90 px-1 pt-1.5 backdrop-blur-xl lg:hidden"
       >
         {MOBILE_TABS.map((item) => {
           const active = isActive(pathname, item);
@@ -159,11 +162,14 @@ function SidebarLink({ item, active, badge }: { item: NavItem; active: boolean; 
       )}
     >
       <item.icon
-        className={cn("size-4", active ? "text-primary" : "text-muted-foreground group-hover:text-foreground")}
+        className={cn(
+          "size-4",
+          active ? "text-primary" : "text-muted-foreground group-hover:text-foreground",
+        )}
       />
       <span className="flex-1">{item.label}</span>
       {badge > 0 && (
-        <span className="bg-primary text-primary-foreground rounded-full px-1.5 text-[11px] leading-5 font-semibold tabular">
+        <span className="tabular rounded-full bg-primary px-1.5 text-[11px] leading-5 font-semibold text-primary-foreground">
           {badge}
         </span>
       )}
@@ -182,7 +188,9 @@ function QuickAdd({ className, compact }: { className?: string; compact?: boolea
         ) : (
           <Button className={cn("justify-start", className)}>
             <Plus /> New
-            <span className="text-primary-foreground/70 ml-auto text-xs font-normal">contact · meeting</span>
+            <span className="ml-auto text-xs font-normal text-primary-foreground/70">
+              contact · meeting
+            </span>
           </Button>
         )}
       </DropdownMenuTrigger>
@@ -213,7 +221,7 @@ function UserMenu({ user, displayName }: { user: ShellUser; displayName: string 
       <DropdownMenuTrigger asChild>
         <button
           type="button"
-          className="hover:bg-sidebar-accent flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors"
+          className="flex w-full items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-sidebar-accent"
         >
           <PersonAvatar
             firstName={user.firstName ?? user.userName}
@@ -224,12 +232,12 @@ function UserMenu({ user, displayName }: { user: ShellUser; displayName: string 
           />
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-medium">{displayName}</span>
-            <span className="text-muted-foreground block truncate text-xs">@{user.userName}</span>
+            <span className="block truncate text-xs text-muted-foreground">@{user.userName}</span>
           </span>
         </button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="start" side="top" className="w-56">
-        <DropdownMenuLabel className="text-muted-foreground text-xs font-normal">
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
           Signed in as @{user.userName}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />

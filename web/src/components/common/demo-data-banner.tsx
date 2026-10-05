@@ -10,7 +10,7 @@ export function DemoDataBanner({ className }: { className?: string }) {
         className,
       )}
     >
-      <ShieldAlert className="text-warning mt-0.5 size-4 shrink-0" aria-hidden="true" />
+      <ShieldAlert className="mt-0.5 size-4 shrink-0 text-warning" aria-hidden="true" />
       <p>
         <strong className="font-semibold">Demo site - don&apos;t enter real personal data.</strong>{" "}
         <span className="text-muted-foreground">

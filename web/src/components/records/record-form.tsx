@@ -11,7 +11,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { CustomFieldsEditor } from "@/components/common/custom-fields-editor";
@@ -20,15 +26,18 @@ import { saveRecordAction } from "@/server/actions/records";
 import { dataValidator, type CustomField } from "@/lib/legacy/validation";
 import { cn } from "@/lib/utils";
 
-const LocationPicker = dynamic(() => import("@/components/maps/location-picker").then((m) => m.LocationPicker), {
-  ssr: false,
-  loading: () => (
-    <div className="space-y-3">
-      <Skeleton className="h-10 rounded-lg" />
-      <Skeleton className="h-64 rounded-2xl sm:h-80" />
-    </div>
-  ),
-});
+const LocationPicker = dynamic(
+  () => import("@/components/maps/location-picker").then((m) => m.LocationPicker),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="space-y-3">
+        <Skeleton className="h-10 rounded-lg" />
+        <Skeleton className="h-64 rounded-2xl sm:h-80" />
+      </div>
+    ),
+  },
+);
 
 export interface ContactOption {
   id: string;
@@ -64,12 +73,15 @@ export function RecordForm({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pending, start] = useTransition();
   const selected = contacts.find((c) => c.id === values.contactId);
-  const set = <K extends keyof RecordFormValues>(key: K, v: RecordFormValues[K]) => setValues((s) => ({ ...s, [key]: v }));
+  const set = <K extends keyof RecordFormValues>(key: K, v: RecordFormValues[K]) =>
+    setValues((s) => ({ ...s, [key]: v }));
 
   if (contacts.length === 0) {
     return (
       <div className="text-center">
-        <p className="text-muted-foreground text-sm">You need at least one contact before logging a meeting.</p>
+        <p className="text-sm text-muted-foreground">
+          You need at least one contact before logging a meeting.
+        </p>
         <Button asChild className="mt-4">
           <Link href="/contacts/new">Add a contact</Link>
         </Button>
@@ -109,11 +121,17 @@ export function RecordForm({
                 role="combobox"
                 aria-expanded={pickerOpen}
                 aria-labelledby="who-label"
-                className="bg-card h-10 w-full justify-between px-3 font-normal"
+                className="h-10 w-full justify-between bg-card px-3 font-normal"
               >
                 {selected ? (
                   <span className="flex min-w-0 items-center gap-2">
-                    <PersonAvatar firstName={selected.firstName} lastName={selected.lastName} portrait={selected.portrait} seed={selected.id} size="xs" />
+                    <PersonAvatar
+                      firstName={selected.firstName}
+                      lastName={selected.lastName}
+                      portrait={selected.portrait}
+                      seed={selected.id}
+                      size="xs"
+                    />
                     <span className="truncate">
                       {selected.firstName} {selected.lastName}
                     </span>
@@ -138,12 +156,24 @@ export function RecordForm({
                         setPickerOpen(false);
                       }}
                     >
-                      <PersonAvatar firstName={c.firstName} lastName={c.lastName} portrait={c.portrait} seed={c.id} size="xs" />
+                      <PersonAvatar
+                        firstName={c.firstName}
+                        lastName={c.lastName}
+                        portrait={c.portrait}
+                        seed={c.id}
+                        size="xs"
+                      />
                       <span className="min-w-0 flex-1 truncate">
                         {c.firstName} {c.lastName}
-                        <span className="text-muted-foreground ml-1.5 text-xs">{c.occupation}</span>
+                        <span className="ml-1.5 text-xs text-muted-foreground">{c.occupation}</span>
                       </span>
-                      <Check className={cn("size-4", c.id === values.contactId ? "opacity-100" : "opacity-0")} aria-hidden="true" />
+                      <Check
+                        className={cn(
+                          "size-4",
+                          c.id === values.contactId ? "opacity-100" : "opacity-0",
+                        )}
+                        aria-hidden="true"
+                      />
                     </CommandItem>
                   ))}
                 </CommandList>
@@ -160,7 +190,7 @@ export function RecordForm({
             onChange={(e) => set("dateTime", e.target.value)}
             required
           />
-          <p className="text-muted-foreground text-xs">Melbourne time</p>
+          <p className="text-xs text-muted-foreground">Melbourne time</p>
         </div>
       </div>
 
@@ -183,16 +213,22 @@ export function RecordForm({
 
       <div className="space-y-1.5">
         <Label htmlFor="notes">Notes</Label>
-        <Textarea id="notes" rows={4} value={values.notes} onChange={(e) => set("notes", e.target.value)} placeholder="What did you talk about? Any follow-ups?" />
+        <Textarea
+          id="notes"
+          rows={4}
+          value={values.notes}
+          onChange={(e) => set("notes", e.target.value)}
+          placeholder="What did you talk about? Any follow-ups?"
+        />
       </div>
       <CustomFieldsEditor fields={values.customFields} onChange={(f) => set("customFields", f)} />
 
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}
-      <div className="bg-background/90 sticky bottom-20 flex justify-end gap-2 border-t py-3 backdrop-blur lg:bottom-0">
+      <div className="sticky bottom-20 flex justify-end gap-2 border-t bg-background/90 py-3 backdrop-blur lg:bottom-0">
         <Button type="button" variant="ghost" onClick={() => router.back()}>
           Cancel
         </Button>

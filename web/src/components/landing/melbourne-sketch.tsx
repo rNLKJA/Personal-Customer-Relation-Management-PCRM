@@ -10,7 +10,10 @@ import { PLACES } from "@/lib/places";
 
 const BBOX = { minLng: 144.62, maxLng: 145.2, minLat: -38.02, maxLat: -37.68 };
 const W = 560;
-const H = Math.round((W * (BBOX.maxLat - BBOX.minLat)) / ((BBOX.maxLng - BBOX.minLng) * Math.cos((37.8 * Math.PI) / 180)));
+const H = Math.round(
+  (W * (BBOX.maxLat - BBOX.minLat)) /
+    ((BBOX.maxLng - BBOX.minLng) * Math.cos((37.8 * Math.PI) / 180)),
+);
 
 type Ring = [number, number][];
 
@@ -24,7 +27,10 @@ function landPath(): string {
   try {
     const file = path.join(process.cwd(), "public", "data", "basemap.geojson");
     const geo = JSON.parse(fs.readFileSync(file, "utf8")) as {
-      features: { properties: { kind: string }; geometry: { type: string; coordinates: unknown } }[];
+      features: {
+        properties: { kind: string };
+        geometry: { type: string; coordinates: unknown };
+      }[];
     };
     const detail = geo.features.find((f) => f.properties.kind === "detail");
     if (!detail) return "";
@@ -52,7 +58,12 @@ export function MelbourneSketch({ className }: { className?: string }) {
       p.lat < BBOX.maxLat,
   );
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} className={className} role="img" aria-label="Sketch of Greater Melbourne with meeting places marked">
+    <svg
+      viewBox={`0 0 ${W} ${H}`}
+      className={className}
+      role="img"
+      aria-label="Sketch of Greater Melbourne with meeting places marked"
+    >
       <defs>
         <pattern id="sketch-grid" width="16" height="16" patternUnits="userSpaceOnUse">
           <path d="M16 0H0V16" fill="none" stroke="currentColor" strokeOpacity="0.06" />
@@ -71,15 +82,35 @@ export function MelbourneSketch({ className }: { className?: string }) {
         />
       )}
       <rect width={W} height={H} fill="url(#sketch-grid)" />
-      <text x={Math.round(W * 0.38)} y={H - 22} textAnchor="middle" fontSize="11" fill="currentColor" fillOpacity="0.4" fontFamily="var(--font-mono)">
+      <text
+        x={Math.round(W * 0.38)}
+        y={H - 22}
+        textAnchor="middle"
+        fontSize="11"
+        fill="currentColor"
+        fillOpacity="0.4"
+        fontFamily="var(--font-mono)"
+      >
         Port Phillip Bay
       </text>
       {dots.map((p, i) => {
         const [x, y] = project([p.lng, p.lat]);
         return (
           <g key={p.name}>
-            <circle cx={x} cy={y} r={i % 5 === 0 ? 9 : 6} fill="var(--primary)" fillOpacity="0.12" />
-            <circle cx={x} cy={y} r={i % 5 === 0 ? 3.2 : 2.4} fill="var(--primary)" fillOpacity={i % 3 === 0 ? 0.95 : 0.6} />
+            <circle
+              cx={x}
+              cy={y}
+              r={i % 5 === 0 ? 9 : 6}
+              fill="var(--primary)"
+              fillOpacity="0.12"
+            />
+            <circle
+              cx={x}
+              cy={y}
+              r={i % 5 === 0 ? 3.2 : 2.4}
+              fill="var(--primary)"
+              fillOpacity={i % 3 === 0 ? 0.95 : 0.6}
+            />
           </g>
         );
       })}

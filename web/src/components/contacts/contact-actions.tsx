@@ -16,10 +16,22 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { deleteContactAction, inviteContactAction, syncContactAction } from "@/server/actions/contacts";
+import {
+  deleteContactAction,
+  inviteContactAction,
+  syncContactAction,
+} from "@/server/actions/contacts";
 import { syncFieldLabels } from "@/lib/labels";
 
-export function DeleteContactButton({ id, name, meetings }: { id: string; name: string; meetings: number }) {
+export function DeleteContactButton({
+  id,
+  name,
+  meetings,
+}: {
+  id: string;
+  name: string;
+  meetings: number;
+}) {
   const router = useRouter();
   const [pending, start] = useTransition();
   return (
@@ -34,8 +46,10 @@ export function DeleteContactButton({ id, name, meetings }: { id: string; name: 
           <AlertDialogTitle>Delete {name}?</AlertDialogTitle>
           <AlertDialogDescription>
             This removes the contact
-            {meetings > 0 ? ` and the ${meetings} meeting${meetings === 1 ? "" : "s"} you logged with them` : ""}. It
-            can&apos;t be undone.
+            {meetings > 0
+              ? ` and the ${meetings} meeting${meetings === 1 ? "" : "s"} you logged with them`
+              : ""}
+            . It can&apos;t be undone.
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
@@ -80,15 +94,18 @@ export function SyncButton({ id }: { id: string }) {
             return;
           }
           toast.success(
-            res.changed.length
-              ? `Updated ${syncFieldLabels(res.changed)}`
-              : "Already up to date",
+            res.changed.length ? `Updated ${syncFieldLabels(res.changed)}` : "Already up to date",
           );
           router.refresh();
         })
       }
     >
-      {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <RefreshCw aria-hidden="true" />} Sync now
+      {pending ? (
+        <Loader2 className="animate-spin" aria-hidden="true" />
+      ) : (
+        <RefreshCw aria-hidden="true" />
+      )}{" "}
+      Sync now
     </Button>
   );
 }
@@ -109,13 +126,19 @@ export function InviteButton({ id }: { id: string }) {
             return;
           }
           toast.success(`Invitation sent to ${res.email}`, {
-            description: "In this demo it lands in your demo inbox - open it to follow the sign-up link.",
+            description:
+              "In this demo it lands in your demo inbox - open it to follow the sign-up link.",
             action: { label: "Open inbox", onClick: () => router.push("/inbox") },
           });
         })
       }
     >
-      {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : <Send aria-hidden="true" />} Send invite
+      {pending ? (
+        <Loader2 className="animate-spin" aria-hidden="true" />
+      ) : (
+        <Send aria-hidden="true" />
+      )}{" "}
+      Send invite
     </Button>
   );
 }

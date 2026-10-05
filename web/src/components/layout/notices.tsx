@@ -2,7 +2,13 @@ import { Clock, HardDrive } from "lucide-react";
 import { formatRelative } from "@/lib/time";
 
 /** Small banners shown above page content in special demo modes. */
-export function DemoNotices({ ephemeral, guestExpiresAt }: { ephemeral: boolean; guestExpiresAt: Date | null }) {
+export function DemoNotices({
+  ephemeral,
+  guestExpiresAt,
+}: {
+  ephemeral: boolean;
+  guestExpiresAt: Date | null;
+}) {
   if (!ephemeral && !guestExpiresAt) return null;
   return (
     <div className="border-b bg-accent/50 text-accent-foreground">
@@ -10,7 +16,8 @@ export function DemoNotices({ ephemeral, guestExpiresAt }: { ephemeral: boolean;
         {guestExpiresAt && (
           <span className="inline-flex items-center gap-1.5">
             <Clock className="size-3.5" aria-hidden="true" />
-            Guest sandbox - your private copy of the demo data is deleted {formatRelative(guestExpiresAt)}.
+            Guest sandbox - your private copy of the demo data is deleted{" "}
+            {formatRelative(guestExpiresAt)}.
           </span>
         )}
         {ephemeral && (

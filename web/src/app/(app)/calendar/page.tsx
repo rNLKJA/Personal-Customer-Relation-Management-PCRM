@@ -17,13 +17,25 @@ export const metadata: Metadata = { title: "Calendar" };
 
 /** "5:45 pm" -> "5:45p", "10:00 am" -> "10a" (fits the narrow day cells). */
 function compactTime(d: Date): string {
-  return formatTime(d).replace(":00", "").replace(/\s?([ap])m$/i, "$1");
+  return formatTime(d)
+    .replace(":00", "")
+    .replace(/\s?([ap])m$/i, "$1");
 }
 
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 export default async function CalendarPage({ searchParams }: PageProps<"/calendar">) {
@@ -72,13 +84,16 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="bg-card rounded-2xl border p-3 shadow-(--shadow-soft) sm:p-5" aria-labelledby="month-title">
+        <section
+          className="rounded-2xl border bg-card p-3 shadow-(--shadow-soft) sm:p-5"
+          aria-labelledby="month-title"
+        >
           <div className="mb-4 flex items-center justify-between gap-2 px-1">
             <div>
               <h2 id="month-title" className="text-lg font-semibold tracking-tight">
                 {MONTH_NAMES[month.month - 1]} {month.year}
               </h2>
-              <p className="text-muted-foreground text-xs">
+              <p className="text-xs text-muted-foreground">
                 {monthTotal} {monthTotal === 1 ? "meeting" : "meetings"}
               </p>
             </div>
@@ -89,7 +104,14 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                 </Link>
               </Button>
               <Button asChild variant="outline" size="sm">
-                <Link href={href(monthKey({ year: todayParts.year, month: todayParts.month }), todayKey)}>Today</Link>
+                <Link
+                  href={href(
+                    monthKey({ year: todayParts.year, month: todayParts.month }),
+                    todayKey,
+                  )}
+                >
+                  Today
+                </Link>
               </Button>
               <Button asChild variant="ghost" size="icon" aria-label="Next month">
                 <Link href={href(monthKey(shiftMonth(month, 1)))}>
@@ -102,7 +124,10 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
           <div className="grid grid-cols-7 gap-px overflow-hidden rounded-xl border bg-border">
             <div className="contents" aria-hidden="true">
               {WEEKDAYS.map((d) => (
-                <div key={d} className="bg-surface text-muted-foreground py-2 text-center text-[11px] font-semibold tracking-wide uppercase">
+                <div
+                  key={d}
+                  className="bg-surface py-2 text-center text-[11px] font-semibold tracking-wide text-muted-foreground uppercase"
+                >
                   {d}
                 </div>
               ))}
@@ -121,14 +146,15 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                       href={href(monthKey(month), cell.key)}
                       scroll={false}
                       className={cn(
-                        "bg-card hover:bg-muted/70 relative flex min-h-16 flex-col gap-1 p-1.5 transition-colors sm:min-h-24 sm:p-2",
+                        "relative flex min-h-16 flex-col gap-1 bg-card p-1.5 transition-colors hover:bg-muted/70 sm:min-h-24 sm:p-2",
                         !cell.inMonth && "bg-surface text-muted-foreground/60",
-                        isSelected && "bg-accent/70 hover:bg-accent ring-primary/40 z-[1] ring-2 ring-inset",
+                        isSelected &&
+                          "z-[1] bg-accent/70 ring-2 ring-primary/40 ring-inset hover:bg-accent",
                       )}
                     >
                       <span
                         className={cn(
-                          "flex size-6 items-center justify-center rounded-full text-xs font-medium tabular",
+                          "tabular flex size-6 items-center justify-center rounded-full text-xs font-medium",
                           isToday && "bg-primary text-primary-foreground",
                         )}
                       >
@@ -138,7 +164,13 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                         <>
                           <span className="flex gap-0.5 sm:hidden" aria-hidden="true">
                             {items.slice(0, 3).map((r) => (
-                              <span key={r.id} className={cn("size-1.5 rounded-full", r.dateTime > now ? "bg-primary" : "bg-muted-foreground/50")} />
+                              <span
+                                key={r.id}
+                                className={cn(
+                                  "size-1.5 rounded-full",
+                                  r.dateTime > now ? "bg-primary" : "bg-muted-foreground/50",
+                                )}
+                              />
                             ))}
                           </span>
                           <span className="hidden flex-col gap-0.5 sm:flex" aria-hidden="true">
@@ -147,13 +179,22 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                                 key={r.id}
                                 className={cn(
                                   "truncate rounded-md px-1 py-0.5 text-[11px] leading-tight",
-                                  r.dateTime > now ? "bg-primary/12 text-accent-foreground" : "bg-muted text-muted-foreground",
+                                  r.dateTime > now
+                                    ? "bg-primary/12 text-accent-foreground"
+                                    : "bg-muted text-muted-foreground",
                                 )}
                               >
-                                <span className="tabular font-medium">{compactTime(r.dateTime)}</span> {r.meetingPerson.firstName}
+                                <span className="tabular font-medium">
+                                  {compactTime(r.dateTime)}
+                                </span>{" "}
+                                {r.meetingPerson.firstName}
                               </span>
                             ))}
-                            {items.length > 2 && <span className="text-muted-foreground px-1.5 text-[11px]">+{items.length - 2} more</span>}
+                            {items.length > 2 && (
+                              <span className="px-1.5 text-[11px] text-muted-foreground">
+                                +{items.length - 2} more
+                              </span>
+                            )}
                           </span>
                         </>
                       )}
@@ -165,7 +206,11 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
           </div>
         </section>
 
-        <section className="bg-card h-fit rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="day-title" aria-live="polite">
+        <section
+          className="h-fit rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+          aria-labelledby="day-title"
+          aria-live="polite"
+        >
           <h2 id="day-title" className="text-sm font-semibold tracking-tight">
             {formatDate(selectedDate)}
           </h2>
@@ -180,7 +225,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                     portrait={r.meetingPerson.portrait}
                     seed={r.meetingPerson.id}
                     size="sm"
-                    className="ring-card ring-2"
+                    className="ring-2 ring-card"
                   />
                 ))}
               </div>
@@ -192,7 +237,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
             </>
           ) : (
             <div className="mt-3">
-              <p className="text-muted-foreground text-sm">No meetings on this day.</p>
+              <p className="text-sm text-muted-foreground">No meetings on this day.</p>
               <Button asChild size="sm" variant="outline" className="mt-3">
                 <Link href={`/records/new?date=${selectedKey}`}>
                   <CalendarPlus /> Plan one

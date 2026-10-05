@@ -12,7 +12,11 @@ export default async function MapPage() {
   const records = await listRecords(user.id);
   return (
     <div className="animate-fade-up">
-      <PageHeader title="Map" description="Where you've met people. Tap a pin for the details." className="mb-4" />
+      <PageHeader
+        title="Map"
+        description="Where you've met people. Tap a pin for the details."
+        className="mb-4"
+      />
       <RecordsMapLoader
         now={requestNow()}
         records={records.map((r) => ({

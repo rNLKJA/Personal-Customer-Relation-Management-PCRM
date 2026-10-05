@@ -29,7 +29,7 @@ export function Logo({ className, withText = true }: { className?: string; withT
       <LogoMark className="size-7" />
       {withText && (
         <span className="text-[15px] font-semibold tracking-tight">
-          4399 <span className="text-muted-foreground font-medium">CRM</span>
+          4399 <span className="font-medium text-muted-foreground">CRM</span>
         </span>
       )}
     </span>

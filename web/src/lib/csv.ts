@@ -13,7 +13,10 @@ export function csvCell(value: unknown): string {
   return s;
 }
 
-export function toCsv(columns: readonly string[], rows: readonly Record<string, unknown>[]): string {
+export function toCsv(
+  columns: readonly string[],
+  rows: readonly Record<string, unknown>[],
+): string {
   const lines = [columns.map(csvCell).join(",")];
   for (const row of rows) lines.push(columns.map((c) => csvCell(row[c])).join(","));
   return lines.join("\r\n") + "\r\n";

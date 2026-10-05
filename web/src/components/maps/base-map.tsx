@@ -1,7 +1,15 @@
 "use client";
 
 import "maplibre-gl/dist/maplibre-gl.css";
-import { forwardRef, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  type ReactNode,
+} from "react";
 import Map, {
   AttributionControl,
   NavigationControl,
@@ -41,8 +49,17 @@ function fallbackStyle(dark: boolean): StyleSpecification {
       },
     },
     layers: [
-      { id: "water", type: "background", paint: { "background-color": dark ? "#1b1d2b" : "#dfe6f2" } },
-      { id: "land", type: "fill", source: "base", paint: { "fill-color": dark ? "#262838" : "#f6f6f4" } },
+      {
+        id: "water",
+        type: "background",
+        paint: { "background-color": dark ? "#1b1d2b" : "#dfe6f2" },
+      },
+      {
+        id: "land",
+        type: "fill",
+        source: "base",
+        paint: { "fill-color": dark ? "#262838" : "#f6f6f4" },
+      },
       {
         id: "outline",
         type: "line",
@@ -56,7 +73,10 @@ function fallbackStyle(dark: boolean): StyleSpecification {
 const subscribe = () => () => {};
 
 export interface BaseMapProps {
-  initialViewState: Partial<ViewState> & { bounds?: [[number, number], [number, number]]; fitBoundsOptions?: { padding?: number; maxZoom?: number } };
+  initialViewState: Partial<ViewState> & {
+    bounds?: [[number, number], [number, number]];
+    fitBoundsOptions?: { padding?: number; maxZoom?: number };
+  };
   children?: ReactNode;
   className?: string;
   interactive?: boolean;
@@ -68,11 +88,25 @@ export interface BaseMapProps {
 }
 
 export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
-  { initialViewState, children, className, interactive = true, onClick, onLoad, cursor, showNavigation = true, ariaLabel },
+  {
+    initialViewState,
+    children,
+    className,
+    interactive = true,
+    onClick,
+    onLoad,
+    cursor,
+    showNavigation = true,
+    ariaLabel,
+  },
   ref,
 ) {
   const { resolvedTheme } = useTheme();
-  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
+  const mounted = useSyncExternalStore(
+    subscribe,
+    () => true,
+    () => false,
+  );
   const dark = mounted && resolvedTheme === "dark";
   const [offline, setOffline] = useState(false);
   const loaded = useRef(false);
@@ -91,7 +125,11 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
   }, [offline, mapStyle]);
 
   return (
-    <div className={cn("bg-muted relative isolate overflow-hidden", className)} role="region" aria-label={ariaLabel}>
+    <div
+      className={cn("relative isolate overflow-hidden bg-muted", className)}
+      role="region"
+      aria-label={ariaLabel}
+    >
       <Map
         ref={ref}
         initialViewState={initialViewState}
@@ -119,11 +157,13 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
         }}
       >
         <AttributionControl compact position="bottom-right" />
-        {interactive && showNavigation && <NavigationControl position="top-right" showCompass={false} />}
+        {interactive && showNavigation && (
+          <NavigationControl position="top-right" showCompass={false} />
+        )}
         {children}
       </Map>
       {offline && (
-        <div className="bg-card/90 text-muted-foreground absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs shadow-(--shadow-soft) backdrop-blur">
+        <div className="absolute top-3 left-3 z-10 inline-flex items-center gap-1.5 rounded-full border bg-card/90 px-2.5 py-1 text-xs text-muted-foreground shadow-(--shadow-soft) backdrop-blur">
           <WifiOff className="size-3" aria-hidden="true" /> Offline basemap
         </div>
       )}

@@ -13,7 +13,9 @@ function refreshRecords(id?: string, contactId?: string) {
   if (contactId) revalidatePath(`/contacts/${contactId}`);
 }
 
-export async function saveRecordAction(values: RecordInputValues): Promise<ActionResult<{ id: string }>> {
+export async function saveRecordAction(
+  values: RecordInputValues,
+): Promise<ActionResult<{ id: string }>> {
   const user = await getCurrentUser();
   if (!user) return SESSION_EXPIRED;
   const parsed = recordInputSchema.safeParse(values);

@@ -4,7 +4,12 @@ import { countThisMonth, greeting, reconnectCandidates, splitByNow } from "./ins
 
 describe("Melbourne time helpers", () => {
   it("round-trips datetime-local values across DST", () => {
-    for (const v of ["2026-01-15T09:30", "2026-07-15T18:45", "2026-10-04T03:30", "2026-04-05T02:30"]) {
+    for (const v of [
+      "2026-01-15T09:30",
+      "2026-07-15T18:45",
+      "2026-10-04T03:30",
+      "2026-04-05T02:30",
+    ]) {
       const d = fromZonedInputValue(v)!;
       expect(toZonedInputValue(d)).toBe(v);
     }
@@ -36,16 +41,39 @@ describe("dashboard insights", () => {
     ];
     const { upcoming, past } = splitByNow(records, now);
     expect(upcoming).toHaveLength(1);
-    expect(past.map((r) => r.dateTime.toISOString().slice(0, 10))).toEqual(["2026-10-01", "2026-09-20"]);
+    expect(past.map((r) => r.dateTime.toISOString().slice(0, 10))).toEqual([
+      "2026-10-01",
+      "2026-09-20",
+    ]);
     expect(countThisMonth(records, now)).toBe(2);
   });
   it("suggests contacts to reconnect with", () => {
     const day = 864e5;
     const list = [
-      { id: "a", lastMeeting: new Date(now.getTime() - 100 * day), nextMeeting: null, addDate: new Date(now.getTime() - 300 * day) },
-      { id: "b", lastMeeting: new Date(now.getTime() - 10 * day), nextMeeting: null, addDate: new Date(now.getTime() - 300 * day) },
-      { id: "c", lastMeeting: null, nextMeeting: null, addDate: new Date(now.getTime() - 50 * day) },
-      { id: "d", lastMeeting: new Date(now.getTime() - 200 * day), nextMeeting: new Date(now.getTime() + day), addDate: now },
+      {
+        id: "a",
+        lastMeeting: new Date(now.getTime() - 100 * day),
+        nextMeeting: null,
+        addDate: new Date(now.getTime() - 300 * day),
+      },
+      {
+        id: "b",
+        lastMeeting: new Date(now.getTime() - 10 * day),
+        nextMeeting: null,
+        addDate: new Date(now.getTime() - 300 * day),
+      },
+      {
+        id: "c",
+        lastMeeting: null,
+        nextMeeting: null,
+        addDate: new Date(now.getTime() - 50 * day),
+      },
+      {
+        id: "d",
+        lastMeeting: new Date(now.getTime() - 200 * day),
+        nextMeeting: new Date(now.getTime() + day),
+        addDate: now,
+      },
     ];
     expect(reconnectCandidates(list, now).map((c) => c.id)).toEqual(["a", "c"]);
   });

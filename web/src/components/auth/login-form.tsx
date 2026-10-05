@@ -15,19 +15,31 @@ export function LoginForm({ next }: { next?: string }) {
       {next && <input type="hidden" name="next" value={next} />}
       <div className="space-y-1.5">
         <Label htmlFor="userName">User name</Label>
-        <Input id="userName" name="userName" autoComplete="username" autoCapitalize="none" required />
+        <Input
+          id="userName"
+          name="userName"
+          autoComplete="username"
+          autoCapitalize="none"
+          required
+        />
       </div>
       <div className="space-y-1.5">
         <div className="flex items-center justify-between">
           <Label htmlFor="password">Password</Label>
-          <Link href="/reset-password" className="text-primary text-xs font-medium hover:underline">
+          <Link href="/reset-password" className="text-xs font-medium text-primary hover:underline">
             Forgot password?
           </Link>
         </div>
-        <Input id="password" name="password" type="password" autoComplete="current-password" required />
+        <Input
+          id="password"
+          name="password"
+          type="password"
+          autoComplete="current-password"
+          required
+        />
       </div>
       {state && !state.ok && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4" aria-hidden="true" /> {state.error}
         </p>
       )}

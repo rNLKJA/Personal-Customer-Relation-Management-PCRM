@@ -16,7 +16,17 @@ export async function fileToPortraitDataUrl(file: File, size = 256): Promise<str
   canvas.height = size;
   const ctx = canvas.getContext("2d");
   if (!ctx) throw new Error("Your browser cannot process images.");
-  ctx.drawImage(bitmap, (bitmap.width - side) / 2, (bitmap.height - side) / 2, side, side, 0, 0, size, size);
+  ctx.drawImage(
+    bitmap,
+    (bitmap.width - side) / 2,
+    (bitmap.height - side) / 2,
+    side,
+    side,
+    0,
+    0,
+    size,
+    size,
+  );
   bitmap.close();
   for (const quality of [0.85, 0.7, 0.55]) {
     const url = canvas.toDataURL("image/webp", quality);

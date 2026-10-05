@@ -5,7 +5,11 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const Inner = dynamic(
   () =>
-    Promise.all([import("./base-map"), import("react-map-gl/maplibre"), import("./meeting-pin")]).then(
+    Promise.all([
+      import("./base-map"),
+      import("react-map-gl/maplibre"),
+      import("./meeting-pin"),
+    ]).then(
       ([{ BaseMap }, { Marker }, { MeetingPin }]) =>
         function StaticPinMapInner(props: StaticPinMapProps) {
           return (
@@ -15,7 +19,12 @@ const Inner = dynamic(
               initialViewState={{ latitude: props.lat, longitude: props.lng, zoom: 15 }}
             >
               <Marker latitude={props.lat} longitude={props.lng} anchor="bottom">
-                <MeetingPin firstName={props.firstName} lastName={props.lastName} seed={props.seed} upcoming={props.upcoming} />
+                <MeetingPin
+                  firstName={props.firstName}
+                  lastName={props.lastName}
+                  seed={props.seed}
+                  upcoming={props.upcoming}
+                />
               </Marker>
             </BaseMap>
           );

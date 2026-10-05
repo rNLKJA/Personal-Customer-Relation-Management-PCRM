@@ -18,7 +18,10 @@ const now = () => new Date("2021-10-20T00:00:00.000Z");
 
 describe("normaliseRecordRequest (createRecord / editRecord)", () => {
   it("Test 2: a record without contact_id -> Miss Important Information Input", () => {
-    expect(normaliseRecordRequest({ ...body, contact_id: undefined }, { editing: false })).toEqual({ ok: false, error: MISSING_INFO });
+    expect(normaliseRecordRequest({ ...body, contact_id: undefined }, { editing: false })).toEqual({
+      ok: false,
+      error: MISSING_INFO,
+    });
   });
 
   it("Test 3: without dateTime -> stored with a non-null time", () => {
@@ -32,7 +35,10 @@ describe("normaliseRecordRequest (createRecord / editRecord)", () => {
   });
 
   it("Test 4: with dateTime -> exactly that instant", () => {
-    const r = normaliseRecordRequest({ ...body, dateTime: "2021-10-01T10:28:10.018Z" }, { editing: false });
+    const r = normaliseRecordRequest(
+      { ...body, dateTime: "2021-10-01T10:28:10.018Z" },
+      { editing: false },
+    );
     expect(r.ok && r.value.dateTime.toISOString()).toBe("2021-10-01T10:28:10.018Z");
   });
 
@@ -42,16 +48,28 @@ describe("normaliseRecordRequest (createRecord / editRecord)", () => {
   });
 
   it("Test 8: without location -> Miss Important Information Input", () => {
-    expect(normaliseRecordRequest({ ...body, location: undefined }, { editing: false })).toEqual({ ok: false, error: MISSING_INFO });
+    expect(normaliseRecordRequest({ ...body, location: undefined }, { editing: false })).toEqual({
+      ok: false,
+      error: MISSING_INFO,
+    });
   });
 
   it("editing requires _id", () => {
-    expect(normaliseRecordRequest(body, { editing: true })).toEqual({ ok: false, error: MISSING_INFO });
-    const r = normaliseRecordRequest({ ...body, _id: "61695204687a7c05e401666e" }, { editing: true });
+    expect(normaliseRecordRequest(body, { editing: true })).toEqual({
+      ok: false,
+      error: MISSING_INFO,
+    });
+    const r = normaliseRecordRequest(
+      { ...body, _id: "61695204687a7c05e401666e" },
+      { editing: true },
+    );
     expect(r.ok && r.value.id).toBe("61695204687a7c05e401666e");
   });
 
   it("an empty location failed Mongoose's required validator -> Database query failed", () => {
-    expect(normaliseRecordRequest({ ...body, location: "" }, { editing: false })).toEqual({ ok: false, error: QUERY_FAILED });
+    expect(normaliseRecordRequest({ ...body, location: "" }, { editing: false })).toEqual({
+      ok: false,
+      error: QUERY_FAILED,
+    });
   });
 });

@@ -1,6 +1,11 @@
 import { z } from "zod";
 import { isAllowedPortrait } from "./avatar";
-import { EMAIL_PATTERN, PASSWORD_HINT, PASSWORD_PATTERN, USERNAME_PATTERN } from "./legacy/validation";
+import {
+  EMAIL_PATTERN,
+  PASSWORD_HINT,
+  PASSWORD_PATTERN,
+  USERNAME_PATTERN,
+} from "./legacy/validation";
 
 /** zod schemas shared by forms (client) and Server Actions (server). */
 

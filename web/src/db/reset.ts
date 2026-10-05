@@ -16,12 +16,16 @@ async function main() {
 
   const { db, client } = createDb(`file:${file}`);
   await runMigrations(db);
-  const anchor = process.env.SEED_ANCHOR ? new Date(`${process.env.SEED_ANCHOR}T00:00:00Z`) : startOfUtcDay();
+  const anchor = process.env.SEED_ANCHOR
+    ? new Date(`${process.env.SEED_ANCHOR}T00:00:00Z`)
+    : startOfUtcDay();
   await seedDatabase(db, anchor);
   await client.execute("VACUUM");
   client.close();
   const kb = (fs.statSync(file).size / 1024).toFixed(0);
-  console.log(`[db:${snapshot ? "snapshot" : "reset"}] wrote ${path.relative(process.cwd(), file)} (${kb} KiB, anchor ${anchor.toISOString().slice(0, 10)})`);
+  console.log(
+    `[db:${snapshot ? "snapshot" : "reset"}] wrote ${path.relative(process.cwd(), file)} (${kb} KiB, anchor ${anchor.toISOString().slice(0, 10)})`,
+  );
 }
 
 main().catch((err) => {

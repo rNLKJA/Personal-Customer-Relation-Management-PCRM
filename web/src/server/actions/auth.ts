@@ -28,7 +28,9 @@ import {
 import type { ActionResult } from "./types";
 
 function safeNext(next: unknown): string {
-  return typeof next === "string" && next.startsWith("/") && !next.startsWith("//") ? next : "/home";
+  return typeof next === "string" && next.startsWith("/") && !next.startsWith("//")
+    ? next
+    : "/home";
 }
 
 export async function loginAction(
@@ -37,7 +39,8 @@ export async function loginAction(
 ): Promise<ActionResult> {
   const userName = String(formData.get("userName") ?? "");
   const password = String(formData.get("password") ?? "");
-  if (!userName.trim() || !password) return { ok: false, error: "Enter your user name and password." };
+  if (!userName.trim() || !password)
+    return { ok: false, error: "Enter your user name and password." };
   const user = await authenticate(userName, password);
   if (!user) return { ok: false, error: "Incorrect user name or password." };
   await createSession(user);
@@ -112,7 +115,10 @@ export async function verifyResetCodeAction(userName: string, code: string): Pro
   return { ok: true };
 }
 
-export async function resetPasswordAction(password: string, rePassword: string): Promise<ActionResult> {
+export async function resetPasswordAction(
+  password: string,
+  rePassword: string,
+): Promise<ActionResult> {
   const parsed = passwordSchema.safeParse(password);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   const userId = await consumeResetTicket();
@@ -131,7 +137,9 @@ const inviteSchema = z.object({
   re_password: z.string(),
 });
 
-export async function confirmInviteAction(input: z.input<typeof inviteSchema>): Promise<ActionResult> {
+export async function confirmInviteAction(
+  input: z.input<typeof inviteSchema>,
+): Promise<ActionResult> {
   const parsed = inviteSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   const result = await confirmFastRegister(parsed.data);

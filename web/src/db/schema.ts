@@ -33,8 +33,14 @@ export const users = sqliteTable(
     firstName: text("first_name"),
     lastName: text("last_name"),
     occupation: text("occupation"),
-    emails: text("emails", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
-    phones: text("phones", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+    emails: text("emails", { mode: "json" })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
+    phones: text("phones", { mode: "json" })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
     portrait: text("portrait"),
     /**
      * The original `User.status` string was overloaded: the profile editor wrote
@@ -44,8 +50,12 @@ export const users = sqliteTable(
      */
     statusMessage: text("status_message"),
     /** Account state: fast-register (invited) accounts stay `pending` until confirmed. */
-    status: text("status", { enum: ["active", "pending"] }).notNull().default("active"),
-    role: text("role", { enum: ["user", "admin"] }).notNull().default("user"),
+    status: text("status", { enum: ["active", "pending"] })
+      .notNull()
+      .default("active"),
+    role: text("role", { enum: ["user", "admin"] })
+      .notNull()
+      .default("user"),
     /** Seeded demo/guest accounts: password reset and change are disabled. */
     isDemo: integer("is_demo", { mode: "boolean" }).notNull().default(false),
     /** Guest sandboxes and pending invitees are purged after this instant. */
@@ -66,8 +76,14 @@ export const contacts = sqliteTable(
     firstName: text("first_name").notNull(),
     lastName: text("last_name").notNull(),
     occupation: text("occupation").notNull(),
-    emails: text("emails", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
-    phones: text("phones", { mode: "json" }).$type<string[]>().notNull().default(sql`'[]'`),
+    emails: text("emails", { mode: "json" })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
+    phones: text("phones", { mode: "json" })
+      .$type<string[]>()
+      .notNull()
+      .default(sql`'[]'`),
     note: text("note").notNull().default(""),
     /** Original boolean `status` (true for manual / by-username contacts). */
     status: integer("status", { mode: "boolean" }).notNull().default(true),
@@ -80,7 +96,10 @@ export const contacts = sqliteTable(
       .notNull()
       .default(sql`(unixepoch() * 1000)`),
   },
-  (t) => [index("contacts_owner_idx").on(t.ownerId), index("contacts_linked_idx").on(t.linkedUserId)],
+  (t) => [
+    index("contacts_owner_idx").on(t.ownerId),
+    index("contacts_linked_idx").on(t.linkedUserId),
+  ],
 );
 
 export const contactLinks = sqliteTable(
@@ -202,7 +221,11 @@ export const contactLinksRelations = relations(contactLinks, ({ one }) => ({
 }));
 
 export const recordsRelations = relations(records, ({ one }) => ({
-  owner: one(users, { fields: [records.ownerId], references: [users.id], relationName: "recordOwner" }),
+  owner: one(users, {
+    fields: [records.ownerId],
+    references: [users.id],
+    relationName: "recordOwner",
+  }),
   meetingPerson: one(contacts, { fields: [records.contactId], references: [contacts.id] }),
 }));
 

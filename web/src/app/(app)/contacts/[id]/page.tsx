@@ -16,7 +16,11 @@ import { Button } from "@/components/ui/button";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { EmptyState } from "@/components/common/empty-state";
 import { MeetingRow } from "@/components/records/meeting-row";
-import { DeleteContactButton, InviteButton, SyncButton } from "@/components/contacts/contact-actions";
+import {
+  DeleteContactButton,
+  InviteButton,
+  SyncButton,
+} from "@/components/contacts/contact-actions";
 import { getContact } from "@/server/contacts";
 import { listRecords } from "@/server/records";
 import { requireUser } from "@/server/session";
@@ -42,27 +46,40 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
   const syncKeys = Object.keys(pendingSync);
 
   return (
-    <div className="animate-fade-up mx-auto max-w-4xl">
-      <Link href="/contacts" className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 rounded-md text-sm">
+    <div className="mx-auto max-w-4xl animate-fade-up">
+      <Link
+        href="/contacts"
+        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> Contacts
       </Link>
 
-      <section className="bg-card rounded-3xl border p-5 shadow-(--shadow-soft) sm:p-7">
+      <section className="rounded-3xl border bg-card p-5 shadow-(--shadow-soft) sm:p-7">
         <div className="flex flex-col gap-5 sm:flex-row sm:items-center">
-          <PersonAvatar firstName={c.firstName} lastName={c.lastName} portrait={c.portrait} seed={c.id} size="xl" />
+          <PersonAvatar
+            firstName={c.firstName}
+            lastName={c.lastName}
+            portrait={c.portrait}
+            seed={c.id}
+            size="xl"
+          />
           <div className="min-w-0 flex-1">
             <h1 className="flex items-center gap-2 text-2xl font-semibold tracking-tight">
               {name}
-              {linked && <BadgeCheck className="text-primary size-5" aria-label="Has a 4399 CRM account" />}
+              {linked && (
+                <BadgeCheck className="size-5 text-primary" aria-label="Has a 4399 CRM account" />
+              )}
             </h1>
             <p className="text-muted-foreground">{c.occupation}</p>
-            <p className="text-muted-foreground mt-1 text-xs">
+            <p className="mt-1 text-xs text-muted-foreground">
               {linked ? (
                 <>
-                  On 4399 CRM as <span className="text-primary font-medium">@{linked.userName}</span> ·{" "}
+                  On 4399 CRM as{" "}
+                  <span className="font-medium text-primary">@{linked.userName}</span> ·{" "}
                 </>
               ) : null}
-              Added <time dateTime={c.addDate.toISOString()}>{convert(c.addDate, APP_TIME_ZONE)}</time>
+              Added{" "}
+              <time dateTime={c.addDate.toISOString()}>{convert(c.addDate, APP_TIME_ZONE)}</time>
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -81,23 +98,23 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
         </div>
 
         {linked && syncKeys.length > 0 && (
-          <div className="border-primary/20 bg-accent/50 mt-5 flex flex-wrap items-center gap-3 rounded-2xl border px-4 py-3">
-            <RefreshCw className="text-primary size-4 shrink-0" aria-hidden="true" />
+          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl border border-primary/20 bg-accent/50 px-4 py-3">
+            <RefreshCw className="size-4 shrink-0 text-primary" aria-hidden="true" />
             <p className="min-w-0 flex-1 text-sm">
-              <strong className="font-medium">@{linked.userName}</strong> has newer details on their profile:{" "}
-              {syncFieldLabels(syncKeys)}.
+              <strong className="font-medium">@{linked.userName}</strong> has newer details on their
+              profile: {syncFieldLabels(syncKeys)}.
             </p>
             <SyncButton id={c.id} />
           </div>
         )}
         {!linked && (
-          <div className="bg-muted/60 mt-5 flex flex-wrap items-center gap-3 rounded-2xl px-4 py-3">
-            <UserRoundPlus className="text-muted-foreground size-4 shrink-0" aria-hidden="true" />
-            <p className="text-muted-foreground min-w-0 flex-1 text-sm">
+          <div className="mt-5 flex flex-wrap items-center gap-3 rounded-2xl bg-muted/60 px-4 py-3">
+            <UserRoundPlus className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
+            <p className="min-w-0 flex-1 text-sm text-muted-foreground">
               {c.emails[0] ? (
                 <>
-                  {c.firstName} isn&apos;t on 4399 CRM yet. Invite them - they get a sign-up link valid for 15
-                  minutes, and their account is linked to this contact.
+                  {c.firstName} isn&apos;t on 4399 CRM yet. Invite them - they get a sign-up link
+                  valid for 15 minutes, and their account is linked to this contact.
                 </>
               ) : (
                 <>Add an e-mail address to invite {c.firstName} to 4399 CRM.</>
@@ -109,14 +126,20 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
       </section>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
-        <section className="bg-card space-y-5 rounded-2xl border p-5 shadow-(--shadow-soft)" aria-label="Details">
+        <section
+          className="space-y-5 rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+          aria-label="Details"
+        >
           <Detail label="Phone">
             {c.phones.length ? (
               <ul className="space-y-1">
                 {c.phones.map((p) => (
                   <li key={p}>
-                    <a href={`tel:${p}`} className="hover:text-primary inline-flex items-center gap-2 text-sm tabular">
-                      <Phone className="text-muted-foreground size-3.5" aria-hidden="true" /> {p}
+                    <a
+                      href={`tel:${p}`}
+                      className="tabular inline-flex items-center gap-2 text-sm hover:text-primary"
+                    >
+                      <Phone className="size-3.5 text-muted-foreground" aria-hidden="true" /> {p}
                     </a>
                   </li>
                 ))}
@@ -130,8 +153,15 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
               <ul className="space-y-1">
                 {c.emails.map((m) => (
                   <li key={m}>
-                    <a href={`mailto:${m}`} className="hover:text-primary inline-flex items-center gap-2 text-sm break-all">
-                      <Mail className="text-muted-foreground size-3.5 shrink-0" aria-hidden="true" /> {m}
+                    <a
+                      href={`mailto:${m}`}
+                      className="inline-flex items-center gap-2 text-sm break-all hover:text-primary"
+                    >
+                      <Mail
+                        className="size-3.5 shrink-0 text-muted-foreground"
+                        aria-hidden="true"
+                      />{" "}
+                      {m}
                     </a>
                   </li>
                 ))}
@@ -157,16 +187,25 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
           )}
         </section>
 
-        <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="meetings-heading">
+        <section
+          className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+          aria-labelledby="meetings-heading"
+        >
           <div className="flex items-center justify-between">
             <h2 id="meetings-heading" className="text-sm font-semibold tracking-tight">
-              Meetings <span className="text-muted-foreground font-normal">· {meetings.length}</span>
+              Meetings{" "}
+              <span className="font-normal text-muted-foreground">· {meetings.length}</span>
             </h2>
           </div>
           {meetings.length ? (
             <div className="mt-2">
               {meetings.map((r) => (
-                <MeetingRow key={r.id} record={r} upcoming={r.dateTime.getTime() > now} hidePerson />
+                <MeetingRow
+                  key={r.id}
+                  record={r}
+                  upcoming={r.dateTime.getTime() > now}
+                  hidePerson
+                />
               ))}
             </div>
           ) : (
@@ -191,12 +230,14 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
 function Detail({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div>
-      <h2 className="text-muted-foreground mb-1.5 text-xs font-medium tracking-wide uppercase">{label}</h2>
+      <h2 className="mb-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase">
+        {label}
+      </h2>
       {children}
     </div>
   );
 }
 
 function Empty() {
-  return <p className="text-muted-foreground text-sm">-</p>;
+  return <p className="text-sm text-muted-foreground">-</p>;
 }

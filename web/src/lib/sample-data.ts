@@ -10,33 +10,128 @@ import { pick, randInt, shuffle } from "./random";
  */
 
 export const FICTIONAL_MOBILES = [
-  "0491570006", "0491570156", "0491570157", "0491570158", "0491570159",
-  "0491570110", "0491570313", "0491570737", "0491571266", "0491571491",
-  "0491571804", "0491572549", "0491572665", "0491572983", "0491573770",
-  "0491573087", "0491574118", "0491574632", "0491575254", "0491575789",
-  "0491576398", "0491576801", "0491577426", "0491577644", "0491578957",
-  "0491578148", "0491578888", "0491579212", "0491579760", "0491579455",
+  "0491570006",
+  "0491570156",
+  "0491570157",
+  "0491570158",
+  "0491570159",
+  "0491570110",
+  "0491570313",
+  "0491570737",
+  "0491571266",
+  "0491571491",
+  "0491571804",
+  "0491572549",
+  "0491572665",
+  "0491572983",
+  "0491573770",
+  "0491573087",
+  "0491574118",
+  "0491574632",
+  "0491575254",
+  "0491575789",
+  "0491576398",
+  "0491576801",
+  "0491577426",
+  "0491577644",
+  "0491578957",
+  "0491578148",
+  "0491578888",
+  "0491579212",
+  "0491579760",
+  "0491579455",
 ] as const;
 
 const FIRST_NAMES = [
-  "Amelia", "Oliver", "Charlotte", "Lucas", "Isla", "Mateo", "Harper", "Kai",
-  "Sienna", "Arjun", "Priya", "Tomas", "Leila", "Hamish", "Matilda", "Jun",
-  "Yasmin", "Felix", "Grace", "Rafael", "Chloe", "Darcy", "Aisha", "Hugo",
-  "Imogen", "Ravi", "Sofia", "Callum", "Mei", "Theo",
+  "Amelia",
+  "Oliver",
+  "Charlotte",
+  "Lucas",
+  "Isla",
+  "Mateo",
+  "Harper",
+  "Kai",
+  "Sienna",
+  "Arjun",
+  "Priya",
+  "Tomas",
+  "Leila",
+  "Hamish",
+  "Matilda",
+  "Jun",
+  "Yasmin",
+  "Felix",
+  "Grace",
+  "Rafael",
+  "Chloe",
+  "Darcy",
+  "Aisha",
+  "Hugo",
+  "Imogen",
+  "Ravi",
+  "Sofia",
+  "Callum",
+  "Mei",
+  "Theo",
 ];
 const LAST_NAMES = [
-  "Nguyen", "Smith", "Kowalski", "Okafor", "Singh", "Papadopoulos", "Tran",
-  "O'Brien", "Rossi", "Haddad", "Fraser", "Liu", "Mendes", "Walker",
-  "Kaur", "Brennan", "Sato", "Costa", "Murphy", "Ivanova", "Ali", "Park",
-  "Fitzgerald", "Moreau", "Ngata", "Schmidt", "Lopez", "Wright", "Zhou", "Evans",
+  "Nguyen",
+  "Smith",
+  "Kowalski",
+  "Okafor",
+  "Singh",
+  "Papadopoulos",
+  "Tran",
+  "O'Brien",
+  "Rossi",
+  "Haddad",
+  "Fraser",
+  "Liu",
+  "Mendes",
+  "Walker",
+  "Kaur",
+  "Brennan",
+  "Sato",
+  "Costa",
+  "Murphy",
+  "Ivanova",
+  "Ali",
+  "Park",
+  "Fitzgerald",
+  "Moreau",
+  "Ngata",
+  "Schmidt",
+  "Lopez",
+  "Wright",
+  "Zhou",
+  "Evans",
 ];
 const OCCUPATIONS = [
-  "Product designer", "Data analyst", "Barista & roaster", "Software engineer",
-  "Physiotherapist", "Urban planner", "Research fellow", "Recruiter",
-  "Startup founder", "Architect", "Marketing lead", "Teacher", "Nurse",
-  "Photographer", "Accountant", "UX researcher", "Journalist", "Chef",
-  "Mechanical engineer", "Policy advisor", "Pharmacist", "Musician",
-  "Venture analyst", "Landscape designer", "Lawyer",
+  "Product designer",
+  "Data analyst",
+  "Barista & roaster",
+  "Software engineer",
+  "Physiotherapist",
+  "Urban planner",
+  "Research fellow",
+  "Recruiter",
+  "Startup founder",
+  "Architect",
+  "Marketing lead",
+  "Teacher",
+  "Nurse",
+  "Photographer",
+  "Accountant",
+  "UX researcher",
+  "Journalist",
+  "Chef",
+  "Mechanical engineer",
+  "Policy advisor",
+  "Pharmacist",
+  "Musician",
+  "Venture analyst",
+  "Landscape designer",
+  "Lawyer",
 ];
 const EMAIL_DOMAINS = ["example.com", "example.org", "example.net"];
 
@@ -58,13 +153,32 @@ const UPCOMING_TEMPLATES = [
   "Planning session for {topic}; prep {thing} beforehand.",
 ];
 const TOPICS = [
-  "design systems", "career moves", "the IT project", "open data", "public transport apps",
-  "UX research", "machine learning", "a side project", "hiring", "climate tech",
-  "photography", "board games", "the Melbourne food scene", "accessibility",
+  "design systems",
+  "career moves",
+  "the IT project",
+  "open data",
+  "public transport apps",
+  "UX research",
+  "machine learning",
+  "a side project",
+  "hiring",
+  "climate tech",
+  "photography",
+  "board games",
+  "the Melbourne food scene",
+  "accessibility",
 ];
 const THINGS = [
-  "the slides", "a reading list", "a podcast episode", "their portfolio", "the meetup link",
-  "a café recommendation", "the job ad", "a book", "the repo link", "a short demo",
+  "the slides",
+  "a reading list",
+  "a podcast episode",
+  "their portfolio",
+  "the meetup link",
+  "a café recommendation",
+  "the job ad",
+  "a book",
+  "the repo link",
+  "a short demo",
 ];
 const CONTACT_NOTES = [
   "Prefers messages over calls.",
@@ -129,9 +243,7 @@ export interface LinkableAccount {
 const DAY = 864e5;
 
 function fill(template: string, rng: () => number): string {
-  return template
-    .replace("{topic}", pick(rng, TOPICS))
-    .replace("{thing}", pick(rng, THINGS));
+  return template.replace("{topic}", pick(rng, TOPICS)).replace("{thing}", pick(rng, THINGS));
 }
 
 /** Melbourne wall-clock time on the day of `base` (UTC+10/11 handled approximately). */
@@ -139,7 +251,9 @@ function melbourneTime(base: Date, hour: number, minute: number): Date {
   // Melbourne is UTC+10 (AEST) or UTC+11 (AEDT, first Sunday Oct - first Sunday Apr).
   const m = base.getUTCMonth();
   const offset = m >= 9 || m <= 2 ? 11 : 10;
-  const d = new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate(), hour - offset, minute));
+  const d = new Date(
+    Date.UTC(base.getUTCFullYear(), base.getUTCMonth(), base.getUTCDate(), hour - offset, minute),
+  );
   return d;
 }
 
@@ -186,7 +300,8 @@ export function generateSampleData(opts: {
     const firstName = firsts[i % firsts.length];
     const lastName = lasts[(i * 7) % lasts.length];
     const handle = `${firstName}.${lastName}`.toLowerCase().replace(/[^a-z.]/g, "");
-    const extraEmail = rng() < 0.2 ? [`${firstName.toLowerCase()}@${pick(rng, EMAIL_DOMAINS)}`] : [];
+    const extraEmail =
+      rng() < 0.2 ? [`${firstName.toLowerCase()}@${pick(rng, EMAIL_DOMAINS)}`] : [];
     const extraPhone = rng() < 0.15 ? [phones[(i + 13) % phones.length]] : [];
     contacts.push({
       key: `c${contacts.length}`,
@@ -198,7 +313,9 @@ export function generateSampleData(opts: {
       note: pick(rng, CONTACT_NOTES),
       status: true,
       customFields: rng() < 0.3 ? pick(rng, CONTACT_FIELDS) : [],
-      addDate: new Date(anchor.getTime() - randInt(rng, 5, 240) * DAY - randInt(rng, 0, 86_000) * 1000),
+      addDate: new Date(
+        anchor.getTime() - randInt(rng, 5, 240) * DAY - randInt(rng, 0, 86_000) * 1000,
+      ),
       linkedUserName: null,
     });
   }

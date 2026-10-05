@@ -43,12 +43,16 @@ export function photonLabel(p: PhotonProperties): { name: string; label: string 
   const street = [p.housenumber, p.street].filter(Boolean).join(" ");
   const name = p.name || street || p.district || p.city || p.state || "Dropped pin";
   const locality =
-    p.city === "Melbourne" && p.district ? p.district : p.suburb || p.district || p.city || p.locality || p.county;
+    p.city === "Melbourne" && p.district
+      ? p.district
+      : p.suburb || p.district || p.city || p.locality || p.county;
   const isAu = (p.countrycode ?? "").toUpperCase() === "AU";
   const state = p.state ? (isAu ? (AU_STATES[p.state] ?? p.state) : p.state) : undefined;
   const parts: string[] = [name];
   if (street && !name.includes(street)) parts.push(street);
-  const tail = [locality && locality !== name ? locality : null, state, p.postcode].filter(Boolean).join(" ");
+  const tail = [locality && locality !== name ? locality : null, state, p.postcode]
+    .filter(Boolean)
+    .join(" ");
   if (tail) parts.push(tail);
   if (!isAu && p.country && p.country !== name) parts.push(p.country);
   return { name, label: parts.join(", ") };

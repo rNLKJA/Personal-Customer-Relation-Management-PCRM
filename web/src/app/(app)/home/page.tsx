@@ -25,7 +25,8 @@ export const metadata: Metadata = { title: "Home" };
 
 const WELCOME: Record<string, string> = {
   "1": "Your account is ready. Start by adding someone you met recently.",
-  guest: "This is your private guest sandbox - a copy of the demo address book that only you can see.",
+  guest:
+    "This is your private guest sandbox - a copy of the demo address book that only you can see.",
   invite: "Your account is active now! The person who invited you is already connected.",
 };
 
@@ -40,7 +41,12 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
 
   const stats = [
     { label: "Contacts", value: contacts.length, icon: Users, href: "/contacts" },
-    { label: "Meetings this month", value: countThisMonth(records, now), icon: CalendarDays, href: "/calendar" },
+    {
+      label: "Meetings this month",
+      value: countThisMonth(records, now),
+      icon: CalendarDays,
+      href: "/calendar",
+    },
     { label: "Upcoming", value: upcoming.length, icon: CalendarClock, href: "/records" },
     {
       label: "On 4399 CRM",
@@ -54,11 +60,11 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
     <div className="animate-fade-up space-y-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-muted-foreground text-sm">{formatDate(now)}</p>
+          <p className="text-sm text-muted-foreground">{formatDate(now)}</p>
           <h1 className="mt-1 text-2xl font-semibold tracking-tight sm:text-3xl">
             {greeting(now)}, {user.firstName || displayName(user)}.
           </h1>
-          <p className="text-muted-foreground mt-1 text-sm">Enjoy your day!</p>
+          <p className="mt-1 text-sm text-muted-foreground">Enjoy your day!</p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Button asChild variant="outline">
@@ -80,7 +86,9 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
       </div>
 
       {welcome && (
-        <div className="border-primary/20 bg-accent/60 text-accent-foreground rounded-2xl border px-4 py-3 text-sm">{welcome}</div>
+        <div className="rounded-2xl border border-primary/20 bg-accent/60 px-4 py-3 text-sm text-accent-foreground">
+          {welcome}
+        </div>
       )}
 
       <section aria-label="Overview" className="grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -88,19 +96,25 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
           <Link
             key={s.label}
             href={s.href}
-            className="bg-card group rounded-2xl border p-4 shadow-(--shadow-soft) transition-shadow hover:shadow-(--shadow-lifted)"
+            className="group rounded-2xl border bg-card p-4 shadow-(--shadow-soft) transition-shadow hover:shadow-(--shadow-lifted)"
           >
-            <div className="text-muted-foreground flex items-center justify-between text-xs font-medium">
+            <div className="flex items-center justify-between text-xs font-medium text-muted-foreground">
               {s.label}
-              <s.icon className="group-hover:text-primary size-4 transition-colors" aria-hidden="true" />
+              <s.icon
+                className="size-4 transition-colors group-hover:text-primary"
+                aria-hidden="true"
+              />
             </div>
-            <p className="mt-2 text-3xl font-semibold tracking-tight tabular">{s.value}</p>
+            <p className="tabular mt-2 text-3xl font-semibold tracking-tight">{s.value}</p>
           </Link>
         ))}
       </section>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="up-next">
+        <section
+          className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+          aria-labelledby="up-next"
+        >
           <SectionHead id="up-next" title="Up next" href="/calendar" linkLabel="Calendar" />
           {upcoming.length ? (
             <div className="mt-2">
@@ -129,14 +143,19 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
               ))}
             </div>
           ) : (
-            <p className="text-muted-foreground mt-3 text-sm">No meetings logged yet.</p>
+            <p className="mt-3 text-sm text-muted-foreground">No meetings logged yet.</p>
           )}
         </section>
 
         <div className="min-w-0 space-y-6">
-          <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="reconnect">
+          <section
+            className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+            aria-labelledby="reconnect"
+          >
             <SectionHead id="reconnect" title="Time to reconnect" />
-            <p className="text-muted-foreground mt-1 text-xs">No meeting in the last 45 days and nothing planned.</p>
+            <p className="mt-1 text-xs text-muted-foreground">
+              No meeting in the last 45 days and nothing planned.
+            </p>
             {reconnect.length ? (
               <div className="mt-2">
                 {reconnect.map((c) => (
@@ -148,11 +167,21 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
                 ))}
               </div>
             ) : (
-              <p className="text-muted-foreground mt-3 text-sm">You&apos;re keeping in touch with everyone. Nice.</p>
+              <p className="mt-3 text-sm text-muted-foreground">
+                You&apos;re keeping in touch with everyone. Nice.
+              </p>
             )}
           </section>
-          <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="new-contacts">
-            <SectionHead id="new-contacts" title="Recently added" href="/contacts" linkLabel="Contacts" />
+          <section
+            className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft)"
+            aria-labelledby="new-contacts"
+          >
+            <SectionHead
+              id="new-contacts"
+              title="Recently added"
+              href="/contacts"
+              linkLabel="Contacts"
+            />
             {contacts.length ? (
               <div className="mt-2">
                 {contacts.slice(0, 4).map((c) => (
@@ -198,7 +227,10 @@ function SectionHead({
         {title}
       </h2>
       {href && (
-        <Link href={href} className="text-muted-foreground hover:text-primary inline-flex items-center gap-1 text-xs font-medium">
+        <Link
+          href={href}
+          className="inline-flex items-center gap-1 text-xs font-medium text-muted-foreground hover:text-primary"
+        >
           {linkLabel} <ArrowRight className="size-3" aria-hidden="true" />
         </Link>
       )}

@@ -13,17 +13,24 @@ export default async function NewRecordPage({ searchParams }: PageProps<"/record
   const user = await requireUser();
   const sp = await searchParams;
   const contacts = await contactOptions(user.id);
-  const preset = typeof sp.contact === "string" && contacts.some((c) => c.id === sp.contact) ? sp.contact : "";
+  const preset =
+    typeof sp.contact === "string" && contacts.some((c) => c.id === sp.contact) ? sp.contact : "";
   const now = new Date();
   now.setSeconds(0, 0);
   const day = typeof sp.date === "string" && /^\d{4}-\d{2}-\d{2}$/.test(sp.date) ? sp.date : null;
   return (
-    <div className="animate-fade-up mx-auto max-w-3xl">
-      <Link href="/records" className="text-muted-foreground hover:text-foreground mb-4 inline-flex items-center gap-1.5 rounded-md text-sm">
+    <div className="mx-auto max-w-3xl animate-fade-up">
+      <Link
+        href="/records"
+        className="mb-4 inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+      >
         <ArrowLeft className="size-4" aria-hidden="true" /> Meetings
       </Link>
-      <PageHeader title="Log a meeting" description="Record who you met, where and when - past or planned." />
-      <div className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft) sm:p-6">
+      <PageHeader
+        title="Log a meeting"
+        description="Record who you met, where and when - past or planned."
+      />
+      <div className="rounded-2xl border bg-card p-5 shadow-(--shadow-soft) sm:p-6">
         <RecordForm
           contacts={contacts}
           initial={{

@@ -7,7 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { InlineInbox } from "@/components/inbox/inline-inbox";
-import { resetPasswordAction, sendResetCodeAction, verifyResetCodeAction } from "@/server/actions/auth";
+import {
+  resetPasswordAction,
+  sendResetCodeAction,
+  verifyResetCodeAction,
+} from "@/server/actions/auth";
 import { passwordValidation } from "@/lib/legacy/registration";
 
 type Step = "user" | "code" | "password" | "done";
@@ -36,8 +40,8 @@ export function ResetForm() {
 
   if (step === "done") {
     return (
-      <div className="bg-card rounded-xl border p-5 text-center shadow-(--shadow-soft)">
-        <CheckCircle2 className="text-success mx-auto size-8" aria-hidden="true" />
+      <div className="rounded-xl border bg-card p-5 text-center shadow-(--shadow-soft)">
+        <CheckCircle2 className="mx-auto size-8 text-success" aria-hidden="true" />
         <p className="mt-3 font-medium">Your password has been reset.</p>
         <Button asChild className="mt-4 w-full">
           <Link href="/login">Sign in</Link>
@@ -65,7 +69,14 @@ export function ResetForm() {
         >
           <div className="space-y-1.5">
             <Label htmlFor="userName">User name</Label>
-            <Input id="userName" autoComplete="username" autoCapitalize="none" value={userName} onChange={(e) => setUserName(e.target.value)} required />
+            <Input
+              id="userName"
+              autoComplete="username"
+              autoCapitalize="none"
+              value={userName}
+              onChange={(e) => setUserName(e.target.value)}
+              required
+            />
           </div>
           <Button type="submit" size="lg" className="w-full" disabled={pending || !userName.trim()}>
             {pending && <Loader2 className="animate-spin" aria-hidden="true" />} Send reset code
@@ -91,9 +102,9 @@ export function ResetForm() {
           {delivered ? (
             <InlineInbox kind="password-reset" since={sentAt} onUseCode={setCode} />
           ) : (
-            <p className="bg-muted text-muted-foreground rounded-xl px-3.5 py-3 text-sm">
-              In this demo, reset codes only appear in the demo inbox of a browser that has signed in to
-              this account before - so nobody can take over someone else&apos;s account.
+            <p className="rounded-xl bg-muted px-3.5 py-3 text-sm text-muted-foreground">
+              In this demo, reset codes only appear in the demo inbox of a browser that has signed
+              in to this account before - so nobody can take over someone else&apos;s account.
             </p>
           )}
           <div className="space-y-1.5">
@@ -108,10 +119,19 @@ export function ResetForm() {
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
             />
           </div>
-          <Button type="submit" size="lg" className="w-full" disabled={pending || code.length !== 6}>
+          <Button
+            type="submit"
+            size="lg"
+            className="w-full"
+            disabled={pending || code.length !== 6}
+          >
             {pending && <Loader2 className="animate-spin" aria-hidden="true" />} Verify code
           </Button>
-          <button type="button" className="text-muted-foreground hover:text-foreground w-full text-sm" onClick={() => setStep("user")}>
+          <button
+            type="button"
+            className="w-full text-sm text-muted-foreground hover:text-foreground"
+            onClick={() => setStep("user")}
+          >
             Use a different user name
           </button>
         </form>
@@ -133,11 +153,23 @@ export function ResetForm() {
         >
           <div className="space-y-1.5">
             <Label htmlFor="password">New password</Label>
-            <Input id="password" type="password" autoComplete="new-password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              id="password"
+              type="password"
+              autoComplete="new-password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="rePassword">Confirm new password</Label>
-            <Input id="rePassword" type="password" autoComplete="new-password" value={rePassword} onChange={(e) => setRePassword(e.target.value)} />
+            <Input
+              id="rePassword"
+              type="password"
+              autoComplete="new-password"
+              value={rePassword}
+              onChange={(e) => setRePassword(e.target.value)}
+            />
           </div>
           <Button type="submit" size="lg" className="w-full" disabled={pending}>
             {pending && <Loader2 className="animate-spin" aria-hidden="true" />} Reset password
@@ -146,7 +178,7 @@ export function ResetForm() {
       )}
 
       {error && (
-        <p role="alert" className="text-destructive flex items-center gap-1.5 text-sm">
+        <p role="alert" className="flex items-center gap-1.5 text-sm text-destructive">
           <AlertCircle className="size-4 shrink-0" aria-hidden="true" /> {error}
         </p>
       )}

@@ -2,7 +2,14 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { codeSchema, firstIssue, passwordSchema, portraitSchema, profileSchema, type ProfileValues } from "@/lib/schemas";
+import {
+  codeSchema,
+  firstIssue,
+  passwordSchema,
+  portraitSchema,
+  profileSchema,
+  type ProfileValues,
+} from "@/lib/schemas";
 import { getBrowserKey, getCurrentUser } from "../session";
 import { changePassword, sendChangePasswordCode, setUserPortrait, updateProfile } from "../users";
 import { markRead } from "../mail";
@@ -41,7 +48,9 @@ const changeSchema = z.object({
   newPassword2: z.string(),
 });
 
-export async function changePasswordAction(input: z.input<typeof changeSchema>): Promise<ActionResult> {
+export async function changePasswordAction(
+  input: z.input<typeof changeSchema>,
+): Promise<ActionResult> {
   const user = await getCurrentUser();
   if (!user) return SESSION_EXPIRED;
   const parsed = changeSchema.safeParse(input);

@@ -21,7 +21,7 @@ export function MeetingPin({
   return (
     <span
       className={cn(
-        "relative flex size-9 -translate-y-1/2 items-center justify-center rounded-full rounded-br-none border-2 border-white shadow-(--shadow-lifted) transition-transform [transform:rotate(45deg)]",
+        "relative flex size-9 -translate-y-1/2 [transform:rotate(45deg)] items-center justify-center rounded-full rounded-br-none border-2 border-white shadow-(--shadow-lifted) transition-transform",
         active && "z-10 scale-125",
       )}
       style={{ background: upcoming ? "var(--primary)" : `oklch(0.62 0.13 ${hue})` }}

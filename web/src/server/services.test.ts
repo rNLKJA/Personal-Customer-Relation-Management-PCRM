@@ -38,28 +38,53 @@ describe("accounts", () => {
   });
 
   it("checks user names like checkUserDuplicate", async () => {
-    expect(await svc.users.checkUserName("")).toEqual({ status: false, message: "userName is empty" });
-    expect(await svc.users.checkUserName("Ava.Chen")).toEqual({ status: false, message: "userName has been taken by someone else" });
-    expect(await svc.users.checkUserName("brand-new")).toEqual({ status: true, message: "userName is able to use" });
+    expect(await svc.users.checkUserName("")).toEqual({
+      status: false,
+      message: "userName is empty",
+    });
+    expect(await svc.users.checkUserName("Ava.Chen")).toEqual({
+      status: false,
+      message: "userName has been taken by someone else",
+    });
+    expect(await svc.users.checkUserName("brand-new")).toEqual({
+      status: true,
+      message: "userName is able to use",
+    });
   });
 
   it("registers only with the e-mailed code (sendEmailcode -> signup)", async () => {
     await svc.users.sendSignupCode("new.person@example.com", "b".repeat(32));
-    const [mail] = await db.select().from(emailOutbox).where(eq(emailOutbox.toEmail, "new.person@example.com"));
+    const [mail] = await db
+      .select()
+      .from(emailOutbox)
+      .where(eq(emailOutbox.toEmail, "new.person@example.com"));
     expect(mail.code).toMatch(/^\d{6}$/);
     expect(mail.subject).toBe("Vertify Your Email with Code");
     const wrong = mail.code === "000000" ? "111111" : "000000";
-    const base = { email: "new.person@example.com", userName: "new.person", password: "passw0rd", re_password: "passw0rd" };
-    expect(await svc.users.register({ ...base, authCode: wrong })).toEqual({ ok: false, error: "Wrong Code, please try again" });
+    const base = {
+      email: "new.person@example.com",
+      userName: "new.person",
+      password: "passw0rd",
+      re_password: "passw0rd",
+    };
+    expect(await svc.users.register({ ...base, authCode: wrong })).toEqual({
+      ok: false,
+      error: "Wrong Code, please try again",
+    });
     const ok = await svc.users.register({ ...base, authCode: mail.code! });
     expect(ok.ok).toBe(true);
     // codes are single-use
-    expect((await svc.users.register({ ...base, userName: "other", authCode: mail.code! })).ok).toBe(false);
+    expect(
+      (await svc.users.register({ ...base, userName: "other", authCode: mail.code! })).ok,
+    ).toBe(false);
   });
 
   it("refuses password resets for the shared demo accounts", async () => {
     expect(await svc.users.sendResetCode("demo", null)).toMatchObject({ ok: false });
-    expect(await svc.users.sendResetCode("nobody-here", null)).toEqual({ ok: false, error: "User doesn't exist" });
+    expect(await svc.users.sendResetCode("nobody-here", null)).toEqual({
+      ok: false,
+      error: "User doesn't exist",
+    });
   });
 });
 
@@ -108,9 +133,17 @@ describe("contacts (contactController)", () => {
     const added = await svc.contacts.createContactByUserName(owner, "zoe.k");
     expect(added.status).toBe(true);
     expect((await svc.contacts.listContacts(owner.id)).length).toBe(before + 1);
-    expect(await svc.contacts.createContactByUserName(owner, "zoe.k")).toMatchObject({ status: false, msg: "You already add this contact!" });
-    expect(await svc.contacts.createContactByUserName(owner, "ghost")).toEqual({ status: false, msg: "Cannot find user!" });
-    expect(await svc.contacts.createContactByUserName(owner, owner.userName)).toMatchObject({ status: false });
+    expect(await svc.contacts.createContactByUserName(owner, "zoe.k")).toMatchObject({
+      status: false,
+      msg: "You already add this contact!",
+    });
+    expect(await svc.contacts.createContactByUserName(owner, "ghost")).toEqual({
+      status: false,
+      msg: "Cannot find user!",
+    });
+    expect(await svc.contacts.createContactByUserName(owner, owner.userName)).toMatchObject({
+      status: false,
+    });
   });
 
   it("syncs a stale linked contact from the account (synchronizationContactInfo)", async () => {
@@ -125,7 +158,11 @@ describe("contacts (contactController)", () => {
 
   it("scopes every query to the owner", async () => {
     const stranger = await svc.users.createGuest();
-    const [someone] = await db.select().from(contacts).where(eq(contacts.ownerId, (await demo()).id)).limit(1);
+    const [someone] = await db
+      .select()
+      .from(contacts)
+      .where(eq(contacts.ownerId, (await demo()).id))
+      .limit(1);
     expect(await svc.contacts.getContact(stranger.id, someone.id)).toBeNull();
     expect(await svc.contacts.deleteContact(stranger.id, someone.id)).toBe(false);
   });
@@ -142,18 +179,39 @@ describe("contacts (contactController)", () => {
 describe("fast register invitation", () => {
   it("creates a pending account, e-mails a link and links the contact on confirm", async () => {
     const inviter = await svc.users.createGuest();
-    const contact = (await svc.contacts.listContacts(inviter.id)).find((c) => !c.linkedUserId && c.emails[0])!;
-    const prepared = await svc.users.prepareFastRegister(inviter, contact.id, "http://localhost:3110");
+    const contact = (await svc.contacts.listContacts(inviter.id)).find(
+      (c) => !c.linkedUserId && c.emails[0],
+    )!;
+    const prepared = await svc.users.prepareFastRegister(
+      inviter,
+      contact.id,
+      "http://localhost:3110",
+    );
     expect(prepared).toMatchObject({ ok: true, msg: "Email Code send" });
-    const [mail] = await db.select().from(emailOutbox).where(eq(emailOutbox.triggeredByUserId, inviter.id));
+    const [mail] = await db
+      .select()
+      .from(emailOutbox)
+      .where(eq(emailOutbox.triggeredByUserId, inviter.id));
     expect(mail.kind).toBe("fast-register");
     const [, , id, code] = mail.actionPath!.split("/");
     expect(code).toMatch(/^\d{10}$/);
     expect(await svc.users.authenticate(contact.firstName, "anything")).toBeNull();
 
-    const bad = await svc.users.confirmFastRegister({ id, fastRegisterCode: "0000000000", userName: "invitee", password: "passw0rd", re_password: "passw0rd" });
+    const bad = await svc.users.confirmFastRegister({
+      id,
+      fastRegisterCode: "0000000000",
+      userName: "invitee",
+      password: "passw0rd",
+      re_password: "passw0rd",
+    });
     expect(bad).toEqual({ ok: false, error: "auth fail!" });
-    const ok = await svc.users.confirmFastRegister({ id, fastRegisterCode: code, userName: "invitee", password: "passw0rd", re_password: "passw0rd" });
+    const ok = await svc.users.confirmFastRegister({
+      id,
+      fastRegisterCode: code,
+      userName: "invitee",
+      password: "passw0rd",
+      re_password: "passw0rd",
+    });
     expect(ok).toEqual({ ok: true, message: "your account is active now!" });
     expect(await svc.users.authenticate("invitee", "passw0rd")).not.toBeNull();
     const after = await svc.contacts.getContact(inviter.id, contact.id);
@@ -174,11 +232,22 @@ describe("records (recordController)", () => {
     });
     expect(created.ok && created.record.dateTime.toISOString()).toBe("2021-10-01T10:28:10.018Z");
     if (!created.ok) return;
-    const edited = await svc.records.editRecord(owner.id, { _id: created.record.id, contact_id: c.id, location: "State Library Victoria", geoCoords: null });
-    expect(edited.ok && [edited.record.location, edited.record.lat]).toEqual(["State Library Victoria", null]);
+    const edited = await svc.records.editRecord(owner.id, {
+      _id: created.record.id,
+      contact_id: c.id,
+      location: "State Library Victoria",
+      geoCoords: null,
+    });
+    expect(edited.ok && [edited.record.location, edited.record.lat]).toEqual([
+      "State Library Victoria",
+      null,
+    ]);
 
     const other = await svc.users.createGuest();
-    expect(await svc.records.createRecord(other.id, { contact_id: c.id, location: "x" })).toEqual({ ok: false, error: "Database query failed" });
+    expect(await svc.records.createRecord(other.id, { contact_id: c.id, location: "x" })).toEqual({
+      ok: false,
+      error: "Database query failed",
+    });
     expect(await svc.records.deleteRecord(other.id, created.record.id)).toBe(false);
     expect(await svc.records.deleteRecord(owner.id, created.record.id)).toBe(true);
   });

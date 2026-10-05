@@ -57,7 +57,13 @@ export function ListEditor({
         </div>
       ))}
       {list.length < 6 && (
-        <Button type="button" variant="ghost" size="sm" className="text-primary -ml-2" onClick={() => onChange([...list, ""])}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          className="-ml-2 text-primary"
+          onClick={() => onChange([...list, ""])}
+        >
           <Plus /> {addLabel}
         </Button>
       )}

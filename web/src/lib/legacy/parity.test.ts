@@ -5,7 +5,13 @@ import { listCompare } from "./contact-identity";
 import { autoCodeGenerator } from "./codes";
 import { passwordValidation } from "./registration";
 import { dataValidator, type ValidatorType } from "./validation";
-import { searchContacts, searchRecords, sortContacts, type ContactSearchOption, type RecordSearchOption } from "./search";
+import {
+  searchContacts,
+  searchRecords,
+  sortContacts,
+  type ContactSearchOption,
+  type RecordSearchOption,
+} from "./search";
 import { mulberry32 } from "../random";
 
 /**
@@ -62,9 +68,15 @@ describe("listCompare() - contactController.js", () => {
   const cases: [string[], string[]][] = [
     [[], []],
     [["a"], ["a"]],
-    [["a", "b"], ["b", "a"]],
+    [
+      ["a", "b"],
+      ["b", "a"],
+    ],
     [["0491570006"], ["0491570006", "0491570156"]],
-    [["x@example.com", "y@example.com"], ["x@example.com", "y@example.com"]],
+    [
+      ["x@example.com", "y@example.com"],
+      ["x@example.com", "y@example.com"],
+    ],
     [["x"], ["X"]],
   ];
   it.each(cases)("%j vs %j", (a, b) => {
@@ -74,7 +86,10 @@ describe("listCompare() - contactController.js", () => {
 
 describe("autoCodeGenerator() - config/emailAuth.js", () => {
   it("produces the same digits from the same random stream", () => {
-    const original = loadOriginal<(n: number) => string>("backend/config/emailAuth.js", "autoCodeGenerator");
+    const original = loadOriginal<(n: number) => string>(
+      "backend/config/emailAuth.js",
+      "autoCodeGenerator",
+    );
     for (const length of [6, 10]) {
       const a = mulberry32(42 + length);
       const b = mulberry32(42 + length);
@@ -131,12 +146,16 @@ describe("dataValidator() - manual-input.js", () => {
   ];
   it.each(cases)("%j as %s", (items, type) => {
     let error: string | null = null;
-    const original = loadOriginal<(i: unknown, t: string, sv: (v: boolean) => void, v: boolean, se: (e: string) => void) => void>(
-      "frontend/src/API/contact/manual-input.js",
-      "dataValidator",
-      { console: { log: () => {} } },
+    const original = loadOriginal<
+      (i: unknown, t: string, sv: (v: boolean) => void, v: boolean, se: (e: string) => void) => void
+    >("frontend/src/API/contact/manual-input.js", "dataValidator", { console: { log: () => {} } });
+    original(
+      items,
+      type,
+      () => {},
+      true,
+      (e) => (error = e),
     );
-    original(items, type, () => {}, true, (e) => (error = e));
     expect(dataValidator(items as never, type)).toBe(error);
   });
 });
@@ -144,10 +163,34 @@ describe("dataValidator() - manual-input.js", () => {
 // --- client-side search ------------------------------------------------------
 
 const contacts = [
-  { firstName: "Ava", lastName: "Chen", occupation: "UX researcher", note: "Met at the IT Project expo", addDate: "2021-10-21T02:30:00.000Z" },
-  { firstName: "Bin", lastName: "Liang", occupation: "Back-end lead", note: "Knows MongoDB", addDate: "2021-09-02T09:05:00.000Z" },
-  { firstName: "Wei", lastName: "Zhao", occupation: "Front-end lead", note: "", addDate: "2021-11-03T04:13:59.620Z" },
-  { firstName: "avery", lastName: "Brooks", occupation: "Designer", note: "Coffee on Lygon St", addDate: "2021-08-15T23:45:00.000Z" },
+  {
+    firstName: "Ava",
+    lastName: "Chen",
+    occupation: "UX researcher",
+    note: "Met at the IT Project expo",
+    addDate: "2021-10-21T02:30:00.000Z",
+  },
+  {
+    firstName: "Bin",
+    lastName: "Liang",
+    occupation: "Back-end lead",
+    note: "Knows MongoDB",
+    addDate: "2021-09-02T09:05:00.000Z",
+  },
+  {
+    firstName: "Wei",
+    lastName: "Zhao",
+    occupation: "Front-end lead",
+    note: "",
+    addDate: "2021-11-03T04:13:59.620Z",
+  },
+  {
+    firstName: "avery",
+    lastName: "Brooks",
+    occupation: "Designer",
+    note: "Coffee on Lygon St",
+    addDate: "2021-08-15T23:45:00.000Z",
+  },
 ];
 
 describe("searchContacts() - People in Contact.js", () => {
@@ -166,13 +209,24 @@ describe("searchContacts() - People in Contact.js", () => {
       const originalConvert = loadOriginal<(s: string) => string>(CONTACT_JS, "convert");
       for (const [port, legacy] of options) {
         for (const key of keys) {
-          const prop = { contacts: contacts.map((c) => ({ contact: c })), options: legacy, search_key: key };
-          const run = loadOriginal<() => { contact: (typeof contacts)[number] }[]>(CONTACT_JS, "searchContacts", {
-            prop,
-            convert: originalConvert,
-          });
+          const prop = {
+            contacts: contacts.map((c) => ({ contact: c })),
+            options: legacy,
+            search_key: key,
+          };
+          const run = loadOriginal<() => { contact: (typeof contacts)[number] }[]>(
+            CONTACT_JS,
+            "searchContacts",
+            {
+              prop,
+              convert: originalConvert,
+            },
+          );
           const expected = run().map((x) => x.contact.firstName);
-          expect(searchContacts(contacts, key, port, MEL).map((c) => c.firstName), `${port}/${key}`).toEqual(expected);
+          expect(
+            searchContacts(contacts, key, port, MEL).map((c) => c.firstName),
+            `${port}/${key}`,
+          ).toEqual(expected);
         }
       }
     });
@@ -181,23 +235,44 @@ describe("searchContacts() - People in Contact.js", () => {
 
 describe("sortContact() - Contact.js", () => {
   it("orders text fields like the original", () => {
-    const original = loadOriginal<(c: unknown[], set: unknown, type: string) => void>(CONTACT_JS, "sortContact", {
-      convert: () => "",
-      console: { log: () => {} },
-    });
+    const original = loadOriginal<(c: unknown[], set: unknown, type: string) => void>(
+      CONTACT_JS,
+      "sortContact",
+      {
+        convert: () => "",
+        console: { log: () => {} },
+      },
+    );
     for (const type of ["firstName", "lastName", "occupation", "notes"] as const) {
       const legacy = contacts.map((c) => ({ contact: c }));
       original(legacy, null, type);
-      expect(sortContacts(contacts, type).map((c) => c.firstName)).toEqual(legacy.map((x) => x.contact.firstName));
+      expect(sortContacts(contacts, type).map((c) => c.firstName)).toEqual(
+        legacy.map((x) => x.contact.firstName),
+      );
     }
   });
 });
 
 describe("searchRecords() - RecordList in Record.js", () => {
   const records = [
-    { meetingPerson: { firstName: "W", lastName: "Z" }, location: "The University of Melbourne", notes: "This is a note", dateTime: "2021-11-05T18:19:00.000Z" },
-    { meetingPerson: { firstName: "Ava", lastName: "Chen" }, location: "State Library Victoria, 328 Swanston Street, Melbourne VIC 3000", notes: "Talked UX", dateTime: "2021-10-01T10:28:10.018Z" },
-    { meetingPerson: { firstName: "Bin", lastName: "Liang" }, location: "Carlton Gardens", notes: "Sprint review", dateTime: "2021-10-14T01:00:00.000Z" },
+    {
+      meetingPerson: { firstName: "W", lastName: "Z" },
+      location: "The University of Melbourne",
+      notes: "This is a note",
+      dateTime: "2021-11-05T18:19:00.000Z",
+    },
+    {
+      meetingPerson: { firstName: "Ava", lastName: "Chen" },
+      location: "State Library Victoria, 328 Swanston Street, Melbourne VIC 3000",
+      notes: "Talked UX",
+      dateTime: "2021-10-01T10:28:10.018Z",
+    },
+    {
+      meetingPerson: { firstName: "Bin", lastName: "Liang" },
+      location: "Carlton Gardens",
+      notes: "Sprint review",
+      dateTime: "2021-10-14T01:00:00.000Z",
+    },
   ];
   const options: [RecordSearchOption, string | null][] = [
     ["all", null],
@@ -215,7 +290,10 @@ describe("searchRecords() - RecordList in Record.js", () => {
       for (const [port, legacy] of options) {
         for (const key of keys) {
           const prop = { records, options: legacy, search_key: key };
-          const run = loadOriginal<() => typeof records>(RECORD_JS, "searchRecords", { prop, convert: originalConvert });
+          const run = loadOriginal<() => typeof records>(RECORD_JS, "searchRecords", {
+            prop,
+            convert: originalConvert,
+          });
           expect(searchRecords(records, key, port, MEL), `${port}/${key}`).toEqual(run());
         }
       }
