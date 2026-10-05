@@ -1,6 +1,6 @@
 # DR-004: Use Turso when configured, and fall back to a /tmp copy of the seed database
 
-- **Status:** Accepted, with the hosted database still to be provisioned
+- **Status:** Partly superseded by DR-007, which records the hosted database being provisioned; the decision stands
 - **Date:** 2026-10-06
 - **Author:** Sunchuangyu (Rin) Huang
 

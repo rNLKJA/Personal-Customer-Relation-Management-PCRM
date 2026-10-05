@@ -545,9 +545,14 @@ export default function MethodsPage() {
           <Section id="limitations" title="Assumptions and limitations">
             <ul>
               <li>
-                <strong>The live demo has no persistent database yet</strong> (DR-004). Writes live
-                in one serverless instance&apos;s copy and can disappear; the privacy and AI
-                features were therefore demonstrated on a local production build.
+                <strong>The hosted database was attached late</strong> (
+                <Link href="/methods/decisions/DR-007-turso-in-production">DR-007</Link>). The
+                live demo now runs on Turso, so writes persist and every serverless instance sees
+                them, but the privacy and AI features were built and demonstrated on a local
+                production build while production still used a per-instance copy (
+                <Link href="/methods/decisions/DR-004-turso-vs-tmp-fallback">DR-004</Link>). The
+                functions run in the US and the database in Tokyo, which adds latency to every
+                page.
               </li>
               <li>
                 The shared <code>demo</code> account is shared: other visitors see its activity log,
@@ -619,7 +624,8 @@ export default function MethodsPage() {
           <Section id="change" title="What I'd change">
             <ul>
               <li>
-                Provision the hosted database first, and fail the deployment if production has none.
+                Provision the hosted database first, fail a production deployment that has none,
+                and run the functions in the database&apos;s region.
               </li>
               <li>
                 Detect names of people outside the address book in the browser before sending, and

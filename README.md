@@ -129,8 +129,10 @@ their own key, and every call lands in their AI log.
 
 ### How the showcase was recorded
 
-Production still has no persistent database (see [DR-004](docs/decisions/DR-004-turso-vs-tmp-fallback.md)): until Turso
-is attached, writes live in one serverless instance's `/tmp` copy and can disappear between requests. The journeys for these
+When these features were built, production had no persistent database ([DR-004](docs/decisions/DR-004-turso-vs-tmp-fallback.md)):
+writes lived in one serverless instance's `/tmp` copy and could disappear between requests. The live demo has since moved to a
+hosted Turso database ([DR-007](docs/decisions/DR-007-turso-in-production.md)), but the screenshots below are still from the
+earlier run. The journeys for these
 features (sign-up through the demo inbox, contact and meeting create / edit / search / delete, add by user name, password
 reset, the assistant's redaction preview and Accept / Edit / Reject, the evaluation harness, export and account deletion
 with the admin tombstone) were therefore recorded against a **local production build** (`pnpm build && pnpm start -p 3211`)
@@ -184,7 +186,7 @@ screenshots below show only real, non-AI content.
 │   ├── _archive/                 the original README of this repository
 │   └── README.md
 ├── docs/
-│   ├── decisions/                DR-001 ... DR-006 (rendered at /methods/decisions/...)
+│   ├── decisions/                DR-001 ... DR-007 (rendered at /methods/decisions/...)
 │   ├── model-card.md             meeting-note assistant + redactor (rendered at /methods/model-card)
 │   └── screenshots/              images used in this README
 ├── scripts/
@@ -245,8 +247,9 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
 - No AI key is configured on the server, by design: AI calls use the visitor's own key in their browser.
 - Without a database URL the app copies `data/seed.db` to `/tmp/app.db` on cold start (writable but ephemeral)
   and shows a "demo storage resets periodically" notice. Each serverless instance has its own copy, so a change
-  made in one request is not guaranteed to show up in the next one. The live demo currently runs in this mode
-  until a Turso database is attached.
+  made in one request is not guaranteed to show up in the next one. The live demo left this mode on 6 October 2026:
+  production now uses a Turso database (Production environment only, so preview deployments still use the `/tmp`
+  copy; see [DR-007](docs/decisions/DR-007-turso-in-production.md)).
 - The shared `demo` account's dates follow the calendar: on the first request of a new (UTC) day its meetings,
   contacts and inbox slide forward so "Up next" and the calendar never go stale.
 
@@ -257,7 +260,7 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
   pagination and a CSV export per table. Password hashes, codes, invitation links and the inbox browser key are always
   masked; names, contact details, notes and AI text are shown only for the seeded demo accounts (DR-005). Every view and
   export is logged under the admin account. `activity_log` and `ai_audit_log` hold the access log and the AI audit trail.
-- **Turso (when attached):** `turso db shell comp30022-personal-crm "select count(*) from contacts"`.
+- **Turso (production):** `turso db shell comp30022-personal-crm "select count(*) from contacts"`.
 - **Locally:** open `web/data/seed.db` (committed snapshot) or `web/data/app.db` (your local copy) in any SQLite
   browser, or run `pnpm db:studio` in `web/`.
 

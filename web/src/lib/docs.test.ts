@@ -25,7 +25,7 @@ const REPO_DOCS = path.join(process.cwd(), "..", "docs");
 describe("decision records and model card", () => {
   const records = listDecisionRecords();
 
-  it("has DR-001 to DR-006 with every section, in order", () => {
+  it("has DR-001 to DR-007 with every section, in order", () => {
     expect(records.map((r) => r.id)).toEqual([
       "DR-001",
       "DR-002",
@@ -33,6 +33,7 @@ describe("decision records and model card", () => {
       "DR-004",
       "DR-005",
       "DR-006",
+      "DR-007",
     ]);
     for (const r of records) {
       const headings = [...r.markdown.matchAll(/^## (.+)$/gm)].map((m) => m[1]);
@@ -63,6 +64,7 @@ describe("decision records and model card", () => {
   it("marks superseded records instead of rewriting them", () => {
     expect(getDecisionRecord("DR-002-demo-inbox")?.status).toMatch(/superseded by DR-005/);
     expect(getDecisionRecord("DR-003-redact-before-llm")?.status).toMatch(/superseded by DR-006/);
+    expect(getDecisionRecord("DR-004-turso-vs-tmp-fallback")?.status).toMatch(/superseded by DR-007/);
   });
 
   it("quotes exactly the evaluation numbers the code produces (no drift)", () => {
