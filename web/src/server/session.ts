@@ -118,7 +118,8 @@ export async function getCurrentUser(): Promise<User | null> {
     // Slide the shared demo account's dates to today (at most once a day).
     try {
       const days = await reanchorDemoAccount(getDb());
-      if (days > 0) return { ...user, createdAt: new Date(user.createdAt.getTime() + days * 864e5) };
+      if (days > 0)
+        return { ...user, createdAt: new Date(user.createdAt.getTime() + days * 864e5) };
     } catch (err) {
       console.error("[pcrm] could not re-anchor the demo account", err);
     }
