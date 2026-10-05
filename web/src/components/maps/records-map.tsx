@@ -10,11 +10,10 @@ import { Label } from "@/components/ui/label";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { BaseMap } from "./base-map";
 import { MeetingPin } from "./meeting-pin";
-import { convert } from "@/lib/legacy/convert";
 import { cleanLocation, ORIGINAL_DEFAULT_CENTER } from "@/lib/legacy/location";
 import { filterRecordsByDayRange } from "@/lib/legacy/search";
-import { boundsOf } from "@/lib/geo";
-import { APP_TIME_ZONE, dayKey, formatShortDate } from "@/lib/time";
+import { boundsOf, clusterPoints, overlapAtZoom, type PointCluster } from "@/lib/geo";
+import { APP_TIME_ZONE, dayKey, formatDateTime, formatShortDate } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
 export interface MapRecord {
@@ -36,6 +35,10 @@ const PRESETS: { value: Preset; label: string }[] = [
 ];
 
 const DAY = 864e5;
+/** Pins closer than this on screen are merged into a numbered cluster. */
+const CLUSTER_RADIUS_PX = 48;
+const MAX_ZOOM = 17;
+const pointOf = (r: MapRecord) => ({ lat: r.lat!, lng: r.lng! });
 
 /**
  * The records map from `map_acmp.js`: every meeting as a pin, an info window
@@ -48,6 +51,8 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
   const [start, setStart] = useState(dayKey(now - 30 * DAY));
   const [end, setEnd] = useState(dayKey(now));
   const [selected, setSelected] = useState<string | null>(null);
+  const [group, setGroup] = useState<PointCluster<MapRecord> | null>(null);
+  const [zoom, setZoom] = useState<number | null>(null);
 
   const located = useMemo(() => records.filter((r) => r.lat != null && r.lng != null), [records]);
   const filtered = useMemo(() => {
@@ -82,7 +87,30 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
     mapRef.current.fitBounds(bounds, { padding: 60, maxZoom: 14, duration: 600 });
   }, [bounds]);
 
+  // Re-cluster on half-zoom steps only (cheap, and pins don't jitter mid-zoom).
+  const clusters = useMemo(
+    () => clusterPoints(filtered, pointOf, Math.round((zoom ?? 12) * 2) / 2, CLUSTER_RADIUS_PX),
+    [filtered, zoom],
+  );
+
+  const openCluster = (c: PointCluster<MapRecord>) => {
+    const map = mapRef.current;
+    if (!map) return;
+    const points = c.items.map(pointOf);
+    if (map.getZoom() >= MAX_ZOOM - 0.5 || overlapAtZoom(points, MAX_ZOOM, CLUSTER_RADIUS_PX)) {
+      // Same place (or already fully zoomed in): list the meetings instead.
+      setSelected(null);
+      setGroup(c);
+      return;
+    }
+    setGroup(null);
+    map.fitBounds(boundsOf(points)!, { padding: 80, maxZoom: MAX_ZOOM, duration: 600 });
+  };
+
   const active = filtered.find((r) => r.id === selected) ?? null;
+  const activeGroup = group
+    ? { ...group, items: group.items.filter((r) => filtered.some((f) => f.id === r.id)) }
+    : null;
   const missing = records.length - located.length;
 
   return (
@@ -153,6 +181,7 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                     <button
                       type="button"
                       onClick={() => {
+                        setGroup(null);
                         setSelected(r.id);
                         mapRef.current?.flyTo({
                           center: [r.lng!, r.lat!],
@@ -221,35 +250,122 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                 zoom: 12,
               }
         }
-        onClick={() => setSelected(null)}
+        onClick={() => {
+          setSelected(null);
+          setGroup(null);
+        }}
+        onLoad={() => {
+          const map = mapRef.current?.getMap();
+          if (!map) return;
+          setZoom(map.getZoom());
+          map.on("zoomend", () => setZoom(map.getZoom()));
+        }}
       >
-        {filtered.map((r) => (
-          <Marker
-            key={r.id}
-            latitude={r.lat!}
-            longitude={r.lng!}
-            anchor="bottom"
-            onClick={(e) => {
-              e.originalEvent.stopPropagation();
-              setSelected(r.id);
-            }}
-          >
-            <button
-              type="button"
-              aria-label={`${r.person.firstName} ${r.person.lastName}, ${formatShortDate(r.dateTime)}`}
-              className="rounded-full"
+        {clusters.map((c) => {
+          if (c.items.length === 1) {
+            const r = c.items[0];
+            return (
+              <Marker
+                key={r.id}
+                latitude={r.lat!}
+                longitude={r.lng!}
+                anchor="bottom"
+                onClick={(e) => {
+                  e.originalEvent.stopPropagation();
+                  setGroup(null);
+                  setSelected(r.id);
+                }}
+              >
+                <button
+                  type="button"
+                  aria-label={`${r.person.firstName} ${r.person.lastName}, ${formatShortDate(r.dateTime)}`}
+                  className="rounded-full"
+                >
+                  <MeetingPin
+                    firstName={r.person.firstName}
+                    lastName={r.person.lastName}
+                    seed={r.person.id}
+                    portrait={r.person.portrait}
+                    active={selected === r.id}
+                    upcoming={r.dateTime.getTime() > now}
+                  />
+                </button>
+              </Marker>
+            );
+          }
+          const upcoming = c.items.some((r) => r.dateTime.getTime() > now);
+          return (
+            <Marker
+              key={c.items.map((r) => r.id).join("|")}
+              latitude={c.lat}
+              longitude={c.lng}
+              anchor="center"
+              onClick={(e) => {
+                e.originalEvent.stopPropagation();
+                openCluster(c);
+              }}
             >
-              <MeetingPin
-                firstName={r.person.firstName}
-                lastName={r.person.lastName}
-                seed={r.person.id}
-                portrait={r.person.portrait}
-                active={selected === r.id}
-                upcoming={r.dateTime.getTime() > now}
-              />
-            </button>
-          </Marker>
-        ))}
+              <button
+                type="button"
+                aria-label={`${c.items.length} meetings here - show them`}
+                className={cn(
+                  "tabular flex size-10 items-center justify-center rounded-full border-2 border-white text-sm font-semibold shadow-(--shadow-lifted) ring-4 transition-transform hover:scale-110",
+                  upcoming
+                    ? "bg-primary text-primary-foreground ring-primary/25"
+                    : "bg-foreground text-background ring-foreground/15",
+                )}
+              >
+                {c.items.length}
+              </button>
+            </Marker>
+          );
+        })}
+        {activeGroup && activeGroup.items.length > 0 && (
+          <Popup
+            latitude={activeGroup.lat}
+            longitude={activeGroup.lng}
+            anchor="top"
+            offset={22}
+            onClose={() => setGroup(null)}
+            closeOnClick={false}
+            maxWidth="300px"
+          >
+            <div className="w-72 p-2">
+              <p className="px-2 pt-1.5 pb-1 text-xs font-medium text-muted-foreground">
+                {activeGroup.items.length} meetings at{" "}
+                {cleanLocation(activeGroup.items[0].location).split(",")[0]}
+              </p>
+              <ul className="max-h-64 overflow-y-auto">
+                {[...activeGroup.items]
+                  .sort((a, b) => b.dateTime.getTime() - a.dateTime.getTime())
+                  .map((r) => (
+                    <li key={r.id}>
+                      <Link
+                        href={`/records/${r.id}`}
+                        className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 hover:bg-muted"
+                      >
+                        <PersonAvatar
+                          firstName={r.person.firstName}
+                          lastName={r.person.lastName}
+                          portrait={r.person.portrait}
+                          seed={r.person.id}
+                          size="sm"
+                        />
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-sm font-medium">
+                            {r.person.firstName} {r.person.lastName}
+                          </span>
+                          <span className="tabular block text-xs text-muted-foreground">
+                            {formatDateTime(r.dateTime)}
+                          </span>
+                        </span>
+                      </Link>
+                    </li>
+                  ))}
+              </ul>
+            </div>
+          </Popup>
+        )}
         {active && (
           <Popup
             latitude={active.lat!}
@@ -274,7 +390,7 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
                     {active.person.firstName} {active.person.lastName}
                   </p>
                   <p className="tabular text-xs text-muted-foreground">
-                    {convert(active.dateTime, APP_TIME_ZONE)}
+                    {formatDateTime(active.dateTime)}
                   </p>
                 </div>
               </div>

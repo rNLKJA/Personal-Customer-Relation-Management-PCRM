@@ -1,11 +1,14 @@
 import { describe, expect, it } from "vitest";
 import {
   boundsOf,
+  clusterPoints,
   formatCoords,
   formatDistance,
   haversineKm,
   isValidLatLng,
   nearestPlace,
+  overlapAtZoom,
+  projectToPixels,
   searchPlaces,
   MELBOURNE_CBD,
 } from "./geo";
@@ -109,5 +112,50 @@ describe("address formatting", () => {
     expect(cleanLocation("墨尔本大学 The University of Melbourne")).toBe(
       " The University of Melbourne",
     );
+  });
+});
+
+describe("map pin clustering", () => {
+  const stateLibrary = { id: "a", lat: -37.8098, lng: 144.9652 };
+  const sameSpot = { id: "b", lat: -37.8098, lng: 144.9652 };
+  const fedSquare = { id: "c", lat: -37.818, lng: 144.9691 }; // ~1 km away
+  const stKilda = { id: "d", lat: -37.8676, lng: 144.9809 }; // ~6 km away
+  const all = [stateLibrary, sameSpot, fedSquare, stKilda];
+
+  it("projects like MapLibre (512 px world at zoom 0)", () => {
+    expect(projectToPixels({ lat: 0, lng: 0 }, 0)).toEqual({ x: 256, y: 256 });
+    expect(projectToPixels({ lat: 0, lng: 180 }, 1).x).toBe(1024);
+  });
+
+  it("merges pins that overlap on screen and splits them as you zoom in", () => {
+    const ids = (z: number) =>
+      clusterPoints(all, (p) => p, z)
+        .map((c) => c.items.map((i) => i.id).join(""))
+        .sort();
+    expect(ids(8)).toEqual(["abcd"]);
+    expect(ids(10)).toEqual(["abc", "d"]);
+    expect(ids(13)).toEqual(["ab", "c", "d"]);
+  });
+
+  it("puts a cluster at its members' centroid", () => {
+    const [c] = clusterPoints([stateLibrary, fedSquare], (p) => p, 10);
+    expect(c.lat).toBeCloseTo((stateLibrary.lat + fedSquare.lat) / 2, 10);
+    expect(c.lng).toBeCloseTo((stateLibrary.lng + fedSquare.lng) / 2, 10);
+  });
+
+  it("merges clusters whose centroids end up overlapping", () => {
+    // Points at 0, 45 and 30 px (in that order): the greedy pass gives {0, 30}
+    // (centroid 15 px) and {45}; those centroids are only 30 px apart.
+    const z = 15;
+    const px = (n: number) => (n / (512 * 2 ** z)) * 360; // n px of longitude
+    const row = [0, 45, 30].map((n) => ({ id: String(n), lat: -37.8, lng: 144.9 + px(n) }));
+    const out = clusterPoints(row, (p) => p, z, 40);
+    expect(out).toHaveLength(1);
+    expect(out[0].items.map((i) => i.id).sort()).toEqual(["0", "30", "45"]);
+  });
+
+  it("detects pins that can never be separated by zooming", () => {
+    expect(overlapAtZoom([stateLibrary, sameSpot], 17)).toBe(true);
+    expect(overlapAtZoom([stateLibrary, fedSquare], 17)).toBe(false);
   });
 });

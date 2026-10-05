@@ -133,3 +133,80 @@ export function boundsOf(points: readonly LatLng[]): [[number, number], [number,
     [maxLng, maxLat],
   ];
 }
+
+/** Web Mercator "world pixel" coordinates at `zoom` (512 px tiles, as in MapLibre). */
+export function projectToPixels(p: LatLng, zoom: number): { x: number; y: number } {
+  const scale = 512 * 2 ** zoom;
+  const lat = Math.max(-85.0511, Math.min(85.0511, p.lat));
+  const sin = Math.sin(toRad(lat));
+  return {
+    x: ((p.lng + 180) / 360) * scale,
+    y: (0.5 - Math.log((1 + sin) / (1 - sin)) / (4 * Math.PI)) * scale,
+  };
+}
+
+export interface PointCluster<T> extends LatLng {
+  items: T[];
+}
+
+/**
+ * Screen-space clustering for map pins. A greedy pass puts each point into the
+ * first cluster whose seed lies within `radiusPx` on screen at `zoom`; then
+ * clusters whose centroids still sit within `radiusPx` of each other are merged
+ * until none overlap. Positions are the members' centroid. Quadratic, which is
+ * fine for an address book's worth of meetings.
+ */
+export function clusterPoints<T>(
+  items: readonly T[],
+  pointOf: (item: T) => LatLng,
+  zoom: number,
+  radiusPx = 40,
+): PointCluster<T>[] {
+  type Group = { x: number; y: number; items: T[]; px: { x: number; y: number }[] };
+  const groups: Group[] = [];
+  for (const item of items) {
+    const p = projectToPixels(pointOf(item), zoom);
+    const hit = groups.find((g) => Math.hypot(g.x - p.x, g.y - p.y) <= radiusPx);
+    if (hit) {
+      hit.items.push(item);
+      hit.px.push(p);
+    } else groups.push({ x: p.x, y: p.y, items: [item], px: [p] });
+  }
+  const centre = (g: Group) => {
+    g.x = g.px.reduce((sum, p) => sum + p.x, 0) / g.px.length;
+    g.y = g.px.reduce((sum, p) => sum + p.y, 0) / g.px.length;
+  };
+  groups.forEach(centre);
+  for (let merged = true; merged;) {
+    merged = false;
+    outer: for (let i = 0; i < groups.length; i++) {
+      for (let j = i + 1; j < groups.length; j++) {
+        if (Math.hypot(groups[i].x - groups[j].x, groups[i].y - groups[j].y) <= radiusPx) {
+          groups[i].items.push(...groups[j].items);
+          groups[i].px.push(...groups[j].px);
+          centre(groups[i]);
+          groups.splice(j, 1);
+          merged = true;
+          break outer;
+        }
+      }
+    }
+  }
+  return groups.map((g) => {
+    const pts = g.items.map(pointOf);
+    return {
+      items: g.items,
+      lat: pts.reduce((sum, p) => sum + p.lat, 0) / pts.length,
+      lng: pts.reduce((sum, p) => sum + p.lng, 0) / pts.length,
+    };
+  });
+}
+
+/** True when every point would still overlap on screen at `zoom` (e.g. the same café). */
+export function overlapAtZoom(points: readonly LatLng[], zoom: number, radiusPx = 40): boolean {
+  const b = boundsOf(points);
+  if (!b) return false;
+  const a = projectToPixels({ lng: b[0][0], lat: b[0][1] }, zoom);
+  const c = projectToPixels({ lng: b[1][0], lat: b[1][1] }, zoom);
+  return Math.hypot(a.x - c.x, a.y - c.y) <= radiusPx;
+}

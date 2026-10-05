@@ -33,6 +33,13 @@ const OPENFREEMAP = {
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
 const STYLE_TIMEOUT_MS = 8000;
+/**
+ * MapLibre opens a compact attribution expanded and only collapses it on the
+ * first drag, so on small maps it covers a fifth of the view. The OSMF
+ * attribution guidelines allow a collapsible attribution once it has been
+ * shown for a few seconds; the "i" button re-opens it.
+ */
+const ATTRIBUTION_COLLAPSE_MS = 5000;
 
 // MapLibre v6 resolves its worker relative to its own (bundled) chunk URL; point
 // it at the copy served from public/vendor (see scripts/copy-assets.mjs).
@@ -131,6 +138,10 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
   const dark = mounted && resolvedTheme === "dark";
   const [offline, setOffline] = useState(false);
   const loaded = useRef(false);
+  const wrapper = useRef<HTMLDivElement>(null);
+  const collapseTimer = useRef<number | undefined>(undefined);
+
+  useEffect(() => () => window.clearTimeout(collapseTimer.current), []);
 
   const mapStyle = useMemo(
     () => (offline ? fallbackStyle(dark) : dark ? OPENFREEMAP.dark : OPENFREEMAP.light),
@@ -147,6 +158,7 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
 
   return (
     <div
+      ref={wrapper}
       className={cn("relative isolate overflow-hidden bg-muted", className)}
       role="region"
       aria-label={ariaLabel}
@@ -164,6 +176,12 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
         style={{ position: "absolute", inset: 0 }}
         onLoad={() => {
           loaded.current = true;
+          window.clearTimeout(collapseTimer.current);
+          collapseTimer.current = window.setTimeout(() => {
+            wrapper.current
+              ?.querySelectorAll(".maplibregl-ctrl-attrib.maplibregl-compact-show")
+              .forEach((el) => el.classList.remove("maplibregl-compact-show"));
+          }, ATTRIBUTION_COLLAPSE_MS);
           onLoad?.();
         }}
         onStyleData={() => {
