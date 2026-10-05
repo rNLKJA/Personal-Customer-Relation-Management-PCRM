@@ -54,17 +54,38 @@ function fallbackStyle(dark: boolean): StyleSpecification {
         type: "background",
         paint: { "background-color": dark ? "#1b1d2b" : "#dfe6f2" },
       },
+      // Coarse state outlines for the overview; above zoom 8 only the detailed
+      // Greater Melbourne polygon is drawn so the bay coastline stays accurate.
       {
-        id: "land",
+        id: "states",
         type: "fill",
         source: "base",
+        maxzoom: 8,
+        filter: ["==", ["get", "kind"], "state"],
         paint: { "fill-color": dark ? "#262838" : "#f6f6f4" },
       },
       {
-        id: "outline",
+        id: "states-outline",
         type: "line",
         source: "base",
+        maxzoom: 8,
+        filter: ["==", ["get", "kind"], "state"],
         paint: { "line-color": dark ? "#3c3f55" : "#c9cdd8", "line-width": 0.8 },
+      },
+      {
+        id: "melbourne",
+        type: "fill",
+        source: "base",
+        filter: ["==", ["get", "kind"], "detail"],
+        paint: { "fill-color": dark ? "#262838" : "#f6f6f4" },
+      },
+      {
+        id: "melbourne-coast",
+        type: "line",
+        source: "base",
+        minzoom: 8,
+        filter: ["==", ["get", "kind"], "detail"],
+        paint: { "line-color": dark ? "#3c3f55" : "#c9cdd8", "line-width": 1 },
       },
     ],
   };
