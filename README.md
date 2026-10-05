@@ -104,7 +104,9 @@ pnpm install          # also copies the MapLibre worker and ZXing wasm into publ
 pnpm dev              # http://localhost:3000 - uses data/app.db, created from data/seed.db on first run
 ```
 
-No environment variables are needed locally. See [`web/.env.example`](web/.env.example) for the production ones
+No environment variables are needed locally, for `pnpm dev` or for a local `pnpm build && pnpm start` (without
+`SESSION_SECRET` a fixed development signing key is used and `pnpm start` logs a warning). On Vercel
+`SESSION_SECRET` is **required**. See [`web/.env.example`](web/.env.example) for every variable
 (`DATABASE_URL`, `DATABASE_AUTH_TOKEN`, `SESSION_SECRET`).
 
 | Script | What it does |
@@ -118,7 +120,7 @@ No environment variables are needed locally. See [`web/.env.example`](web/.env.e
 
 ### Deployment notes
 
-- Vercel project root: `web/`. Set `SESSION_SECRET`, and for persistent shared data `DATABASE_URL` +
+- Vercel project root: `web/`. Set `SESSION_SECRET` (required, 32+ characters), and for persistent shared data `DATABASE_URL` +
   `DATABASE_AUTH_TOKEN` of a Turso database (run `pnpm db:migrate && pnpm db:seed` against it once).
 - Without a database URL the app copies `data/seed.db` to `/tmp/app.db` on cold start (writable but ephemeral)
   and shows a "demo storage resets periodically" notice.

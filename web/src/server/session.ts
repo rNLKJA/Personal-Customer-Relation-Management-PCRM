@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { getDb } from "@/db/client";
 import { users, type User } from "@/db/schema";
+import { sessionKey } from "./session-secret";
 
 /**
  * Sessions are signed JWTs in an httpOnly cookie (jose, HS256). This replaces
@@ -20,25 +21,8 @@ const KNOWN_TTL_S = 60 * 60 * 24 * 90;
 const SESSION_TTL_S = 60 * 60 * 24 * 7;
 const RESET_TTL_S = 60 * 10;
 
-let warned = false;
-const fallbackSecret = randomBytes(32).toString("hex");
-
 function secretKey(): Uint8Array {
-  let secret = process.env.SESSION_SECRET;
-  if (!secret || secret.length < 32) {
-    if (process.env.NODE_ENV === "production") {
-      if (!warned) {
-        console.warn(
-          "[pcrm] SESSION_SECRET is missing or too short; using a random per-instance secret.",
-        );
-        warned = true;
-      }
-      secret = fallbackSecret;
-    } else {
-      secret = "dev-only-insecure-session-secret-change-me-please";
-    }
-  }
-  return new TextEncoder().encode(secret);
+  return sessionKey();
 }
 
 const secure = () => process.env.NODE_ENV === "production";
