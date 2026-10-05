@@ -8,13 +8,17 @@ export function EmptyState({
   description,
   action,
   className,
+  headingLevel = 2,
 }: {
   icon: LucideIcon;
   title: string;
   description?: ReactNode;
   action?: ReactNode;
   className?: string;
+  /** Use 3 when the empty state sits inside a section that already has an h2. */
+  headingLevel?: 2 | 3;
 }) {
+  const Heading = headingLevel === 3 ? "h3" : "h2";
   return (
     <div
       className={cn(
@@ -28,7 +32,7 @@ export function EmptyState({
           <Icon className="size-5" />
         </div>
       </div>
-      <h3 className="text-base font-semibold tracking-tight">{title}</h3>
+      <Heading className="text-base font-semibold tracking-tight">{title}</Heading>
       {description && (
         <p className="mt-1.5 max-w-sm text-sm text-balance text-muted-foreground">{description}</p>
       )}

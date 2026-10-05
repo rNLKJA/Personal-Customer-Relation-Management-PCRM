@@ -109,7 +109,12 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
             />
           </form>
         </div>
-        <div className="overflow-x-auto">
+        <div
+          className="overflow-x-auto outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-inset"
+          tabIndex={0}
+          role="region"
+          aria-label={`${table} rows (scroll sideways for more columns)`}
+        >
           <table className="w-full text-left text-[13px]">
             <thead className="bg-surface text-muted-foreground">
               <tr>
@@ -136,7 +141,7 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
                         title={text}
                       >
                         {text === "" ? (
-                          <span className="text-muted-foreground/60">null</span>
+                          <span className="text-muted-foreground italic">null</span>
                         ) : (
                           text
                         )}

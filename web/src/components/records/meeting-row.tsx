@@ -25,7 +25,12 @@ export function DateTile({ date, highlight }: { date: Date; highlight?: boolean 
         highlight ? "border-primary/30 bg-accent text-accent-foreground" : "bg-surface",
       )}
     >
-      <span className="text-[10px] font-semibold tracking-wide uppercase opacity-70">
+      <span
+        className={cn(
+          "text-[11px] font-semibold tracking-wide uppercase",
+          !highlight && "text-muted-foreground",
+        )}
+      >
         {MONTHS[p.month - 1]}
       </span>
       <span className="tabular mt-0.5 text-lg font-semibold">{p.day}</span>

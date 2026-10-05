@@ -24,9 +24,14 @@ export function MeetingPin({
         "relative flex size-9 -translate-y-1/2 [transform:rotate(45deg)] items-center justify-center rounded-full rounded-br-none border-2 border-white shadow-(--shadow-lifted) transition-transform",
         active && "z-10 scale-125",
       )}
-      style={{ background: upcoming ? "var(--primary)" : `oklch(0.62 0.13 ${hue})` }}
+      style={{ background: upcoming ? "var(--primary)" : `oklch(0.52 0.13 ${hue})` }}
     >
-      <span className="flex size-full -rotate-45 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold text-white">
+      <span
+        className={cn(
+          "flex size-full -rotate-45 items-center justify-center overflow-hidden rounded-full text-[11px] font-semibold",
+          upcoming ? "text-primary-foreground" : "text-white",
+        )}
+      >
         {portrait ? (
           // eslint-disable-next-line @next/next/no-img-element -- small data URL
           <img src={portrait} alt="" className="size-full object-cover" />

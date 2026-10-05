@@ -188,7 +188,7 @@ function QuickAdd({ className, compact }: { className?: string; compact?: boolea
         ) : (
           <Button className={cn("justify-start", className)}>
             <Plus /> New
-            <span className="ml-auto text-xs font-normal text-primary-foreground/70">
+            <span className="ml-auto text-xs font-normal text-primary-foreground/90">
               contact · meeting
             </span>
           </Button>

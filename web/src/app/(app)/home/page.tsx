@@ -124,6 +124,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
             </div>
           ) : (
             <EmptyState
+              headingLevel={3}
               className="mt-3 py-8"
               icon={CalendarClock}
               title="Nothing planned"
@@ -190,6 +191,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
               </div>
             ) : (
               <EmptyState
+                headingLevel={3}
                 className="mt-3 py-8"
                 icon={Users}
                 title="Your address book is empty"
