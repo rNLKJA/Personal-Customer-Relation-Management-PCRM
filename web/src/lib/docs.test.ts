@@ -64,7 +64,9 @@ describe("decision records and model card", () => {
   it("marks superseded records instead of rewriting them", () => {
     expect(getDecisionRecord("DR-002-demo-inbox")?.status).toMatch(/superseded by DR-005/);
     expect(getDecisionRecord("DR-003-redact-before-llm")?.status).toMatch(/superseded by DR-006/);
-    expect(getDecisionRecord("DR-004-turso-vs-tmp-fallback")?.status).toMatch(/superseded by DR-007/);
+    expect(getDecisionRecord("DR-004-turso-vs-tmp-fallback")?.status).toMatch(
+      /superseded by DR-007/,
+    );
   });
 
   it("quotes exactly the evaluation numbers the code produces (no drift)", () => {
