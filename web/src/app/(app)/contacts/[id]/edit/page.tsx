@@ -7,7 +7,13 @@ import { ContactForm } from "@/components/contacts/contact-form";
 import { getContact } from "@/server/contacts";
 import { requireUser } from "@/server/session";
 
-export const metadata: Metadata = { title: "Edit contact" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/contacts/[id]/edit">): Promise<Metadata> {
+  const user = await requireUser();
+  const found = await getContact(user.id, (await params).id);
+  return { title: found ? "Edit contact" : "Contact not found" };
+}
 
 export default async function EditContactPage({ params }: PageProps<"/contacts/[id]/edit">) {
   const user = await requireUser();

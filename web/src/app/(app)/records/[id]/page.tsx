@@ -12,7 +12,12 @@ import { convert } from "@/lib/legacy/convert";
 import { formatCoords, haversineKm, formatDistance, MELBOURNE_CBD } from "@/lib/geo";
 import { APP_TIME_ZONE, formatDate, formatRelative, formatTime, requestNow } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Meeting" };
+export async function generateMetadata({ params }: PageProps<"/records/[id]">): Promise<Metadata> {
+  const user = await requireUser();
+  const r = await getRecord(user.id, (await params).id);
+  if (!r) return { title: "Meeting not found" };
+  return { title: `Meeting with ${r.meetingPerson.firstName} ${r.meetingPerson.lastName}` };
+}
 
 export default async function RecordPage({ params }: PageProps<"/records/[id]">) {
   const user = await requireUser();

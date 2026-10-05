@@ -31,7 +31,9 @@ import { APP_TIME_ZONE, formatDate, requestNow } from "@/lib/time";
 export async function generateMetadata({ params }: PageProps<"/contacts/[id]">): Promise<Metadata> {
   const user = await requireUser();
   const found = await getContact(user.id, (await params).id);
-  return { title: found ? `${found.contact.firstName} ${found.contact.lastName}` : "Contact" };
+  return {
+    title: found ? `${found.contact.firstName} ${found.contact.lastName}` : "Contact not found",
+  };
 }
 
 export default async function ContactPage({ params }: PageProps<"/contacts/[id]">) {

@@ -9,7 +9,13 @@ import { getRecord } from "@/server/records";
 import { requireUser } from "@/server/session";
 import { toZonedInputValue } from "@/lib/time";
 
-export const metadata: Metadata = { title: "Edit meeting" };
+export async function generateMetadata({
+  params,
+}: PageProps<"/records/[id]/edit">): Promise<Metadata> {
+  const user = await requireUser();
+  const r = await getRecord(user.id, (await params).id);
+  return { title: r ? "Edit meeting" : "Meeting not found" };
+}
 
 export default async function EditRecordPage({ params }: PageProps<"/records/[id]/edit">) {
   const user = await requireUser();
