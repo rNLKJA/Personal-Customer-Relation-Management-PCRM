@@ -59,7 +59,7 @@ describe("accounts", () => {
       .from(emailOutbox)
       .where(eq(emailOutbox.toEmail, "new.person@example.com"));
     expect(mail.code).toMatch(/^\d{6}$/);
-    expect(mail.subject).toBe("Vertify Your Email with Code");
+    expect(mail.subject).toBe("Verify your e-mail with this code");
     const wrong = mail.code === "000000" ? "111111" : "000000";
     const base = {
       email: "new.person@example.com",

@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { eq } from "drizzle-orm";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
 import { getDb } from "@/db/client";
+import { DEMO_USER_ID, demoLagDays, reanchorDemoAccount } from "@/db/populate";
 import { users, type User } from "@/db/schema";
 import { sessionKey } from "./session-secret";
 
@@ -113,6 +114,15 @@ export async function getCurrentUser(): Promise<User | null> {
   const user = await getDb().query.users.findFirst({ where: eq(users.id, session.sub) });
   if (!user || user.status !== "active") return null;
   if (user.expiresAt && user.expiresAt.getTime() < Date.now()) return null;
+  if (user.id === DEMO_USER_ID && demoLagDays(user.createdAt) > 0) {
+    // Slide the shared demo account's dates to today (at most once a day).
+    try {
+      const days = await reanchorDemoAccount(getDb());
+      if (days > 0) return { ...user, createdAt: new Date(user.createdAt.getTime() + days * 864e5) };
+    } catch (err) {
+      console.error("[pcrm] could not re-anchor the demo account", err);
+    }
+  }
   return user;
 }
 

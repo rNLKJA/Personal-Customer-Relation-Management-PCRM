@@ -52,15 +52,20 @@ export function fastRegisterEmailHtml(opts: {
   return frame(`
     <p style="color:white">Hi ${escapeHtml(opts.inviteeName)},</p>
     <p style="color:white">${escapeHtml(opts.inviterName)} added you as a contact in 4399 CRM and invited you to join.</p>
-    <p style="color:white">Complete your register by access the link within <strong style="color:#ff5555;">15 minutes</strong>:</p>
+    <p style="color:white">Complete your registration by opening this link within <strong style="color:#ff5555;">15 minutes</strong>:</p>
     <p><a href="${escapeHtml(opts.link)}" style="color:#8be9fd;word-break:break-all;">${escapeHtml(opts.link)}</a></p>`);
 }
 
+/**
+ * Subject lines shown in the demo inbox. The 2021 back-end used "Vertify Your
+ * Email with Code" and "Complete your register by access the Link"; the typos
+ * are corrected here (user-facing copy, not ported logic).
+ */
 export const EMAIL_SUBJECTS = {
-  verification: "Vertify Your Email with Code",
-  "password-reset": "Reset Your Password",
+  verification: "Verify your e-mail with this code",
+  "password-reset": "Reset your password",
   "change-password": "Confirm your password change",
-  "fast-register": "Complete your register by access the Link",
+  "fast-register": "Complete your registration with this link",
 } as const;
 
 export type EmailKind = keyof typeof EMAIL_SUBJECTS;

@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { deleteUsersCascade } from "./cascade";
 import type { Db } from "./client-core";
 import { newId } from "./ids";
@@ -8,7 +8,7 @@ import { DEMO_ACCOUNTS, DIRECTORY_USERS } from "./demo-accounts";
 import { generateSampleData, type LinkableAccount } from "@/lib/sample-data";
 import { PLACES } from "@/lib/places";
 import { mulberry32, hashString } from "@/lib/random";
-import { verificationEmailHtml } from "@/lib/email-templates";
+import { EMAIL_SUBJECTS, verificationEmailHtml } from "@/lib/email-templates";
 
 /**
  * Data population shared by `pnpm db:seed` (deterministic demo database) and
@@ -131,6 +131,12 @@ export function startOfUtcDay(d: Date = new Date()): Date {
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()));
 }
 
+/** Id of the shared, one-click "Demo user" account. */
+export const DEMO_USER_ID = "usr_demo";
+/** The seed creates the demo user exactly this many days before its anchor date. */
+export const DEMO_ACCOUNT_AGE_DAYS = 365;
+const DAY_MS = 864e5;
+
 /** Seed an empty, migrated database with the demo accounts and their data. */
 export async function seedDatabase(db: Db, anchor: Date = startOfUtcDay()): Promise<void> {
   const created = (daysAgo: number) => new Date(anchor.getTime() - daysAgo * 864e5);
@@ -157,7 +163,7 @@ export async function seedDatabase(db: Db, anchor: Date = startOfUtcDay()): Prom
     });
   }
 
-  const demoId = "usr_demo";
+  const demoId = DEMO_USER_ID;
   await db.insert(users).values({
     id: demoId,
     userName: DEMO_ACCOUNTS.demo.userName,
@@ -171,7 +177,7 @@ export async function seedDatabase(db: Db, anchor: Date = startOfUtcDay()): Prom
     status: "active",
     role: "user",
     isDemo: true,
-    createdAt: created(365),
+    createdAt: created(DEMO_ACCOUNT_AGE_DAYS),
   });
 
   await db.insert(users).values({
@@ -196,13 +202,75 @@ export async function seedDatabase(db: Db, anchor: Date = startOfUtcDay()): Prom
   await db.insert(emailOutbox).values({
     id: newId(),
     toEmail: "jordan.lee@example.com",
-    subject: "Vertify Your Email with Code",
+    subject: EMAIL_SUBJECTS.verification,
     kind: "verification",
     html: verificationEmailHtml("438921"),
     code: "438921",
     recipientUserId: demoId,
     createdAt: created(365),
     readAt: created(365),
+  });
+}
+
+/** The date the shared demo account's data is currently anchored to. */
+export function demoAnchorOf(demoCreatedAt: Date): Date {
+  return new Date(demoCreatedAt.getTime() + DEMO_ACCOUNT_AGE_DAYS * DAY_MS);
+}
+
+/** Whole days the shared demo account's data lags behind `now` (0 when current). */
+export function demoLagDays(demoCreatedAt: Date, now: Date = new Date()): number {
+  const lag = startOfUtcDay(now).getTime() - startOfUtcDay(demoAnchorOf(demoCreatedAt)).getTime();
+  return Math.max(0, Math.round(lag / DAY_MS));
+}
+
+/**
+ * Keep the shared demo account current: the snapshot (and a Turso database
+ * seeded once) is anchored to a fixed date, so its "Up next" meetings would
+ * drift into the past. Slide every date of the demo user's address book
+ * forward by whole days so the anchor is today. The demo user's `created_at`
+ * doubles as the anchor and as an optimistic lock, so concurrent requests
+ * shift the data only once. Returns the number of days shifted.
+ */
+export async function reanchorDemoAccount(db: Db, now: Date = new Date()): Promise<number> {
+  const demo = await db
+    .select({ createdAt: users.createdAt })
+    .from(users)
+    .where(eq(users.id, DEMO_USER_ID))
+    .get();
+  if (!demo) return 0;
+  const days = demoLagDays(demo.createdAt, now);
+  if (days < 1) return 0;
+  const delta = days * DAY_MS;
+  return db.transaction(async (tx) => {
+    const claimed = await tx
+      .update(users)
+      .set({ createdAt: new Date(demo.createdAt.getTime() + delta) })
+      .where(and(eq(users.id, DEMO_USER_ID), eq(users.createdAt, demo.createdAt)))
+      .returning({ id: users.id });
+    if (claimed.length === 0) return 0; // another request already shifted it
+    await tx
+      .update(records)
+      .set({
+        dateTime: sql`${records.dateTime} + ${delta}`,
+        createdAt: sql`${records.createdAt} + ${delta}`,
+      })
+      .where(eq(records.ownerId, DEMO_USER_ID));
+    await tx
+      .update(contacts)
+      .set({ addDate: sql`${contacts.addDate} + ${delta}` })
+      .where(eq(contacts.ownerId, DEMO_USER_ID));
+    await tx
+      .update(contactLinks)
+      .set({ addSince: sql`${contactLinks.addSince} + ${delta}` })
+      .where(eq(contactLinks.userId, DEMO_USER_ID));
+    await tx
+      .update(emailOutbox)
+      .set({
+        createdAt: sql`${emailOutbox.createdAt} + ${delta}`,
+        readAt: sql`${emailOutbox.readAt} + ${delta}`,
+      })
+      .where(eq(emailOutbox.recipientUserId, DEMO_USER_ID));
+    return days;
   });
 }
 
