@@ -551,7 +551,9 @@ export default function MethodsPage() {
                 but the privacy and AI features were built and demonstrated on a local production
                 build while production still used a per-instance copy (
                 <Link href="/methods/decisions/DR-004-turso-vs-tmp-fallback">DR-004</Link>). The
-                functions run in the US and the database in Tokyo, which adds latency to every page.
+                functions now run in Sydney (
+                <Link href="/methods/decisions/DR-008-functions-in-sydney">DR-008</Link>) but the
+                database is in Tokyo, so every query still crosses to Japan and back.
               </li>
               <li>
                 The shared <code>demo</code> account is shared: other visitors see its activity log,
@@ -624,7 +626,8 @@ export default function MethodsPage() {
             <ul>
               <li>
                 Provision the hosted database first, fail a production deployment that has none, and
-                run the functions in the database&apos;s region.
+                choose the function region by an interleaved comparison that includes the
+                database&apos;s own region.
               </li>
               <li>
                 Detect names of people outside the address book in the browser before sending, and

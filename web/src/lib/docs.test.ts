@@ -25,7 +25,7 @@ const REPO_DOCS = path.join(process.cwd(), "..", "docs");
 describe("decision records and model card", () => {
   const records = listDecisionRecords();
 
-  it("has DR-001 to DR-007 with every section, in order", () => {
+  it("has DR-001 to DR-008 with every section, in order", () => {
     expect(records.map((r) => r.id)).toEqual([
       "DR-001",
       "DR-002",
@@ -34,6 +34,7 @@ describe("decision records and model card", () => {
       "DR-005",
       "DR-006",
       "DR-007",
+      "DR-008",
     ]);
     for (const r of records) {
       const headings = [...r.markdown.matchAll(/^## (.+)$/gm)].map((m) => m[1]);

@@ -163,7 +163,7 @@ screenshots below show only real, non-AI content.
 
 - **Framework:** Next.js 16 (App Router, Server Components, Server Actions, Route Handlers, `proxy.ts`), React 19, TypeScript (strict)
 - **UI:** Tailwind CSS 4, shadcn/ui (Radix), lucide-react, next-themes (light / dark / system), Geist + Instrument Serif via `next/font`, sonner
-- **Data:** SQLite through `@libsql/client` + Drizzle ORM; Turso in production, `/tmp` copy of the seed snapshot as a fallback on Vercel
+- **Data:** SQLite through `@libsql/client` + Drizzle ORM; Turso (hosted libSQL, Tokyo) in production, `/tmp` copy of the seed snapshot as a fallback on Vercel previews
 - **Auth:** bcrypt (`bcryptjs`, cost 10 as in the original) + signed httpOnly session cookies (`jose`), zod-validated actions
 - **Maps & places:** MapLibre GL via `react-map-gl/maplibre`, OpenFreeMap vector tiles, Photon geocoding (Nominatim / bundled gazetteer fallbacks), haversine distances, offline GeoJSON basemap
 - **QR:** `qrcode` (generation), native `BarcodeDetector` or the `barcode-detector` ZXing-wasm ponyfill (scanning)
@@ -186,7 +186,7 @@ screenshots below show only real, non-AI content.
 │   ├── _archive/                 the original README of this repository
 │   └── README.md
 ├── docs/
-│   ├── decisions/                DR-001 ... DR-007 (rendered at /methods/decisions/...)
+│   ├── decisions/                DR-001 ... DR-008 (rendered at /methods/decisions/...)
 │   ├── model-card.md             meeting-note assistant + redactor (rendered at /methods/model-card)
 │   └── screenshots/              images used in this README
 ├── scripts/
@@ -238,7 +238,11 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
 ### Deployment notes
 
 - Production: <https://comp30022-personal-crm.vercel.app> (Vercel project `comp30022-personal-crm`, deployed from
-  `web/` with `vercel deploy --prod`).
+  `web/` with `vercel deploy --prod`). Production uses the Turso database `comp30022-personal-crm` (AWS
+  `ap-northeast-1`, Tokyo).
+- Functions run in `syd1` (Sydney), set by `regions` in `web/vercel.json`. Moving them from the default `iad1` cut the
+  median time to first byte of signed-in pages from 0.74 s to 0.45 s, measured from Australia
+  ([DR-008](docs/decisions/DR-008-functions-in-sydney.md)).
 - Vercel project root: `web/`. Set `SESSION_SECRET` (required, 32+ characters), and for persistent shared data `DATABASE_URL` +
   `DATABASE_AUTH_TOKEN` of a Turso database (run `pnpm db:migrate && pnpm db:seed` against it once).
 - Pending Drizzle migrations are also applied when each server instance starts (`src/instrumentation.ts`), so the `/tmp`
