@@ -15,6 +15,12 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <div className="animate-fade-up">
       <h1 className="text-2xl font-semibold tracking-tight">Welcome back</h1>
       <p className="mt-1 text-sm text-muted-foreground">Sign in to your 4399 CRM address book.</p>
+      {sp.error === "slow-down" && (
+        <p role="alert" className="mt-4 text-sm text-destructive">
+          Lots of guest sandboxes were created from your network just now - please wait a few
+          minutes or use the shared demo account.
+        </p>
+      )}
       {sp.error === "demo-unavailable" && (
         <p role="alert" className="mt-4 text-sm text-destructive">
           The demo account is not available right now - try the guest sandbox instead.

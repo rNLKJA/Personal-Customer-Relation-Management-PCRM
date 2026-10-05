@@ -1,6 +1,8 @@
 "use server";
 
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { createRateLimiter } from "@/lib/rate-limit";
 import { z } from "zod";
 import { DEMO_ACCOUNTS } from "@/db/demo-accounts";
 import { codeSchema, emailSchema, firstIssue, passwordSchema, userNameSchema } from "@/lib/schemas";
@@ -26,6 +28,15 @@ import {
   issueResetTicket,
 } from "../session";
 import type { ActionResult } from "./types";
+
+// Abuse guards for the public demo (per server instance, per client IP).
+const allowGuest = createRateLimiter(6, 10 * 60_000);
+const allowCodes = createRateLimiter(10, 10 * 60_000);
+
+async function clientKey(): Promise<string> {
+  const h = await headers();
+  return h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "local";
+}
 
 function safeNext(next: unknown): string {
   return typeof next === "string" && next.startsWith("/") && !next.startsWith("//")
@@ -56,6 +67,7 @@ export async function demoLoginAction(formData: FormData): Promise<void> {
 }
 
 export async function guestLoginAction(): Promise<void> {
+  if (!allowGuest(await clientKey())) redirect("/login?error=slow-down");
   const user = await createGuest();
   await createSession(user);
   redirect("/home?welcome=guest");
@@ -74,6 +86,8 @@ export async function sendSignupCodeAction(email: string): Promise<ActionResult>
   const parsed = emailSchema.safeParse(email);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   const browserKey = (await getBrowserKey(true))!;
+  if (!allowCodes(await clientKey()))
+    return { ok: false, error: "Too many codes requested - wait a few minutes." };
   return sendSignupCode(parsed.data, browserKey);
 }
 
@@ -98,6 +112,8 @@ export async function sendResetCodeAction(
   userName: string,
 ): Promise<ActionResult<{ email: string; delivered: boolean }>> {
   if (!userName.trim()) return { ok: false, error: "Enter your user name." };
+  if (!allowCodes(await clientKey()))
+    return { ok: false, error: "Too many codes requested - wait a few minutes." };
   const browserKey = (await getBrowserKey(true))!;
   const user = await findUserByUserName(userName);
   // Only browsers that have signed in to this account before see the code in

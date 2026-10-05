@@ -1,8 +1,9 @@
 import "server-only";
 import { randomBytes } from "node:crypto";
 import bcrypt from "bcryptjs";
-import { and, eq, gt, sql } from "drizzle-orm";
+import { and, asc, eq, gt, like, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { deleteUsersCascade } from "@/db/cascade";
 import { newId, secureRandom } from "@/db/ids";
 import { hashPassword, populateAddressBook, purgeExpiredUsers } from "@/db/populate";
 import { contacts, fastRegisterCodes, users, type User } from "@/db/schema";
@@ -403,9 +404,23 @@ export async function confirmFastRegister(input: {
 
 // --- guest sandbox ----------------------------------------------------------------
 
+/** Upper bound on simultaneous guest sandboxes; the oldest are recycled first. */
+const MAX_GUESTS = 300;
+
 export async function createGuest(): Promise<User> {
   const db = getDb();
   await purgeExpiredUsers(db);
+  const guests = await db
+    .select({ id: users.id })
+    .from(users)
+    .where(and(eq(users.isDemo, false), like(users.userName, "guest-%")))
+    .orderBy(asc(users.createdAt));
+  if (guests.length >= MAX_GUESTS) {
+    await deleteUsersCascade(
+      db,
+      guests.slice(0, guests.length - MAX_GUESTS + 1).map((g) => g.id),
+    );
+  }
   const now = new Date();
   const suffix = randomBytes(3).toString("hex");
   const id = newId();
