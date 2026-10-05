@@ -286,7 +286,7 @@ export const PARITY: ParityRow[] = [
     original: "emailCodeVerify + updatePassword",
     targets: [t(A.profile, "sendChangePasswordCodeAction"), t(A.profile, "changePasswordAction")],
     status: "implemented",
-    note: "Code from the demo inbox; the 'new password must differ' rule now actually works.",
+    note: "Code from the demo inbox; a new password equal to the old one is now refused, which the original only attempted in resetPassword.",
   },
   {
     method: "POST",
@@ -310,7 +310,7 @@ export const PARITY: ParityRow[] = [
     original: "resetPassword",
     targets: [t(A.auth, "resetPasswordAction")],
     status: "changed",
-    note: 'Requires the reset ticket; the original accepted a constant codeVerified: "4399CRMVerified" from any client.',
+    note: 'Requires the reset ticket; the original accepted a constant codeVerified: "4399CRMVerified" from any client, and its "same as the old password" check compared two salted bcrypt hashes with ===, so it never fired (now bcrypt.compare).',
   },
   {
     method: "POST",
@@ -325,11 +325,15 @@ export const PARITY: ParityRow[] = [
 export const NOT_API = [
   {
     path: "/api/*",
-    note: "Served the generated JSDoc HTML pages - not part of the API; not ported.",
+    note: "Served a 'testing' ping and the generated JSDoc HTML pages - not part of the API; not ported.",
   },
   {
     path: "/test/*",
     note: "Served a generated test report - not ported (CI runs the tests instead).",
+  },
+  {
+    path: "GET /contact/, GET /record/",
+    note: "Declared in the routers without a handler, so requests fell through to the 404 catch-all.",
   },
 ];
 
