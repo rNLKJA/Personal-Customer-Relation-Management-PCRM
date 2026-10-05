@@ -22,7 +22,10 @@ export default async function ContactsPage({ searchParams }: PageProps<"/contact
           <>
             <Button asChild variant="outline">
               <Link href="/contacts/add?tab=scan">
-                <QrCode /> <span className="hidden sm:inline">Add by</span> QR / user name
+                <QrCode />
+                <span>
+                  <span className="hidden sm:inline">Add by </span>QR / user name
+                </span>
               </Link>
             </Button>
             <Button asChild>

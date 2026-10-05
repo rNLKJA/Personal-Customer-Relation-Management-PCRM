@@ -58,7 +58,7 @@ export function InboxView() {
   }
 
   return (
-    <div className="grid gap-4 lg:grid-cols-[340px_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
       <ul className={cn("bg-card divide-y overflow-hidden rounded-2xl border shadow-(--shadow-soft)", open && "hidden lg:block")} aria-label="Messages">
         {messages.map((m) => {
           const Icon = KIND_ICON[m.kind] ?? Mail;

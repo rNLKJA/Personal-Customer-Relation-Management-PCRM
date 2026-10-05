@@ -28,7 +28,7 @@ function getDetector(): Promise<Detector> {
     }
     const mod = await import("barcode-detector/ponyfill");
     mod.setZXingModuleOverrides({
-      locateFile: (path: string, prefix: string) => (path.endsWith(".wasm") ? "/wasm/zxing_reader.wasm" : prefix + path),
+      locateFile: (path: string, prefix: string) => (path.endsWith(".wasm") ? "/vendor/zxing/zxing_reader.wasm" : prefix + path),
     });
     return new mod.BarcodeDetector({ formats: ["qr_code"] }) as Detector;
   })();

@@ -108,7 +108,7 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
         )}
       </section>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_1.2fr]">
+      <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
         <section className="bg-card space-y-5 rounded-2xl border p-5 shadow-(--shadow-soft)" aria-label="Details">
           <Detail label="Phone">
             {c.phones.length ? (
@@ -166,7 +166,7 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
           {meetings.length ? (
             <div className="mt-2">
               {meetings.map((r) => (
-                <MeetingRow key={r.id} record={r} upcoming={r.dateTime.getTime() > now} />
+                <MeetingRow key={r.id} record={r} upcoming={r.dateTime.getTime() > now} hidePerson />
               ))}
             </div>
           ) : (

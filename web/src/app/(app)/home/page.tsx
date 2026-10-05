@@ -99,7 +99,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
         ))}
       </section>
 
-      <div className="grid gap-6 lg:grid-cols-[1.25fr_1fr]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="up-next">
           <SectionHead id="up-next" title="Up next" href="/calendar" linkLabel="Calendar" />
           {upcoming.length ? (
@@ -133,7 +133,7 @@ export default async function HomePage({ searchParams }: PageProps<"/home">) {
           )}
         </section>
 
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
           <section className="bg-card rounded-2xl border p-5 shadow-(--shadow-soft)" aria-labelledby="reconnect">
             <SectionHead id="reconnect" title="Time to reconnect" />
             <p className="text-muted-foreground mt-1 text-xs">No meeting in the last 45 days and nothing planned.</p>

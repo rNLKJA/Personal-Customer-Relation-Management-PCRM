@@ -35,10 +35,13 @@ export function MeetingRow({
   record,
   upcoming,
   showNotes = true,
+  hidePerson = false,
 }: {
   record: MeetingRowData;
   upcoming?: boolean;
   showNotes?: boolean;
+  /** On a contact's own page the person is implied; lead with the place instead. */
+  hidePerson?: boolean;
 }) {
   const person = record.meetingPerson;
   return (
@@ -48,17 +51,27 @@ export function MeetingRow({
     >
       <DateTile date={record.dateTime} highlight={upcoming} />
       <div className="min-w-0 flex-1">
-        <div className="flex items-center gap-2">
-          <PersonAvatar firstName={person.firstName} lastName={person.lastName} portrait={person.portrait} seed={person.id} size="xs" />
-          <span className="truncate text-sm font-medium">
-            {person.firstName} {person.lastName}
-          </span>
-          <span className="text-muted-foreground ml-auto shrink-0 text-xs tabular">{formatTime(record.dateTime)}</span>
-        </div>
-        <p className="text-muted-foreground mt-1 flex items-center gap-1 truncate text-xs">
-          <MapPin className="size-3 shrink-0" aria-hidden="true" />
-          <span className="truncate">{cleanLocation(record.location).replace(/,\s*$/, "")}</span>
-        </p>
+        {hidePerson ? (
+          <div className="flex items-center gap-2">
+            <MapPin className="text-muted-foreground size-3.5 shrink-0" aria-hidden="true" />
+            <span className="truncate text-sm font-medium">{cleanLocation(record.location).replace(/,\s*$/, "")}</span>
+            <span className="text-muted-foreground ml-auto shrink-0 text-xs tabular">{formatTime(record.dateTime)}</span>
+          </div>
+        ) : (
+          <>
+            <div className="flex items-center gap-2">
+              <PersonAvatar firstName={person.firstName} lastName={person.lastName} portrait={person.portrait} seed={person.id} size="xs" />
+              <span className="truncate text-sm font-medium">
+                {person.firstName} {person.lastName}
+              </span>
+              <span className="text-muted-foreground ml-auto shrink-0 text-xs tabular">{formatTime(record.dateTime)}</span>
+            </div>
+            <p className="text-muted-foreground mt-1 flex items-center gap-1 truncate text-xs">
+              <MapPin className="size-3 shrink-0" aria-hidden="true" />
+              <span className="truncate">{cleanLocation(record.location).replace(/,\s*$/, "")}</span>
+            </p>
+          </>
+        )}
         {showNotes && record.notes && (
           <p className="text-muted-foreground/90 mt-0.5 line-clamp-1 text-xs">{record.notes}</p>
         )}

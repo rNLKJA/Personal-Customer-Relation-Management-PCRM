@@ -8,7 +8,7 @@ import type { MapRecord } from "./records-map";
 const RecordsMap = dynamic(() => import("./records-map").then((m) => m.RecordsMap), {
   ssr: false,
   loading: () => (
-    <div className="grid gap-4 lg:h-[calc(100dvh-11rem)] lg:grid-cols-[320px_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:h-[calc(100dvh-11rem)] lg:grid-cols-[320px_minmax(0,1fr)]">
       <Skeleton className="order-2 h-64 rounded-2xl lg:order-1 lg:h-full" />
       <Skeleton className="order-1 h-[52dvh] rounded-2xl lg:order-2 lg:h-full" />
     </div>

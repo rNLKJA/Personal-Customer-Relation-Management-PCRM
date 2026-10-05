@@ -9,7 +9,7 @@ import Map, {
   type MapRef,
   type ViewState,
 } from "react-map-gl/maplibre";
-import type { StyleSpecification } from "maplibre-gl";
+import { setWorkerUrl, type StyleSpecification } from "maplibre-gl";
 import { useTheme } from "next-themes";
 import { WifiOff } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -25,6 +25,10 @@ const OPENFREEMAP = {
   dark: "https://tiles.openfreemap.org/styles/dark",
 };
 const STYLE_TIMEOUT_MS = 8000;
+
+// MapLibre v6 resolves its worker relative to its own (bundled) chunk URL; point
+// it at the copy served from public/vendor (see scripts/copy-assets.mjs).
+if (typeof window !== "undefined") setWorkerUrl("/vendor/maplibre/maplibre-gl-worker.mjs");
 
 function fallbackStyle(dark: boolean): StyleSpecification {
   return {
@@ -114,11 +118,7 @@ export const BaseMap = forwardRef<MapRef, BaseMapProps>(function BaseMap(
           }
         }}
       >
-        <AttributionControl
-          compact
-          position="bottom-right"
-          customAttribution={offline ? undefined : '<a href="https://openfreemap.org" target="_blank" rel="noopener">OpenFreeMap</a>'}
-        />
+        <AttributionControl compact position="bottom-right" />
         {interactive && showNavigation && <NavigationControl position="top-right" showCompass={false} />}
         {children}
       </Map>

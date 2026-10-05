@@ -34,4 +34,4 @@ web/out/
 web/coverage/
 web/data/app.db
 web/data/app.db-*
-web/public/wasm/
+web/public/vendor/

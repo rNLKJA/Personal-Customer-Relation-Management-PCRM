@@ -31,8 +31,8 @@ export default async function ProfilePage() {
           </>
         }
       />
-      <div className="grid gap-6 lg:grid-cols-[1fr_300px]">
-        <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="min-w-0 space-y-6">
           <Card title="Personal information" description="What other people see when they add you.">
             <ProfileForm
               userName={user.userName}

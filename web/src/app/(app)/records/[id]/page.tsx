@@ -53,18 +53,15 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
             </div>
           </div>
 
-          <Link
-            href={`/contacts/${p.id}`}
-            className="bg-surface hover:bg-muted mt-6 flex items-center gap-3 rounded-2xl border p-3 transition-colors"
-          >
+          <div className="bg-surface hover:bg-muted relative mt-6 flex items-center gap-3 rounded-2xl border p-3 transition-colors">
             <PersonAvatar firstName={p.firstName} lastName={p.lastName} portrait={p.portrait} seed={p.id} size="lg" />
             <div className="min-w-0 flex-1">
-              <p className="font-medium">
+              <Link href={`/contacts/${p.id}`} className="font-medium after:absolute after:inset-0 after:rounded-2xl">
                 {p.firstName} {p.lastName}
-              </p>
+              </Link>
               <p className="text-muted-foreground truncate text-sm">{p.occupation}</p>
             </div>
-            <div className="flex gap-1">
+            <div className="relative z-10 flex gap-1">
               {p.phones[0] && (
                 <Button asChild size="icon" variant="ghost" aria-label={`Call ${p.firstName}`}>
                   <a href={`tel:${p.phones[0]}`}>
@@ -80,7 +77,7 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
                 </Button>
               )}
             </div>
-          </Link>
+          </div>
         </header>
 
         <div className="space-y-6 border-t p-5 sm:p-7">

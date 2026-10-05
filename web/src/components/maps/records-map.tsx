@@ -76,7 +76,7 @@ export function RecordsMap({ records, now }: { records: MapRecord[]; now: number
   const missing = records.length - located.length;
 
   return (
-    <div className="grid gap-4 lg:h-[calc(100dvh-11rem)] lg:grid-cols-[320px_1fr]">
+    <div className="grid grid-cols-1 gap-4 lg:h-[calc(100dvh-11rem)] lg:grid-cols-[320px_minmax(0,1fr)]">
       <div className="order-2 flex min-h-0 flex-col gap-3 lg:order-1">
         <div className="bg-card rounded-2xl border p-3 shadow-(--shadow-soft)">
           <p className="text-muted-foreground mb-2 flex items-center gap-1.5 text-xs font-medium">

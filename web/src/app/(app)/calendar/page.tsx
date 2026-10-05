@@ -15,6 +15,11 @@ import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = { title: "Calendar" };
 
+/** "5:45 pm" -> "5:45p", "10:00 am" -> "10a" (fits the narrow day cells). */
+function compactTime(d: Date): string {
+  return formatTime(d).replace(":00", "").replace(/\s?([ap])m$/i, "$1");
+}
+
 const WEEKDAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -66,7 +71,7 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
         <ViewSwitch current="/calendar" />
       </div>
 
-      <div className="grid gap-6 lg:grid-cols-[1fr_340px]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <section className="bg-card rounded-2xl border p-3 shadow-(--shadow-soft) sm:p-5" aria-labelledby="month-title">
           <div className="mb-4 flex items-center justify-between gap-2 px-1">
             <div>
@@ -141,11 +146,11 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                               <span
                                 key={r.id}
                                 className={cn(
-                                  "truncate rounded-md px-1.5 py-0.5 text-[11px] leading-tight",
+                                  "truncate rounded-md px-1 py-0.5 text-[11px] leading-tight",
                                   r.dateTime > now ? "bg-primary/12 text-accent-foreground" : "bg-muted text-muted-foreground",
                                 )}
                               >
-                                <span className="tabular">{formatTime(r.dateTime).replace(":00", "")}</span> {r.meetingPerson.firstName}
+                                <span className="tabular font-medium">{compactTime(r.dateTime)}</span> {r.meetingPerson.firstName}
                               </span>
                             ))}
                             {items.length > 2 && <span className="text-muted-foreground px-1.5 text-[11px]">+{items.length - 2} more</span>}
