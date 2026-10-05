@@ -10,8 +10,10 @@ export function DemoNotices({
   guestExpiresAt: Date | null;
 }) {
   if (!ephemeral && !guestExpiresAt) return null;
+  // A labelled <section> is a region landmark, so the banner is not orphaned
+  // content outside the page landmarks (axe "region").
   return (
-    <div className="border-b bg-accent/50 text-accent-foreground">
+    <section aria-label="Demo notice" className="border-b bg-accent/50 text-accent-foreground">
       <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-x-5 gap-y-1 px-4 py-2 text-xs sm:px-6 lg:px-10">
         {guestExpiresAt && (
           <span className="inline-flex items-center gap-1.5">
@@ -27,6 +29,6 @@ export function DemoNotices({
           </span>
         )}
       </div>
-    </div>
+    </section>
   );
 }
