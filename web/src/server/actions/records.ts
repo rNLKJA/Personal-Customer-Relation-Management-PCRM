@@ -5,6 +5,7 @@ import { firstIssue, recordInputSchema, type RecordInputValues } from "@/lib/sch
 import { fromZonedInputValue } from "@/lib/time";
 import { getCurrentUser } from "../session";
 import { createRecord, deleteRecord, editRecord } from "../records";
+import { logActivity } from "../activity";
 import { SESSION_EXPIRED, type ActionResult } from "./types";
 
 function refreshRecords(id?: string, contactId?: string) {
@@ -42,6 +43,9 @@ export async function saveRecordAction(
           : "Could not save this meeting - check the contact still exists.",
     };
   }
+  await logActivity(user.id, v.id ? "update" : "create", "meeting", result.record.id, {
+    pinned: v.lat != null && v.lng != null,
+  });
   refreshRecords(result.record.id, result.record.contactId);
   return { ok: true, id: result.record.id };
 }
@@ -51,6 +55,7 @@ export async function deleteRecordAction(id: string): Promise<ActionResult> {
   if (!user) return SESSION_EXPIRED;
   const ok = await deleteRecord(user.id, id);
   if (!ok) return { ok: false, error: "Meeting not found." };
+  await logActivity(user.id, "delete", "meeting", id);
   refreshRecords();
   return { ok: true };
 }

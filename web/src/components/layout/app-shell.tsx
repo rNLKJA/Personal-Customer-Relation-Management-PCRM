@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { Inbox, LogOut, Plus, QrCode, UserPlus, NotebookPen } from "lucide-react";
+import { BookOpenText, Inbox, LogOut, Plus, QrCode, UserPlus, NotebookPen } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { Button } from "@/components/ui/button";
@@ -15,10 +15,18 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logoutAction } from "@/server/actions/auth";
+import { SignOutForm } from "@/components/auth/sign-out-form";
 import { useUnreadCount } from "@/hooks/use-unread-count";
 import { cn } from "@/lib/utils";
-import { ADMIN_NAV, MOBILE_TABS, SIDEBAR_NAV, isActive, type NavItem } from "./nav-config";
+import {
+  ADMIN_NAV,
+  MOBILE_TABS,
+  PRIVACY_NAV,
+  SIDEBAR_NAV,
+  isActive,
+  type NavItem,
+} from "./nav-config";
+import { AiSettingsDialog } from "@/components/ai/ai-settings-dialog";
 import { ThemeIconButton, ThemeToggle } from "./theme-toggle";
 
 export interface ShellUser {
@@ -62,7 +70,7 @@ export function AppShell({
           </Link>
         </div>
         <QuickAdd className="mx-3 mb-3" />
-        <nav aria-label="Main" className="flex-1 space-y-0.5 overflow-y-auto px-3">
+        <nav aria-label="Main" className="flex-1 space-y-0.5 overflow-y-auto px-3 pb-3">
           {nav.map((item) => (
             <SidebarLink
               key={item.href}
@@ -71,8 +79,25 @@ export function AppShell({
               badge={item.href === "/inbox" ? unreadLive : 0}
             />
           ))}
+          <p className="px-3 pt-4 pb-1 text-[11px] font-medium tracking-wide text-muted-foreground uppercase">
+            Privacy &amp; AI
+          </p>
+          {PRIVACY_NAV.map((item) => (
+            <SidebarLink key={item.href} item={item} active={isActive(pathname, item)} badge={0} />
+          ))}
+          <Link
+            href="/methods"
+            className="group flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+          >
+            <BookOpenText className="size-4 text-muted-foreground group-hover:text-foreground" />
+            Methods
+          </Link>
         </nav>
         <div className="space-y-3 border-t border-sidebar-border p-3">
+          <div className="flex items-center justify-between px-1">
+            <span className="text-xs text-muted-foreground">Optional AI</span>
+            <AiSettingsDialog />
+          </div>
           <div className="flex items-center justify-between px-1">
             <span className="text-xs text-muted-foreground">Theme</span>
             <ThemeToggle />
@@ -248,13 +273,13 @@ function UserMenu({ user, displayName }: { user: ShellUser; displayName: string 
           <Link href="/contacts/add?tab=code">My QR code</Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <form action={logoutAction}>
+        <SignOutForm>
           <DropdownMenuItem asChild>
             <button type="submit" className="w-full">
               <LogOut /> Sign out
             </button>
           </DropdownMenuItem>
-        </form>
+        </SignOutForm>
       </DropdownMenuContent>
     </DropdownMenu>
   );

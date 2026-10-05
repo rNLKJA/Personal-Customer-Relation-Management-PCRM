@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Client } from "@libsql/client";
-import { createDb, type Db } from "./client-core";
+import { createDb, runMigrations, type Db } from "./client-core";
 
 /**
  * Database connection (libSQL). Resolution order:
@@ -73,4 +73,18 @@ export function getDb(): Db {
 
 export function getStorageMode(): StorageMode {
   return instance().mode;
+}
+
+/**
+ * Apply any pending drizzle/ migrations (idempotent). Called once per server
+ * instance from `src/instrumentation.ts`, so a local data/app.db or an older
+ * /tmp copy picks up new tables without a manual `pnpm db:migrate`. Failures
+ * are logged, not thrown: the app keeps serving what the schema supports.
+ */
+export async function ensureSchema(): Promise<void> {
+  try {
+    await runMigrations(getDb());
+  } catch (err) {
+    console.error(`[pcrm] could not apply migrations (${getStorageMode()} storage)`, err);
+  }
 }

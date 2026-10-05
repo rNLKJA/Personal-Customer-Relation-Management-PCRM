@@ -11,6 +11,8 @@ import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-or
  *   EmailAuth    -> email_codes
  *   EmailRegister/FastRegister -> fast_register_codes
  *   (new)        -> email_outbox     (the "Demo inbox" that replaces Gmail SMTP)
+ *   (new)        -> activity_log     (append-only access / change log per user)
+ *   (new)        -> ai_audit_log     (every bring-your-own-key AI call and the human decision)
  *
  * Mongo arrays (email, phone, customField) are stored as JSON text columns so
  * they keep their order and equality semantics. Portraits were Buffers +
@@ -18,6 +20,39 @@ import { index, integer, real, sqliteTable, text, uniqueIndex } from "drizzle-or
  */
 
 export type CustomField = { field: string; value: string };
+
+/** An AI meeting summary a person accepted (or edited) - see ai_audit_log. */
+export interface AcceptedAiSummary {
+  summary: string;
+  followUps: { action: string; due: string | null }[];
+  auditId: string;
+  provider: "anthropic" | "openai";
+  model: string;
+  decision: "accepted" | "edited";
+  decidedAt: number;
+}
+
+export const ACTIVITY_ACTIONS = [
+  "view",
+  "create",
+  "update",
+  "delete",
+  "export",
+  "ai-call",
+  "ai-decision",
+  "account-delete",
+] as const;
+export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
+export const ACTIVITY_ENTITIES = ["contact", "meeting", "account", "data", "ai"] as const;
+export type ActivityEntity = (typeof ACTIVITY_ENTITIES)[number];
+
+export const AI_DECISION_VALUES = [
+  "pending",
+  "accepted",
+  "edited",
+  "rejected",
+  "not_applicable",
+] as const;
 
 const createdAt = () =>
   integer("created_at", { mode: "timestamp_ms" })
@@ -140,6 +175,8 @@ export const records = sqliteTable(
       .$type<CustomField[]>()
       .notNull()
       .default(sql`'[]'`),
+    /** Accepted (or edited) AI summary; null unless a person kept one. */
+    aiSummary: text("ai_summary", { mode: "json" }).$type<AcceptedAiSummary>(),
     createdAt: createdAt(),
   },
   (t) => [
@@ -203,6 +240,68 @@ export const emailOutbox = sqliteTable(
   ],
 );
 
+/**
+ * Append-only activity log: who viewed, created, changed, deleted or exported
+ * what, and every AI action. Rows are never updated; they are deleted only by
+ * the retention rule (ACTIVITY_RETENTION_DAYS) or with the account. `detail`
+ * holds field names and counts, never the values themselves.
+ */
+export const activityLog = sqliteTable(
+  "activity_log",
+  {
+    id: text("id").primaryKey(),
+    /** null only for the anonymous tombstone written when an account is deleted. */
+    userId: text("user_id").references(() => users.id, { onDelete: "cascade" }),
+    action: text("action", { enum: ACTIVITY_ACTIONS }).notNull(),
+    entityType: text("entity_type", { enum: ACTIVITY_ENTITIES }).notNull(),
+    entityId: text("entity_id"),
+    detail: text("detail", { mode: "json" })
+      .$type<Record<string, string | number | boolean | string[] | null>>()
+      .notNull()
+      .default(sql`'{}'`),
+    createdAt: createdAt(),
+  },
+  (t) => [index("activity_log_user_idx").on(t.userId, t.createdAt)],
+);
+
+/**
+ * One row per AI provider call made with a visitor's own key. The browser
+ * posts the entry WITHOUT the key (zod-validated, secret tripwire). `decision`
+ * starts as "pending" for assistant drafts and is set exactly once to
+ * accepted / edited / rejected; evaluation runs are "not_applicable".
+ */
+export const aiAuditLog = sqliteTable(
+  "ai_audit_log",
+  {
+    id: text("id").primaryKey(),
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    feature: text("feature").notNull(),
+    provider: text("provider", { enum: ["anthropic", "openai"] }).notNull(),
+    model: text("model").notNull(),
+    servedModel: text("served_model"),
+    promptVersion: text("prompt_version").notNull(),
+    /** The meeting the note came from (no FK: the audit entry outlives it). */
+    recordId: text("record_id"),
+    /** Exactly what was sent to the provider (after redaction). */
+    input: text("input").notNull(),
+    redactionCounts: text("redaction_counts", { mode: "json" })
+      .$type<Record<string, number>>()
+      .notNull(),
+    output: text("output"),
+    error: text("error"),
+    latencyMs: integer("latency_ms").notNull(),
+    inputTokens: integer("input_tokens"),
+    outputTokens: integer("output_tokens"),
+    decision: text("decision", { enum: AI_DECISION_VALUES }).notNull(),
+    finalOutput: text("final_output"),
+    decidedAt: integer("decided_at", { mode: "timestamp_ms" }),
+    createdAt: createdAt(),
+  },
+  (t) => [index("ai_audit_log_user_idx").on(t.userId, t.createdAt)],
+);
+
 export const usersRelations = relations(users, ({ many }) => ({
   contacts: many(contacts, { relationName: "owner" }),
   contactLinks: many(contactLinks),
@@ -236,6 +335,8 @@ export type MeetingRecord = typeof records.$inferSelect;
 export type EmailCode = typeof emailCodes.$inferSelect;
 export type FastRegisterCode = typeof fastRegisterCodes.$inferSelect;
 export type OutboxEmail = typeof emailOutbox.$inferSelect;
+export type ActivityEntry = typeof activityLog.$inferSelect;
+export type AiAuditEntry = typeof aiAuditLog.$inferSelect;
 
 export const TABLES = {
   users,
@@ -245,5 +346,7 @@ export const TABLES = {
   email_codes: emailCodes,
   fast_register_codes: fastRegisterCodes,
   email_outbox: emailOutbox,
+  activity_log: activityLog,
+  ai_audit_log: aiAuditLog,
 } as const;
 export type TableName = keyof typeof TABLES;

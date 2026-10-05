@@ -12,6 +12,7 @@ import {
   updateContact,
 } from "../contacts";
 import { prepareFastRegister } from "../users";
+import { logActivity } from "../activity";
 import { getOrigin } from "../origin";
 import { SESSION_EXPIRED, type ActionResult } from "./types";
 
@@ -32,6 +33,10 @@ export async function createContactAction(
   if (!result.status) {
     return { ok: false, error: "You already have this contact in your list." };
   }
+  await logActivity(user.id, "create", "contact", result.contact.id, {
+    via: "form",
+    linked: result.linked,
+  });
   refreshContacts();
   return { ok: true, id: result.contact.id, linked: result.linked };
 }
@@ -46,6 +51,7 @@ export async function updateContactAction(
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   const row = await updateContact(user.id, id, parsed.data);
   if (!row) return { ok: false, error: "Contact not found." };
+  await logActivity(user.id, "update", "contact", id, { via: "form" });
   refreshContacts(id);
   return { ok: true, id };
 }
@@ -55,6 +61,7 @@ export async function deleteContactAction(id: string): Promise<ActionResult> {
   if (!user) return SESSION_EXPIRED;
   const ok = await deleteContact(user.id, id);
   if (!ok) return { ok: false, error: "Contact not found." };
+  await logActivity(user.id, "delete", "contact", id, { cascade: "meetings" });
   refreshContacts();
   revalidatePath("/records");
   revalidatePath("/map");
@@ -72,6 +79,7 @@ export async function addByUserNameAction(
   if (!userName) return { ok: false, error: "Enter a user name." };
   const result = await createContactByUserName(user, userName);
   if (!result.status) return { ok: false, error: result.msg, existingId: result.contactId };
+  await logActivity(user.id, "create", "contact", result.contact.id, { via: "user name / QR" });
   refreshContacts();
   return { ok: true, id: result.contact.id };
 }
@@ -81,6 +89,9 @@ export async function syncContactAction(id: string): Promise<ActionResult<{ chan
   if (!user) return SESSION_EXPIRED;
   const result = await syncContact(user.id, id);
   if (!result.ok) return result;
+  if (result.changed.length) {
+    await logActivity(user.id, "update", "contact", id, { via: "sync", fields: result.changed });
+  }
   refreshContacts(id);
   return { ok: true, changed: result.changed };
 }
@@ -90,6 +101,7 @@ export async function inviteContactAction(id: string): Promise<ActionResult<{ em
   if (!user) return SESSION_EXPIRED;
   const result = await prepareFastRegister(user, id, await getOrigin());
   if (!result.ok) return result;
+  await logActivity(user.id, "update", "contact", id, { via: "invite e-mail" });
   revalidatePath("/inbox");
   return { ok: true, email: result.email };
 }

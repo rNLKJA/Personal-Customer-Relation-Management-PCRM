@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Inbox, LogOut, QrCode } from "lucide-react";
+import { BookOpenText, FolderLock, History, Inbox, LogOut, QrCode, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/page-header";
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { SubmitButton } from "@/components/common/submit-button";
 import { ProfileForm } from "@/components/profile/profile-form";
 import { ChangePassword } from "@/components/profile/change-password";
-import { logoutAction } from "@/server/actions/auth";
+import { AiSettingsDialog } from "@/components/ai/ai-settings-dialog";
+import { SignOutForm } from "@/components/auth/sign-out-form";
 import { requireUser } from "@/server/session";
 import { isSharedDemo } from "@/server/users";
 import { myQrCode } from "@/server/qr";
@@ -76,6 +77,33 @@ export default async function ProfilePage() {
               </Link>
             </Button>
           </Card>
+          <Card title="Privacy & AI">
+            <div className="space-y-2">
+              <Button asChild variant="outline" className="w-full justify-start">
+                <Link href="/your-data">
+                  <FolderLock /> Your data: export or delete
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full justify-start">
+                <Link href="/activity">
+                  <History /> Activity log
+                </Link>
+              </Button>
+              <Button asChild variant="outline" className="w-full justify-start">
+                <Link href="/ai-log">
+                  <Sparkles /> AI log
+                </Link>
+              </Button>
+              <div className="flex items-center justify-between gap-2 pt-1">
+                <AiSettingsDialog />
+                <Button asChild variant="ghost" size="sm">
+                  <Link href="/methods">
+                    <BookOpenText /> Methods
+                  </Link>
+                </Button>
+              </div>
+            </div>
+          </Card>
           <Card title="Appearance">
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">Theme</span>
@@ -89,7 +117,7 @@ export default async function ProfilePage() {
                   <Inbox /> Demo inbox
                 </Link>
               </Button>
-              <form action={logoutAction}>
+              <SignOutForm>
                 <SubmitButton
                   variant="ghost"
                   className="w-full justify-start text-destructive"
@@ -97,7 +125,7 @@ export default async function ProfilePage() {
                 >
                   <LogOut /> Sign out
                 </SubmitButton>
-              </form>
+              </SignOutForm>
             </div>
           </Card>
         </div>

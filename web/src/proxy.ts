@@ -26,5 +26,9 @@ export const config = {
     "/profile/:path*",
     "/inbox/:path*",
     "/admin/:path*",
+    "/insights/:path*",
+    "/your-data/:path*",
+    "/activity/:path*",
+    "/ai-log/:path*",
   ],
 };

@@ -1,13 +1,26 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CalendarClock, Clock, Mail, MapPin, Pencil, Phone } from "lucide-react";
+import {
+  ArrowLeft,
+  CalendarClock,
+  Clock,
+  Mail,
+  MapPin,
+  Pencil,
+  Phone,
+  Sparkles,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { DeleteRecordButton } from "@/components/records/record-actions";
 import { StaticPinMap } from "@/components/maps/static-pin-map";
 import { getRecord } from "@/server/records";
 import { requireUser } from "@/server/session";
+import { logActivity } from "@/server/activity";
+import { MeetingAssistant } from "@/components/ai/meeting-assistant";
+import { AiBadge } from "@/components/ai/ai-badge";
+import { RemoveAiSummaryButton } from "@/components/ai/remove-ai-summary";
 import { convert } from "@/lib/legacy/convert";
 import { formatCoords, haversineKm, formatDistance, MELBOURNE_CBD } from "@/lib/geo";
 import { APP_TIME_ZONE, formatDate, formatRelative, formatTime, requestNow } from "@/lib/time";
@@ -24,7 +37,9 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
   const { id } = await params;
   const r = await getRecord(user.id, id);
   if (!r) notFound();
+  await logActivity(user.id, "view", "meeting", r.id);
   const p = r.meetingPerson;
+  const ai = r.aiSummary;
   const upcoming = r.dateTime.getTime() > requestNow();
   const hasPin = r.lat != null && r.lng != null;
 
@@ -150,6 +165,56 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
               <p className="text-sm text-muted-foreground">No notes.</p>
             )}
           </section>
+
+          {ai && (
+            <section
+              aria-labelledby="ai-summary-heading"
+              className="rounded-2xl border bg-surface p-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h2
+                  id="ai-summary-heading"
+                  className="flex items-center gap-1.5 text-xs font-medium tracking-wide text-muted-foreground uppercase"
+                >
+                  <Sparkles className="size-3.5" aria-hidden="true" /> AI-assisted summary
+                </h2>
+                <RemoveAiSummaryButton recordId={r.id} />
+              </div>
+              <AiBadge decision={ai.decision} className="mt-2" />
+              <p className="mt-3 text-sm leading-relaxed">{ai.summary}</p>
+              {ai.followUps.length > 0 && (
+                <ul className="mt-3 space-y-1.5 text-sm">
+                  {ai.followUps.map((f, i) => (
+                    <li key={i} className="flex gap-2">
+                      <span
+                        className="mt-1.5 size-1.5 shrink-0 rounded-full bg-primary"
+                        aria-hidden="true"
+                      />
+                      <span>
+                        {f.action}
+                        {f.due && <span className="text-muted-foreground"> · {f.due}</span>}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <p className="mt-3 text-xs text-muted-foreground">
+                {ai.model} · {ai.decision === "edited" ? "edited" : "accepted"}{" "}
+                {formatRelative(ai.decidedAt)} ·{" "}
+                <Link href="/ai-log" className="underline underline-offset-2 hover:text-foreground">
+                  see the AI log
+                </Link>
+              </p>
+            </section>
+          )}
+
+          <MeetingAssistant
+            recordId={r.id}
+            notes={r.notes}
+            meetingDay={formatDate(r.dateTime)}
+            knownNames={[p.firstName, p.lastName, user.firstName ?? "", user.lastName ?? ""]}
+            hasAcceptedSummary={Boolean(ai)}
+          />
 
           {r.customFields.length > 0 && (
             <section aria-labelledby="fields">

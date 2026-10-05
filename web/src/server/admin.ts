@@ -20,6 +20,10 @@ export const TABLE_DESCRIPTIONS: Record<TableName, string> = {
   email_codes: "Live 6-digit e-mail verification / reset codes (Mongoose `EmailAuth`).",
   fast_register_codes: "Invite links for contacts without an account (Mongoose `EmailRegister`).",
   email_outbox: "Every e-mail the app would have sent through Gmail - the demo inbox.",
+  activity_log:
+    "Append-only access and change log (ids, field names and counts only). A row without user_id records a deleted account.",
+  ai_audit_log:
+    "Every bring-your-own-key AI call: the redacted text sent, the answer, model, latency, tokens and the human decision. Never the key.",
 };
 
 export function isTableName(name: string): name is TableName {

@@ -13,6 +13,7 @@ import {
 import { getBrowserKey, getCurrentUser } from "../session";
 import { changePassword, sendChangePasswordCode, setUserPortrait, updateProfile } from "../users";
 import { markRead } from "../mail";
+import { logActivity } from "../activity";
 import { SESSION_EXPIRED, type ActionResult } from "./types";
 
 export async function updateProfileAction(values: ProfileValues): Promise<ActionResult> {
@@ -21,6 +22,7 @@ export async function updateProfileAction(values: ProfileValues): Promise<Action
   const parsed = profileSchema.safeParse(values);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   await updateProfile(user.id, parsed.data);
+  await logActivity(user.id, "update", "account", user.id, { fields: ["profile"] });
   revalidatePath("/profile");
   revalidatePath("/home");
   return { ok: true };
@@ -32,6 +34,7 @@ export async function setPortraitAction(dataUrl: string | null): Promise<ActionR
   const parsed = portraitSchema.safeParse(dataUrl);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
   await setUserPortrait(user.id, parsed.data ?? null);
+  await logActivity(user.id, "update", "account", user.id, { fields: ["portrait"] });
   revalidatePath("/profile");
   return { ok: true };
 }
@@ -55,7 +58,9 @@ export async function changePasswordAction(
   if (!user) return SESSION_EXPIRED;
   const parsed = changeSchema.safeParse(input);
   if (!parsed.success) return { ok: false, error: firstIssue(parsed.error) };
-  return changePassword(user, parsed.data);
+  const result = await changePassword(user, parsed.data);
+  if (result.ok) await logActivity(user.id, "update", "account", user.id, { fields: ["password"] });
+  return result;
 }
 
 export async function markEmailReadAction(id: string): Promise<void> {

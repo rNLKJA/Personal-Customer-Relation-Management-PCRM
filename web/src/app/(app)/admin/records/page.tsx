@@ -70,7 +70,10 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
         }
       />
 
-      <nav aria-label="Tables" className="-mx-1 mb-4 flex gap-1.5 overflow-x-auto px-1 pb-1">
+      <nav
+        aria-label="Tables"
+        className="-mx-1 mb-4 flex gap-1.5 overflow-x-auto px-1 pb-1 lg:flex-wrap lg:overflow-visible"
+      >
         {TABLE_NAMES.map((name) => (
           <Link
             key={name}

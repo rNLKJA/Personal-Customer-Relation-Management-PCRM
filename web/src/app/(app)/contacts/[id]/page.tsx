@@ -24,6 +24,7 @@ import {
 import { getContact } from "@/server/contacts";
 import { listRecords } from "@/server/records";
 import { requireUser } from "@/server/session";
+import { logActivity } from "@/server/activity";
 import { convert } from "@/lib/legacy/convert";
 import { syncFieldLabels } from "@/lib/labels";
 import { APP_TIME_ZONE, formatDate, requestNow } from "@/lib/time";
@@ -41,6 +42,7 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
   const { id } = await params;
   const found = await getContact(user.id, id);
   if (!found) notFound();
+  await logActivity(user.id, "view", "contact", found.contact.id);
   const { contact: c, linked, pendingSync } = found;
   const meetings = await listRecords(user.id, { contactId: c.id });
   const now = requestNow();

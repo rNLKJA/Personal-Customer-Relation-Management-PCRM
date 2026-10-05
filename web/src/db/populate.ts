@@ -1,14 +1,15 @@
 import bcrypt from "bcryptjs";
-import { and, eq, inArray, sql } from "drizzle-orm";
+import { and, eq, inArray, lt, sql } from "drizzle-orm";
 import { deleteUsersCascade } from "./cascade";
 import type { Db } from "./client-core";
 import { newId } from "./ids";
-import { contactLinks, contacts, emailOutbox, records, users } from "./schema";
+import { activityLog, contactLinks, contacts, emailOutbox, records, users } from "./schema";
 import { DEMO_ACCOUNTS, DIRECTORY_USERS } from "./demo-accounts";
 import { generateSampleData, type LinkableAccount } from "@/lib/sample-data";
 import { PLACES } from "@/lib/places";
 import { mulberry32, hashString } from "@/lib/random";
 import { EMAIL_SUBJECTS, verificationEmailHtml } from "@/lib/email-templates";
+import { ACTIVITY_RETENTION_DAYS } from "@/lib/retention";
 
 /**
  * Data population shared by `pnpm db:seed` (deterministic demo database) and
@@ -113,11 +114,32 @@ export async function populateAddressBook(
     };
   });
 
+  // One longer, detail-rich note on the most recent past meeting, so the AI
+  // meeting-note assistant has something to redact (every detail is fictional:
+  // example.org, ACMA fiction-range numbers, an invented street).
+  const lastPast = recordRows.filter((r) => r.dateTime.getTime() <= opts.anchor.getTime()).at(-1);
+  if (lastPast) {
+    const c = contactRows.find((x) => x.id === lastPast.contactId)!;
+    lastPast.notes = richMeetingNote(c.firstName, c.lastName, lastPast.location.split(",")[0]);
+  }
+
   // SQLite caps bound parameters per statement; insert in modest chunks.
   for (const chunk of chunks(contactRows, 50)) await db.insert(contacts).values(chunk);
   for (const chunk of chunks(linkRows, 100)) await db.insert(contactLinks).values(chunk);
   for (const chunk of chunks(recordRows, 50)) await db.insert(records).values(chunk);
   return { contacts: contactRows.length, records: recordRows.length };
+}
+
+/** Fictional, detail-rich meeting note (see populateAddressBook). */
+export function richMeetingNote(first: string, last: string, place: string): string {
+  const handle = `${first}.${last}`.toLowerCase().replace(/[^a-z.]/g, "");
+  return [
+    `Long catch-up with ${first} at ${place}.`,
+    `${first} is moving to the data team next month and asked me to send the reading list on causal inference by Friday.`,
+    `New work e-mail: ${handle}@example.org, mobile 0491 570 159 (the old 0491 570 006 no longer works).`,
+    `I'm dropping the book off at 14 Wattlebird Lane, Northcote VIC 3070 on Saturday.`,
+    `Also: intro ${first} to Sam Patel about the open-data project, and book a coffee in three weeks.`,
+  ].join(" ");
 }
 
 function chunks<T>(list: T[], size: number): T[][] {
@@ -284,5 +306,9 @@ export async function purgeExpiredUsers(db: Db, now = new Date()): Promise<numbe
     .filter((u) => u.expiresAt && u.expiresAt.getTime() < now.getTime())
     .map((u) => u.id);
   await deleteUsersCascade(db, expired);
+  // Activity-log retention (see src/lib/retention.ts).
+  await db
+    .delete(activityLog)
+    .where(lt(activityLog.createdAt, new Date(now.getTime() - ACTIVITY_RETENTION_DAYS * DAY_MS)));
   return expired.length;
 }

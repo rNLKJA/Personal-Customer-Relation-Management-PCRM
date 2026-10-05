@@ -1,6 +1,16 @@
-import { inArray, or } from "drizzle-orm";
+import { and, inArray, isNull, or } from "drizzle-orm";
 import type { Db } from "./client-core";
-import { contactLinks, contacts, emailOutbox, fastRegisterCodes, records, users } from "./schema";
+import {
+  activityLog,
+  aiAuditLog,
+  contactLinks,
+  contacts,
+  emailCodes,
+  emailOutbox,
+  fastRegisterCodes,
+  records,
+  users,
+} from "./schema";
 
 /**
  * Explicit cascades. SQLite only enforces foreign keys when
@@ -22,8 +32,18 @@ export async function deleteContactsCascade(db: Db, contactIds: string[]) {
   ]);
 }
 
+/**
+ * Hard-delete accounts and everything that belongs to them: contacts,
+ * meetings (with any accepted AI summaries), links, invitations, demo-inbox
+ * e-mails, pending e-mail codes, the activity log and the AI audit log.
+ * Other people's contacts that were linked to the account are kept but
+ * unlinked (they are the other person's data).
+ */
 export async function deleteUsersCascade(db: Db, userIds: string[]) {
   if (userIds.length === 0) return;
+  const addresses = (
+    await db.select({ emails: users.emails }).from(users).where(inArray(users.id, userIds))
+  ).flatMap((u) => u.emails);
   const owned = await db
     .select({ id: contacts.id })
     .from(contacts)
@@ -45,14 +65,21 @@ export async function deleteUsersCascade(db: Db, userIds: string[]) {
           inArray(fastRegisterCodes.invitedByUserId, userIds),
         ),
       ),
-    db
-      .delete(emailOutbox)
-      .where(
-        or(
-          inArray(emailOutbox.recipientUserId, userIds),
-          inArray(emailOutbox.triggeredByUserId, userIds),
-        ),
+    db.delete(emailOutbox).where(
+      or(
+        inArray(emailOutbox.recipientUserId, userIds),
+        inArray(emailOutbox.triggeredByUserId, userIds),
+        // e.g. the sign-up code sent before the account existed
+        addresses.length
+          ? and(isNull(emailOutbox.recipientUserId), inArray(emailOutbox.toEmail, addresses))
+          : undefined,
       ),
+    ),
+    ...(addresses.length
+      ? [db.delete(emailCodes).where(inArray(emailCodes.email, addresses))]
+      : []),
+    db.delete(activityLog).where(inArray(activityLog.userId, userIds)),
+    db.delete(aiAuditLog).where(inArray(aiAuditLog.userId, userIds)),
     db.delete(users).where(inArray(users.id, userIds)),
   ]);
 }
