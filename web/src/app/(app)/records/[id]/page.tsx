@@ -43,18 +43,15 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
               >
                 {upcoming ? "Upcoming" : "Met"} {formatRelative(r.dateTime)}
               </p>
-              <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+              <h1
+                className="mt-1 text-2xl font-semibold tracking-tight"
+                title={`2021 format: ${convert(r.dateTime, APP_TIME_ZONE)}`}
+              >
                 {formatDate(r.dateTime)}{" "}
                 <span className="font-normal text-muted-foreground">
                   · {formatTime(r.dateTime)}
                 </span>
               </h1>
-              <p
-                className="mt-1 font-mono text-xs text-muted-foreground"
-                title="Original 2021 timestamp format"
-              >
-                {convert(r.dateTime, APP_TIME_ZONE)}
-              </p>
             </div>
             <div className="flex gap-2">
               <Button asChild variant="outline">

@@ -26,7 +26,7 @@ import { listRecords } from "@/server/records";
 import { requireUser } from "@/server/session";
 import { convert } from "@/lib/legacy/convert";
 import { syncFieldLabels } from "@/lib/labels";
-import { APP_TIME_ZONE, requestNow } from "@/lib/time";
+import { APP_TIME_ZONE, formatDate, requestNow } from "@/lib/time";
 
 export async function generateMetadata({ params }: PageProps<"/contacts/[id]">): Promise<Metadata> {
   const user = await requireUser();
@@ -79,7 +79,12 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
                 </>
               ) : null}
               Added{" "}
-              <time dateTime={c.addDate.toISOString()}>{convert(c.addDate, APP_TIME_ZONE)}</time>
+              <time
+                dateTime={c.addDate.toISOString()}
+                title={`2021 format: ${convert(c.addDate, APP_TIME_ZONE)}`}
+              >
+                {formatDate(c.addDate)}
+              </time>
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -210,6 +215,7 @@ export default async function ContactPage({ params }: PageProps<"/contacts/[id]"
             </div>
           ) : (
             <EmptyState
+              headingLevel={3}
               className="mt-3 py-8"
               icon={NotebookPen}
               title={`No meetings with ${c.firstName} yet`}

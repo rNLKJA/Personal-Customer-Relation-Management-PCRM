@@ -142,12 +142,21 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                     <Link
                       key={cell.key}
                       aria-current={isSelected ? "date" : undefined}
-                      aria-label={`${cell.key}${items.length ? `, ${items.length} meeting${items.length > 1 ? "s" : ""}` : ""}`}
+                      aria-label={`${formatDate(new Date(`${cell.key}T12:00:00Z`))}${
+                        items.length
+                          ? `, ${items.length} meeting${items.length > 1 ? "s" : ""}: ${items
+                              .map(
+                                (r) =>
+                                  `${formatTime(r.dateTime)} ${r.meetingPerson.firstName} ${r.meetingPerson.lastName}`,
+                              )
+                              .join(", ")}`
+                          : ""
+                      }`}
                       href={href(monthKey(month), cell.key)}
                       scroll={false}
                       className={cn(
                         "relative flex min-h-16 flex-col gap-1 bg-card p-1.5 transition-colors hover:bg-muted/70 sm:min-h-24 sm:p-2",
-                        !cell.inMonth && "bg-surface text-muted-foreground/60",
+                        !cell.inMonth && "bg-surface text-muted-foreground",
                         isSelected &&
                           "z-[1] bg-accent/70 ring-2 ring-primary/40 ring-inset hover:bg-accent",
                       )}
@@ -177,8 +186,9 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                             {items.slice(0, 2).map((r) => (
                               <span
                                 key={r.id}
+                                title={`${formatTime(r.dateTime)} · ${r.meetingPerson.firstName} ${r.meetingPerson.lastName}`}
                                 className={cn(
-                                  "truncate rounded-md px-1 py-0.5 text-[11px] leading-tight",
+                                  "flex min-w-0 flex-col rounded-md px-1 py-0.5 text-[11px] leading-tight",
                                   r.dateTime > now
                                     ? "bg-primary/12 text-accent-foreground"
                                     : "bg-muted text-muted-foreground",
@@ -186,8 +196,8 @@ export default async function CalendarPage({ searchParams }: PageProps<"/calenda
                               >
                                 <span className="tabular font-medium">
                                   {compactTime(r.dateTime)}
-                                </span>{" "}
-                                {r.meetingPerson.firstName}
+                                </span>
+                                <span className="truncate">{r.meetingPerson.firstName}</span>
                               </span>
                             ))}
                             {items.length > 2 && (

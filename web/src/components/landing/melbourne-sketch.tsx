@@ -8,7 +8,10 @@ import { PLACES } from "@/lib/places";
  * No tiles, no JavaScript - just a decorative illustration for the landing page.
  */
 
-const BBOX = { minLng: 144.62, maxLng: 145.2, minLat: -38.02, maxLat: -37.68 };
+// Framed so the CBD and the bay's eastern shore sit in the right half, which the
+// phone mock on the landing page leaves visible.
+const BBOX = { minLng: 144.55, maxLng: 145.25, minLat: -38.1, maxLat: -37.66 };
+const BAY_LABEL = { lng: 144.93, lat: -37.975 };
 const W = 560;
 const H = Math.round(
   (W * (BBOX.maxLat - BBOX.minLat)) /
@@ -70,26 +73,26 @@ export function MelbourneSketch({ className }: { className?: string }) {
         </pattern>
       </defs>
       {/* water (Port Phillip Bay) behind, land on top */}
-      <rect width={W} height={H} fill="color-mix(in oklch, var(--primary) 9%, var(--card))" />
+      <rect width={W} height={H} fill="color-mix(in oklch, var(--primary) 16%, var(--card))" />
+      <rect width={W} height={H} fill="url(#sketch-grid)" />
       {d && (
         <path
           d={d}
-          fill="var(--card)"
-          stroke="color-mix(in oklch, var(--primary) 30%, var(--border))"
-          strokeWidth="1.2"
+          fill="color-mix(in oklch, var(--primary) 3%, var(--card))"
+          stroke="color-mix(in oklch, var(--primary) 45%, var(--border))"
+          strokeWidth="1.4"
           strokeLinejoin="round"
           fillRule="evenodd"
         />
       )}
-      <rect width={W} height={H} fill="url(#sketch-grid)" />
       <text
-        x={Math.round(W * 0.38)}
-        y={H - 22}
-        textAnchor="middle"
-        fontSize="11"
-        fill="currentColor"
-        fillOpacity="0.4"
-        fontFamily="var(--font-mono)"
+        x={project([BAY_LABEL.lng, BAY_LABEL.lat])[0]}
+        y={project([BAY_LABEL.lng, BAY_LABEL.lat])[1]}
+        fontSize="12"
+        fontStyle="italic"
+        fill="var(--primary)"
+        fillOpacity="0.7"
+        style={{ fontFamily: "var(--font-display)" }}
       >
         Port Phillip Bay
       </text>

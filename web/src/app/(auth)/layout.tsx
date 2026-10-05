@@ -54,10 +54,17 @@ export default function AuthLayout({ children }: LayoutProps<"/">) {
         </p>
       </aside>
       <div className="flex min-h-dvh flex-col">
-        <header className="flex h-16 items-center justify-between px-5 sm:px-8">
+        <header className="flex h-16 items-center justify-between gap-3 px-5 sm:px-8">
           <Link
             href="/"
-            className="inline-flex items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground"
+            className="rounded-md lg:hidden"
+            aria-label="4399 CRM - back to the project page"
+          >
+            <Logo />
+          </Link>
+          <Link
+            href="/"
+            className="hidden items-center gap-1.5 rounded-md text-sm text-muted-foreground hover:text-foreground lg:inline-flex"
           >
             <ArrowLeft className="size-4" aria-hidden="true" /> Project page
           </Link>

@@ -443,7 +443,7 @@ function HeroPreview() {
           ))}
         </div>
       </div>
-      <div className="absolute right-2 bottom-10 z-20 w-[230px] rounded-2xl border bg-card p-3 shadow-(--shadow-lifted) sm:right-6">
+      <div className="absolute right-6 bottom-10 z-20 hidden w-[230px] rounded-2xl border bg-card p-3 shadow-(--shadow-lifted) sm:block">
         <div className="flex items-center gap-2">
           <PersonAvatar firstName="Ava" lastName="Chen" seed="dir_avachen" size="sm" />
           <div className="min-w-0">
