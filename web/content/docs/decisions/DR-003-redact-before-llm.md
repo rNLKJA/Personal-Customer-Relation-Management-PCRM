@@ -1,6 +1,6 @@
 # DR-003: Redact meeting notes in the browser before any language-model call
 
-- **Status:** Accepted
+- **Status:** Partly superseded by DR-006
 - **Date:** 2026-10-06
 - **Author:** Sunchuangyu (Rin) Huang
 

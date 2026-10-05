@@ -39,7 +39,7 @@ self-contained stack:
 | Meeting records | Who, when, where (Google Places), notes, custom fields | MapLibre + OpenFreeMap location picker with Photon search, reverse geocoding |
 | Views | Records list, Google map with date range | List, **map** with date presets, **calendar**, home dashboard ("Up next", "Time to reconnect") |
 | Data | MongoDB Atlas | SQLite via libSQL + Drizzle (Turso in production), deterministic seed |
-| Admin | - | `/admin/records`: every table with counts, search, pagination and CSV export |
+| Admin | - | `/admin/records`: every table with counts, search, pagination and CSV export; secrets always masked, visitors' personal data masked, every read logged |
 | Insights | - | `/insights`: meetings per week with a seeded bootstrap interval, weekday x hour heatmap, contacts by recency |
 | Your data | - | `/your-data`: export everything (JSON + CSV), hard-delete the account; `/activity`: append-only access log |
 | AI | - | Optional meeting-note assistant with your own Anthropic or OpenAI key, redaction before sending, Accept / Edit / Reject, `/ai-log` audit trail |
@@ -66,19 +66,27 @@ including the weak results.
   [`scripts/stats_reference.py`](scripts/stats_reference.py).
 - **Your data** (`/your-data`). Download everything stored about the account (one JSON file, or CSV per table), see what
   is stored, why and for how long, and hard-delete the account. Deletion removes the account and every contact, meeting,
-  link, invitation, demo-inbox e-mail, pending code, activity entry and AI-log entry in one batch; one anonymous row
-  (counts only) records that it happened. Signing out or deleting the account also forgets any AI key in the browser.
-- **Activity log** (`/activity`, and `activity_log` in `/admin/records`). Append-only: views (repeat views within a
-  minute are logged once), creates, changes, deletes and exports of contacts and meetings, profile changes and AI actions.
-  It stores ids, field names and counts, never the contents, and is kept for 180 days.
+  link, invitation, demo-inbox e-mail, pending code, activity entry and AI-log entry in one database transaction; one
+  anonymous row (counts only) records that it happened. Signing out or deleting the account also forgets any AI key in the browser.
+- **Activity log** (`/activity`, and `activity_log` in `/admin/records`). Append-only: views of contact and meeting pages
+  (repeat views within a minute are logged once), creates, changes, deletes and exports, sign-ins, sign-outs, sign-ups and
+  password resets, profile changes, AI actions, and every admin table view or export (under the admin account). It stores
+  ids, field names and counts, never the contents. Entries older than 180 days are never shown or exported and are deleted
+  at server start.
+- **The public demo admin is treated as untrusted** ([DR-005](docs/decisions/DR-005-mask-the-public-demo-admin.md)).
+  Anyone can press "Demo admin", so `/admin/records` always masks password hashes, e-mail codes, invitation links and the
+  inbox browser key, and shows names, contact details, notes and AI text only for the seeded demo accounts. A review
+  before merge found that the first version let anyone read live password-reset codes; the decision record says so.
 - **Meeting-note assistant (optional, bring your own key).** On a meeting page: summarise the note and suggest follow-ups.
-  Before anything is sent, e-mail addresses, phone numbers, street addresses and the names the app knows are removed in the
-  browser and the visitor sees the exact text and the fixed instructions. The answer is labelled "AI-generated" and is only a
-  draft until the person accepts, edits or rejects it.
+  Before anything is sent, e-mail addresses, phone numbers, street addresses, the contact's and user's names and the full
+  names of everyone in the address book ([DR-006](docs/decisions/DR-006-redact-address-book-names.md)) are removed in the
+  browser, and the visitor sees the exact text and the fixed instructions. The answer is labelled "AI-generated" and is
+  only a draft until the person accepts, edits or rejects it; "accepted" always stores the logged answer unchanged.
 - **Evaluation harness** (`/ai-log/evaluate`). The same 32 labelled notes go through a rule-based baseline and the LLM
-  (the assistant's exact prompt), scored by one matcher and compared note by note: mean recall with a seeded bootstrap interval,
-  Wilson intervals for pooled recall and precision, a paired bootstrap interval of the difference, win / tie / loss counts and an
-  exact sign test. Results export as JSON or CSV.
+  (the assistant's exact prompt), scored by one matcher and compared note by note on the same notes: mean recall and mean F1
+  per note with seeded bootstrap intervals, Wilson intervals for pooled recall and precision, and for recall and F1 a paired
+  bootstrap interval of the difference, win / tie / loss counts and an exact sign test. Invalid, refused or cut-off model
+  answers count as empty answers; only infrastructure failures are excluded, and they are counted. Results export as JSON or CSV.
 - **Decision records and a model card** in [`docs/decisions`](docs/decisions) and [`docs/model-card.md`](docs/model-card.md),
   rendered at `/methods/decisions/...` and `/methods/model-card`.
 
@@ -86,15 +94,17 @@ including the weak results.
 
 | What | Result (95% interval) |
 | --- | --- |
-| Redaction recall, 49 labelled details in 34 synthetic notes | 41 of 49, 84% (71-91%); names only 12 of 17, 71% (47-87%) |
-| Redaction precision | 44 of 47, 94% (83-98%) |
-| Notes fully cleaned | 20 of 28, 71% (53-85%) |
-| Rule-based follow-up baseline, development split (rules written on it) | mean recall 100% (100-100%), n = 14 notes |
-| Rule-based follow-up baseline, held-out split (rules frozen first) | mean recall 31% (12-54%), n = 13 notes; precision 6 of 8, 75% (41-93%) |
+| Redaction recall, 49 labelled details in 34 synthetic notes (with the address book, DR-006) | 42 of 49, 86% (73-93%); names only 13 of 17, 76% (53-90%) |
+| Redaction recall with the meeting contact's and user's names only (DR-003) | 41 of 49, 84% (71-91%); names 12 of 17, 71% (47-87%) |
+| Redaction precision | 45 of 48, 94% (83-98%) |
+| Notes fully cleaned | 21 of 28, 75% (57-87%) |
+| Rule-based follow-up baseline, development split (rules written on it) | mean recall 100%, n = 14 notes (every note scored 100%, so no bootstrap interval; pooled 24 of 24, 86-100%) |
+| Rule-based follow-up baseline, held-out split (rules frozen first) | mean recall 31% (12-54%), n = 13 notes; mean F1 42% (21-63%), n = 16; precision 6 of 8, 75% (41-93%) |
 
-Third-party names are not redacted at all, and the corpora were written by the same person who wrote the rules, so the
-redaction numbers are optimistic. The baseline's drop from the development to the held-out split is the reason the split
-exists. **No LLM results are published:** the site has no AI budget, so the comparison runs in a visitor's browser with
+People who are not in the address book are not redacted at all, and the corpora were written by the same person who wrote
+the rules, so the redaction numbers are optimistic. The address book's gain is one name ("Sam Patel", a directory account),
+so it is a fixed leak rather than a measured improvement. The baseline's drop from the development to the held-out split is
+the reason the split exists. **No LLM results are published:** the site has no AI budget, so the comparison runs in a visitor's browser with
 their own key, and every call lands in their AI log.
 
 ### Bring your own key
@@ -113,7 +123,8 @@ their own key, and every call lands in their AI log.
 - **As a user:** `/ai-log` lists every call made with your key: the redacted text sent, the answer, requested and
   served model, latency, token usage and your decision (accepted, edited, rejected, or not applicable for evaluation runs).
   Export it as JSON or CSV from that page, or with everything else from `/your-data`.
-- **As the admin:** sign in with **Demo admin** and open `/admin/records?table=ai_audit_log` (and `activity_log`).
+- **As the admin:** sign in with **Demo admin** and open `/admin/records?table=ai_audit_log` (and `activity_log`). The
+  text sent and received is masked for every account except the seeded demo accounts.
 - **Locally:** `sqlite3 web/data/app.db "select created_at, feature, model, decision from ai_audit_log"`.
 
 ### How the showcase was recorded
@@ -173,7 +184,7 @@ screenshots below show only real, non-AI content.
 │   ├── _archive/                 the original README of this repository
 │   └── README.md
 ├── docs/
-│   ├── decisions/                DR-001 ... DR-004 (rendered at /methods/decisions/...)
+│   ├── decisions/                DR-001 ... DR-006 (rendered at /methods/decisions/...)
 │   ├── model-card.md             meeting-note assistant + redactor (rendered at /methods/model-card)
 │   └── screenshots/              images used in this README
 ├── scripts/
@@ -243,8 +254,9 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
 
 - **On the site:** sign in with the one-click **Demo admin** button (credentials are on the login page) and open
   [`/admin/records`](https://comp30022-personal-crm.vercel.app/admin/records): every table with row counts, search,
-  pagination and a CSV export per table (password hashes and image/HTML blobs are redacted). `activity_log` and
-  `ai_audit_log` hold the access log and the AI audit trail.
+  pagination and a CSV export per table. Password hashes, codes, invitation links and the inbox browser key are always
+  masked; names, contact details, notes and AI text are shown only for the seeded demo accounts (DR-005). Every view and
+  export is logged under the admin account. `activity_log` and `ai_audit_log` hold the access log and the AI audit trail.
 - **Turso (when attached):** `turso db shell comp30022-personal-crm "select count(*) from contacts"`.
 - **Locally:** open `web/data/seed.db` (committed snapshot) or `web/data/app.db` (your local copy) in any SQLite
   browser, or run `pnpm db:studio` in `web/`.
