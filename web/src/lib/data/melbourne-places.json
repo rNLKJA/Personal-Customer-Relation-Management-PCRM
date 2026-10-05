@@ -1,0 +1,706 @@
+{
+ "attribution": "Coordinates from Photon (photon.komoot.io), data (c) OpenStreetMap contributors, ODbL 1.0",
+ "generatedBy": "scripts/build_geodata.py",
+ "places": [
+  {
+   "name": "Melbourne",
+   "label": "Melbourne VIC",
+   "kind": "suburb",
+   "lat": -37.81425,
+   "lng": 144.96317
+  },
+  {
+   "name": "Carlton",
+   "label": "Carlton VIC 3053",
+   "kind": "suburb",
+   "lat": -37.80042,
+   "lng": 144.96843
+  },
+  {
+   "name": "Fitzroy",
+   "label": "Fitzroy VIC 3065",
+   "kind": "suburb",
+   "lat": -37.80104,
+   "lng": 144.97926
+  },
+  {
+   "name": "Collingwood",
+   "label": "Collingwood VIC 3066",
+   "kind": "suburb",
+   "lat": -37.8021,
+   "lng": 144.98814
+  },
+  {
+   "name": "Richmond",
+   "label": "Richmond VIC 3121",
+   "kind": "suburb",
+   "lat": -37.82039,
+   "lng": 145.00251
+  },
+  {
+   "name": "South Yarra",
+   "label": "South Yarra VIC 3141",
+   "kind": "suburb",
+   "lat": -37.83777,
+   "lng": 144.99185
+  },
+  {
+   "name": "Prahran",
+   "label": "Prahran VIC",
+   "kind": "suburb",
+   "lat": -37.85191,
+   "lng": 145.0006
+  },
+  {
+   "name": "St Kilda",
+   "label": "St Kilda VIC 3182",
+   "kind": "suburb",
+   "lat": -37.86383,
+   "lng": 144.98164
+  },
+  {
+   "name": "Southbank",
+   "label": "Southbank VIC 3006",
+   "kind": "suburb",
+   "lat": -37.82536,
+   "lng": 144.96402
+  },
+  {
+   "name": "Docklands",
+   "label": "Docklands VIC 3008",
+   "kind": "suburb",
+   "lat": -37.81754,
+   "lng": 144.93949
+  },
+  {
+   "name": "Parkville",
+   "label": "Parkville VIC 3052",
+   "kind": "suburb",
+   "lat": -37.78711,
+   "lng": 144.95155
+  },
+  {
+   "name": "Brunswick",
+   "label": "Brunswick VIC 3056",
+   "kind": "suburb",
+   "lat": -37.76647,
+   "lng": 144.96131
+  },
+  {
+   "name": "Northcote",
+   "label": "Northcote VIC 3070",
+   "kind": "suburb",
+   "lat": -37.77282,
+   "lng": 145.00095
+  },
+  {
+   "name": "Coburg",
+   "label": "Coburg VIC 3058",
+   "kind": "suburb",
+   "lat": -37.74498,
+   "lng": 144.96433
+  },
+  {
+   "name": "Preston",
+   "label": "Preston VIC 3072",
+   "kind": "suburb",
+   "lat": -37.74187,
+   "lng": 145.00782
+  },
+  {
+   "name": "Abbotsford",
+   "label": "Abbotsford VIC 3067",
+   "kind": "suburb",
+   "lat": -37.80455,
+   "lng": 144.99885
+  },
+  {
+   "name": "Kew",
+   "label": "Kew VIC 3101",
+   "kind": "suburb",
+   "lat": -37.80336,
+   "lng": 145.03333
+  },
+  {
+   "name": "Hawthorn",
+   "label": "Hawthorn VIC 3122",
+   "kind": "suburb",
+   "lat": -37.82442,
+   "lng": 145.03172
+  },
+  {
+   "name": "Camberwell",
+   "label": "Camberwell VIC 3124",
+   "kind": "suburb",
+   "lat": -37.83846,
+   "lng": 145.07408
+  },
+  {
+   "name": "Box Hill",
+   "label": "Box Hill VIC 3128",
+   "kind": "suburb",
+   "lat": -37.82151,
+   "lng": 145.12613
+  },
+  {
+   "name": "Doncaster",
+   "label": "Doncaster VIC 3108",
+   "kind": "suburb",
+   "lat": -37.78483,
+   "lng": 145.12384
+  },
+  {
+   "name": "Glen Waverley",
+   "label": "Glen Waverley VIC 3150",
+   "kind": "suburb",
+   "lat": -37.88163,
+   "lng": 145.16818
+  },
+  {
+   "name": "Clayton",
+   "label": "Clayton VIC 3168",
+   "kind": "suburb",
+   "lat": -37.9158,
+   "lng": 145.13139
+  },
+  {
+   "name": "Caulfield",
+   "label": "Caulfield VIC 3162",
+   "kind": "suburb",
+   "lat": -37.88406,
+   "lng": 145.02637
+  },
+  {
+   "name": "Malvern",
+   "label": "Malvern VIC 3144",
+   "kind": "suburb",
+   "lat": -37.85761,
+   "lng": 145.03507
+  },
+  {
+   "name": "Toorak",
+   "label": "Toorak VIC 3142",
+   "kind": "suburb",
+   "lat": -37.83969,
+   "lng": 145.00854
+  },
+  {
+   "name": "Brighton",
+   "label": "Brighton VIC 3186",
+   "kind": "suburb",
+   "lat": -37.9082,
+   "lng": 144.9958
+  },
+  {
+   "name": "Elwood",
+   "label": "Elwood VIC 3184",
+   "kind": "suburb",
+   "lat": -37.87886,
+   "lng": 144.98555
+  },
+  {
+   "name": "Port Melbourne",
+   "label": "Port Melbourne VIC 3207",
+   "kind": "suburb",
+   "lat": -37.83336,
+   "lng": 144.92192
+  },
+  {
+   "name": "South Melbourne",
+   "label": "South Melbourne VIC 3205",
+   "kind": "suburb",
+   "lat": -37.83344,
+   "lng": 144.95705
+  },
+  {
+   "name": "Albert Park",
+   "label": "Albert Park VIC",
+   "kind": "suburb",
+   "lat": -37.84521,
+   "lng": 144.95711
+  },
+  {
+   "name": "Williamstown",
+   "label": "Williamstown VIC 3016",
+   "kind": "suburb",
+   "lat": -37.86118,
+   "lng": 144.88986
+  },
+  {
+   "name": "Footscray",
+   "label": "Footscray VIC 3011",
+   "kind": "suburb",
+   "lat": -37.79813,
+   "lng": 144.89735
+  },
+  {
+   "name": "Yarraville",
+   "label": "Yarraville VIC 3013",
+   "kind": "suburb",
+   "lat": -37.81801,
+   "lng": 144.88194
+  },
+  {
+   "name": "Essendon",
+   "label": "Essendon VIC 3040",
+   "kind": "suburb",
+   "lat": -37.74983,
+   "lng": 144.91091
+  },
+  {
+   "name": "Moonee Ponds",
+   "label": "Moonee Ponds VIC 3039",
+   "kind": "suburb",
+   "lat": -37.76557,
+   "lng": 144.92129
+  },
+  {
+   "name": "Sunshine",
+   "label": "Sunshine VIC",
+   "kind": "suburb",
+   "lat": -37.78933,
+   "lng": 144.83427
+  },
+  {
+   "name": "Flemington",
+   "label": "Flemington VIC",
+   "kind": "suburb",
+   "lat": -37.78676,
+   "lng": 144.91937
+  },
+  {
+   "name": "North Melbourne",
+   "label": "North Melbourne VIC 3051",
+   "kind": "suburb",
+   "lat": -37.79857,
+   "lng": 144.94517
+  },
+  {
+   "name": "West Melbourne",
+   "label": "West Melbourne VIC 3003",
+   "kind": "suburb",
+   "lat": -37.80875,
+   "lng": 144.92382
+  },
+  {
+   "name": "East Melbourne",
+   "label": "East Melbourne VIC 3002",
+   "kind": "suburb",
+   "lat": -37.8125,
+   "lng": 144.98589
+  },
+  {
+   "name": "Thornbury",
+   "label": "Thornbury VIC 3071",
+   "kind": "suburb",
+   "lat": -37.75827,
+   "lng": 145.00515
+  },
+  {
+   "name": "Ivanhoe",
+   "label": "Ivanhoe VIC",
+   "kind": "suburb",
+   "lat": -37.76902,
+   "lng": 145.04309
+  },
+  {
+   "name": "Heidelberg",
+   "label": "Heidelberg VIC 3084",
+   "kind": "suburb",
+   "lat": -37.75248,
+   "lng": 145.07013
+  },
+  {
+   "name": "Bundoora",
+   "label": "Bundoora VIC 3083",
+   "kind": "suburb",
+   "lat": -37.69825,
+   "lng": 145.05968
+  },
+  {
+   "name": "Ringwood",
+   "label": "Ringwood VIC 3134",
+   "kind": "suburb",
+   "lat": -37.81136,
+   "lng": 145.23064
+  },
+  {
+   "name": "Dandenong",
+   "label": "Dandenong VIC 3175",
+   "kind": "suburb",
+   "lat": -37.98749,
+   "lng": 145.21479
+  },
+  {
+   "name": "Frankston",
+   "label": "Frankston VIC 3199",
+   "kind": "suburb",
+   "lat": -38.14571,
+   "lng": 145.12637
+  },
+  {
+   "name": "Werribee",
+   "label": "Werribee VIC 3030",
+   "kind": "suburb",
+   "lat": -37.90093,
+   "lng": 144.66203
+  },
+  {
+   "name": "Burwood",
+   "label": "Burwood VIC 3125",
+   "kind": "suburb",
+   "lat": -37.84958,
+   "lng": 145.11139
+  },
+  {
+   "name": "Balwyn",
+   "label": "Balwyn VIC 3103",
+   "kind": "suburb",
+   "lat": -37.80917,
+   "lng": 145.08337
+  },
+  {
+   "name": "Oakleigh",
+   "label": "Oakleigh VIC 3166",
+   "kind": "suburb",
+   "lat": -37.9007,
+   "lng": 145.09567
+  },
+  {
+   "name": "Cheltenham",
+   "label": "Cheltenham VIC 3192",
+   "kind": "suburb",
+   "lat": -37.96342,
+   "lng": 145.06157
+  },
+  {
+   "name": "Sandringham",
+   "label": "Sandringham VIC 3191",
+   "kind": "suburb",
+   "lat": -37.95333,
+   "lng": 145.01393
+  },
+  {
+   "name": "Mentone",
+   "label": "Mentone VIC 3194",
+   "kind": "suburb",
+   "lat": -37.98137,
+   "lng": 145.06895
+  },
+  {
+   "name": "The University of Melbourne",
+   "label": "The University of Melbourne, 77 Story Street, Parkville VIC 3052",
+   "kind": "campus",
+   "lat": -37.797,
+   "lng": 144.95447
+  },
+  {
+   "name": "State Library Victoria",
+   "label": "State Library Victoria, 328 Swanston Street, Melbourne VIC 3000",
+   "kind": "library",
+   "lat": -37.80977,
+   "lng": 144.96554
+  },
+  {
+   "name": "Federation Square",
+   "label": "Federation Square, Swanston Street, Melbourne VIC",
+   "kind": "landmark",
+   "lat": -37.81774,
+   "lng": 144.96916
+  },
+  {
+   "name": "Flinders Street Station",
+   "label": "Flinders Street Station, Russell Street, Melbourne VIC 3000",
+   "kind": "station",
+   "lat": -37.81706,
+   "lng": 144.97004
+  },
+  {
+   "name": "Southern Cross Station",
+   "label": "Southern Cross Station, Collins Street, Docklands VIC 3008",
+   "kind": "station",
+   "lat": -37.81919,
+   "lng": 144.9534
+  },
+  {
+   "name": "Queen Victoria Market",
+   "label": "Queen Victoria Market, Queen Street, Melbourne VIC 3000",
+   "kind": "market",
+   "lat": -37.80739,
+   "lng": 144.95739
+  },
+  {
+   "name": "Melbourne Museum",
+   "label": "Melbourne Museum, 11 Nicholson Street, Carlton VIC 3053",
+   "kind": "museum",
+   "lat": -37.80323,
+   "lng": 144.97235
+  },
+  {
+   "name": "Royal Botanic Gardens Victoria",
+   "label": "Royal Botanic Gardens Victoria, Melbourne VIC",
+   "kind": "park",
+   "lat": -37.82946,
+   "lng": 144.98132
+  },
+  {
+   "name": "Melbourne Cricket Ground",
+   "label": "Melbourne Cricket Ground, 120 Barassi Way, East Melbourne VIC 3002",
+   "kind": "stadium",
+   "lat": -37.81991,
+   "lng": 144.98323
+  },
+  {
+   "name": "NGV International",
+   "label": "NGV International, 130-180 St Kilda Road, Southbank VIC 3006",
+   "kind": "museum",
+   "lat": -37.82291,
+   "lng": 144.96865
+  },
+  {
+   "name": "Melbourne Central",
+   "label": "Melbourne Central, La Trobe Street, Melbourne VIC 3000",
+   "kind": "shopping",
+   "lat": -37.81,
+   "lng": 144.96257
+  },
+  {
+   "name": "RMIT University",
+   "label": "RMIT University, A'Beckett Street, Melbourne VIC 3000",
+   "kind": "campus",
+   "lat": -37.80826,
+   "lng": 144.96266
+  },
+  {
+   "name": "Monash University, Clayton",
+   "label": "Monash University, Clayton, 151-211 Wellington Road, Clayton VIC 3168",
+   "kind": "campus",
+   "lat": -37.91078,
+   "lng": 145.13481
+  },
+  {
+   "name": "Crown Melbourne",
+   "label": "Crown Melbourne, 8 Whiteman Street, Southbank VIC 3006",
+   "kind": "venue",
+   "lat": -37.82333,
+   "lng": 144.95829
+  },
+  {
+   "name": "Melbourne Zoo",
+   "label": "Melbourne Zoo, 1 Elliott Avenue, Parkville VIC 3052",
+   "kind": "park",
+   "lat": -37.7848,
+   "lng": 144.95154
+  },
+  {
+   "name": "Carlton Gardens",
+   "label": "Carlton Gardens, Carlton VIC",
+   "kind": "park",
+   "lat": -37.80626,
+   "lng": 144.97123
+  },
+  {
+   "name": "Fitzroy Gardens",
+   "label": "Fitzroy Gardens, East Melbourne VIC",
+   "kind": "park",
+   "lat": -37.81268,
+   "lng": 144.98051
+  },
+  {
+   "name": "Library at The Dock",
+   "label": "Library at The Dock, Victoria Harbour Promenade, Docklands VIC 3008",
+   "kind": "library",
+   "lat": -37.8198,
+   "lng": 144.94082
+  },
+  {
+   "name": "South Melbourne Market",
+   "label": "South Melbourne Market, 322-326 Coventry Street, South Melbourne VIC 3205",
+   "kind": "market",
+   "lat": -37.83217,
+   "lng": 144.95649
+  },
+  {
+   "name": "Prahran Market",
+   "label": "Prahran Market, 163 Commercial Road, South Yarra VIC 3141",
+   "kind": "market",
+   "lat": -37.84602,
+   "lng": 144.99259
+  },
+  {
+   "name": "St Kilda Pier",
+   "label": "St Kilda Pier, Pier Road, St Kilda VIC 3182",
+   "kind": "landmark",
+   "lat": -37.86467,
+   "lng": 144.96892
+  },
+  {
+   "name": "Luna Park",
+   "label": "Luna Park, 18 Lower Esplanade, St Kilda VIC 3182",
+   "kind": "venue",
+   "lat": -37.86802,
+   "lng": 144.97691
+  },
+  {
+   "name": "Melbourne Convention & Exhibition Centre",
+   "label": "Melbourne Convention & Exhibition Centre, Convention Centre Place, South Wharf VIC 3006",
+   "kind": "venue",
+   "lat": -37.82618,
+   "lng": 144.95098
+  },
+  {
+   "name": "Arts Centre Melbourne",
+   "label": "Arts Centre Melbourne, St Kilda Road, Melbourne VIC 3004",
+   "kind": "venue",
+   "lat": -37.82016,
+   "lng": 144.96798
+  },
+  {
+   "name": "Hosier Lane",
+   "label": "Hosier Lane, Melbourne VIC 3000",
+   "kind": "landmark",
+   "lat": -37.81636,
+   "lng": 144.96908
+  },
+  {
+   "name": "Degraves Street",
+   "label": "Degraves Street, Melbourne VIC 3000",
+   "kind": "street",
+   "lat": -37.81708,
+   "lng": 144.96568
+  },
+  {
+   "name": "Lygon Street",
+   "label": "Lygon Street, Carlton VIC 3053",
+   "kind": "street",
+   "lat": -37.79745,
+   "lng": 144.96758
+  },
+  {
+   "name": "Brunswick Street",
+   "label": "Brunswick Street, Fitzroy VIC 3065",
+   "kind": "street",
+   "lat": -37.79821,
+   "lng": 144.97849
+  },
+  {
+   "name": "Chapel Street",
+   "label": "Chapel Street, South Yarra VIC 3141",
+   "kind": "street",
+   "lat": -37.83513,
+   "lng": 144.99649
+  },
+  {
+   "name": "Smith Street",
+   "label": "Smith Street, Collingwood VIC 3066",
+   "kind": "street",
+   "lat": -37.80867,
+   "lng": 144.9826
+  },
+  {
+   "name": "Sydney Road",
+   "label": "Sydney Road, 454 Sydney Road, Brunswick VIC 3056",
+   "kind": "street",
+   "lat": -37.76739,
+   "lng": 144.96222
+  },
+  {
+   "name": "Collingwood Children's Farm",
+   "label": "Collingwood Children's Farm, 6-24 St Heliers Street, Abbotsford VIC 3067",
+   "kind": "park",
+   "lat": -37.80336,
+   "lng": 145.00643
+  },
+  {
+   "name": "Abbotsford Convent",
+   "label": "Abbotsford Convent, 1-5 St Heliers Street, Abbotsford VIC 3067",
+   "kind": "venue",
+   "lat": -37.80293,
+   "lng": 145.00345
+  },
+  {
+   "name": "Williamstown Beach",
+   "label": "Williamstown Beach, Railway Place, Williamstown VIC 3016",
+   "kind": "beach",
+   "lat": -37.86395,
+   "lng": 144.89444
+  },
+  {
+   "name": "Brighton Bathing Boxes",
+   "label": "Brighton Bathing Boxes, Esplanade, Brighton VIC 3186",
+   "kind": "beach",
+   "lat": -37.91756,
+   "lng": 144.98641
+  },
+  {
+   "name": "Albert Park Lake",
+   "label": "Albert Park Lake, Albert Park VIC 3206",
+   "kind": "park",
+   "lat": -37.84594,
+   "lng": 144.96949
+  },
+  {
+   "name": "Melbourne Recital Centre",
+   "label": "Melbourne Recital Centre, 31 Sturt Street, Southbank VIC 3006",
+   "kind": "venue",
+   "lat": -37.82408,
+   "lng": 144.96759
+  },
+  {
+   "name": "Box Hill Central",
+   "label": "Box Hill Central, 1 Main Street, Box Hill VIC 3128",
+   "kind": "shopping",
+   "lat": -37.81956,
+   "lng": 145.12116
+  },
+  {
+   "name": "Chadstone Shopping Centre",
+   "label": "Chadstone Shopping Centre, City Circuit, Malvern East VIC 3145",
+   "kind": "shopping",
+   "lat": -37.88662,
+   "lng": 145.0824
+  },
+  {
+   "name": "Marvel Stadium",
+   "label": "Marvel Stadium, 740 Bourke Street, Docklands VIC 3008",
+   "kind": "stadium",
+   "lat": -37.81653,
+   "lng": 144.94752
+  },
+  {
+   "name": "Melbourne Airport",
+   "label": "Melbourne Airport, Tullamarine VIC 3045",
+   "kind": "transport",
+   "lat": -37.66676,
+   "lng": 144.82885
+  },
+  {
+   "name": "Swinburne University, Hawthorn",
+   "label": "Swinburne University, Hawthorn, John Street, Hawthorn VIC 3122",
+   "kind": "campus",
+   "lat": -37.8215,
+   "lng": 145.03875
+  },
+  {
+   "name": "Deakin University, Burwood",
+   "label": "Deakin University, Burwood, Elgar Road, Burwood VIC 3125",
+   "kind": "campus",
+   "lat": -37.84467,
+   "lng": 145.11191
+  },
+  {
+   "name": "La Trobe University, Bundoora",
+   "label": "La Trobe University, Bundoora, Main Drive, Bundoora VIC 3083",
+   "kind": "campus",
+   "lat": -37.72136,
+   "lng": 145.04886
+  },
+  {
+   "name": "Victoria University, Footscray Park",
+   "label": "Victoria University, Footscray Park, 70-104 Ballarat Road, Footscray VIC 3011",
+   "kind": "campus",
+   "lat": -37.79317,
+   "lng": 144.89894
+  }
+ ]
+}
