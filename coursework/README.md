@@ -7,7 +7,7 @@ academic-integrity purposes; the revived, deployable app lives in [`../web`](../
 | Folder | What it is |
 | --- | --- |
 | [`frontend/`](frontend) | The React 16 (Create React App) client: `src/API/*` feature components (auth, contact, record, map, person, calendar, fastRegister, ...), `src/BackEndAPI/*` fetch hooks, `src/hooks/*` auth helpers, Taiko/Jest tests and the JSDoc output in `out/`. Moved here with `git mv`, so its history is intact. `package.json`, `package-lock.json`, `public/manifest.json` and `public/robots.txt` were restored from the team's `COMP30022-49-Front-End.zip` (the old `.gitignore` excluded `*.json`). |
-| [`backend/`](backend) | The Express 4 + Mongoose 5 REST API (~35 endpoints under `/user`, `/profile`, `/contact`, `/record`), Passport local + JWT auth, multer uploads, nodemailer e-mail codes and 21 Jest test files. Copied from the team repository [Harrison-Huang666/COMP30022-49](https://github.com/Harrison-Huang666/COMP30022-49/tree/Back-End) (branch `Back-End`, commit `22d0675`). |
+| [`backend/`](backend) | The Express 4 + Mongoose 5 REST API (40 endpoints: 11 under `/contact`, 12 `/profile`, 5 `/record`, 12 `/user`), Passport local + JWT auth, multer uploads, nodemailer e-mail codes and 21 Jest test files. Copied from the team repository [Harrison-Huang666/COMP30022-49](https://github.com/Harrison-Huang666/COMP30022-49/tree/Back-End) (branch `Back-End`, commit `22d0675`). Its original `README.md` is included too; the back-end's own `.gitignore` ignores `README.md`, so it is force-added. |
 | [`_archive/`](_archive) | The original README of this repository. |
 
 ## What was changed on import (and why)
