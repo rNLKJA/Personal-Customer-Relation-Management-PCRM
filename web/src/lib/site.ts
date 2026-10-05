@@ -4,6 +4,8 @@ export const SITE = {
   tagline: "A personal CRM for the people you meet",
   description:
     "A revived COMP30022 IT Project (University of Melbourne, 2021): a mobile-first personal CRM for contacts, geo-tagged meetings, a map and a calendar.",
+  /** Canonical production URL (absolute URLs in metadata / Open Graph). */
+  url: "https://comp30022-personal-crm.vercel.app",
   repo: "https://github.com/rNLKJA/Personal-Customer-Relation-Management-PCRM",
   originalRepo: "https://github.com/Harrison-Huang666/COMP30022-49",
   subject: "COMP30022 IT Project",
