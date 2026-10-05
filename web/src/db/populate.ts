@@ -9,7 +9,7 @@ import { generateSampleData, type LinkableAccount } from "@/lib/sample-data";
 import { PLACES } from "@/lib/places";
 import { mulberry32, hashString } from "@/lib/random";
 import { EMAIL_SUBJECTS, verificationEmailHtml } from "@/lib/email-templates";
-import { ACTIVITY_RETENTION_DAYS } from "@/lib/retention";
+import { activityCutoff } from "@/lib/retention";
 
 /**
  * Data population shared by `pnpm db:seed` (deterministic demo database) and
@@ -296,6 +296,11 @@ export async function reanchorDemoAccount(db: Db, now: Date = new Date()): Promi
   });
 }
 
+/** Activity-log retention (see src/lib/retention.ts): delete entries past the cutoff. */
+export async function purgeOldActivityEntries(db: Db, now = new Date()): Promise<void> {
+  await db.delete(activityLog).where(lt(activityLog.createdAt, activityCutoff(now.getTime())));
+}
+
 /** Delete expired guest sandboxes and never-confirmed invitee accounts. */
 export async function purgeExpiredUsers(db: Db, now = new Date()): Promise<number> {
   const all = await db
@@ -306,9 +311,6 @@ export async function purgeExpiredUsers(db: Db, now = new Date()): Promise<numbe
     .filter((u) => u.expiresAt && u.expiresAt.getTime() < now.getTime())
     .map((u) => u.id);
   await deleteUsersCascade(db, expired);
-  // Activity-log retention (see src/lib/retention.ts).
-  await db
-    .delete(activityLog)
-    .where(lt(activityLog.createdAt, new Date(now.getTime() - ACTIVITY_RETENTION_DAYS * DAY_MS)));
+  await purgeOldActivityEntries(db, now);
   return expired.length;
 }

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { NOT_API, PARITY, paritySummary, type ParityStatus } from "@/lib/methods/parity";
 import { evaluateRedaction } from "@/lib/redact/evaluate";
 import { REDACTION_LABELS } from "@/lib/redact/redact";
-import { REDACTION_CORPUS } from "@/lib/redact/corpus";
+import { CORPUS_ADDRESS_BOOK, REDACTION_CORPUS } from "@/lib/redact/corpus";
 import {
   EVAL_RESAMPLES,
   EVAL_SEED,
@@ -19,7 +19,7 @@ import { DATA_INVENTORY, NOT_COLLECTED } from "@/lib/retention";
 import { ANTHROPIC_MODELS, DEFAULT_OPENAI_MODEL } from "@/lib/ai/models";
 import { MEETING_ASSIST_PROMPT_VERSION } from "@/lib/ai/meeting-assist";
 import { listDecisionRecords } from "@/lib/docs";
-import type { Interval } from "@/lib/stats";
+import type { BootstrapResult, Interval } from "@/lib/stats";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -41,8 +41,26 @@ const TOC = [
 ];
 
 const pct = (x: number) => `${Math.round(x * 100)}%`;
-const ci = (i: Interval | { estimate: number; lower: number; upper: number } | null) =>
-  i ? `${pct(i.estimate)} (${pct(i.lower)}-${pct(i.upper)})` : "-";
+const ci = (i: Interval | BootstrapResult | null) =>
+  !i
+    ? "-"
+    : "degenerate" in i && i.degenerate
+      ? `${pct(i.estimate)} (no interval)`
+      : `${pct(i.estimate)} (${pct(i.lower)}-${pct(i.upper)})`;
+
+/** Let long endpoint paths wrap only after a slash. */
+function slashBreaks(path: string) {
+  return path.split("/").map((part, i) => (
+    <span key={i}>
+      {i > 0 && (
+        <>
+          /<wbr />
+        </>
+      )}
+      {part}
+    </span>
+  ));
+}
 
 const STATUS_STYLE: Record<ParityStatus, string> = {
   implemented: "border-success/30 bg-success/10",
@@ -53,6 +71,7 @@ const STATUS_STYLE: Record<ParityStatus, string> = {
 export default function MethodsPage() {
   const parity = paritySummary();
   const redaction = evaluateRedaction();
+  const contactOnly = evaluateRedaction(REDACTION_CORPUS, { addressBook: [] });
   const dev = summarise(baselineScores(notesInSplit("development")));
   const held = summarise(baselineScores(notesInSplit("held-out")));
   const decisions = listDecisionRecords();
@@ -127,7 +146,7 @@ export default function MethodsPage() {
             lead={`All ${parity.total} REST endpoints of the original Express API, and what replaced each one: ${parity.implemented} implemented with the same behaviour, ${parity.changed} changed (same capability, different mechanism), ${parity.dropped} dropped. A unit test checks this table against the original router files and checks that every replacement it names is really exported.`}
           >
             <div
-              className="not-prose max-h-[34rem] overflow-auto rounded-xl border"
+              className="not-prose hidden max-h-[34rem] overflow-auto rounded-xl border sm:block"
               tabIndex={0}
               role="region"
               aria-label="Endpoint parity table (scrolls)"
@@ -156,7 +175,7 @@ export default function MethodsPage() {
                         <span className="font-mono text-[11px] text-muted-foreground">
                           {row.method}
                         </span>{" "}
-                        <code className="font-mono text-[12px] break-all">{row.path}</code>
+                        <code className="font-mono text-[12px]">{slashBreaks(row.path)}</code>
                         <span className="block text-[11px] text-muted-foreground">
                           {row.original}
                         </span>
@@ -191,6 +210,45 @@ export default function MethodsPage() {
                 </tbody>
               </table>
             </div>
+            <ol
+              className="not-prose max-h-[34rem] divide-y overflow-auto rounded-xl border sm:hidden"
+              tabIndex={0}
+              aria-label="Endpoint parity (scrolls)"
+            >
+              {PARITY.map((row) => (
+                <li key={`${row.method} ${row.path}`} className="space-y-1.5 p-3 text-[13px]">
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="min-w-0">
+                      <span className="font-mono text-[11px] text-muted-foreground">
+                        {row.method}
+                      </span>{" "}
+                      <code className="font-mono text-[12px]">{slashBreaks(row.path)}</code>
+                    </p>
+                    <span
+                      className={cn(
+                        "shrink-0 rounded-full border px-2 py-0.5 text-[11px] font-medium",
+                        STATUS_STYLE[row.status],
+                      )}
+                    >
+                      {row.status}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">{row.original}</p>
+                  {row.targets.length > 0 && (
+                    <p>
+                      <span className="text-muted-foreground">Now: </span>
+                      {row.targets.map((t, i) => (
+                        <span key={t.symbol + t.file}>
+                          {i > 0 && ", "}
+                          <code className="font-mono text-[12px]">{t.symbol}</code>
+                        </span>
+                      ))}
+                    </p>
+                  )}
+                  <p className="text-muted-foreground">{row.note}</p>
+                </li>
+              ))}
+            </ol>
             <p className="text-sm text-muted-foreground">
               Not counted as API endpoints:{" "}
               {NOT_API.map((n) => (
@@ -247,7 +305,12 @@ export default function MethodsPage() {
               details. A detail counts as caught only if every character of it is removed (any
               category); a redaction counts as correct if it overlaps a labelled detail. 95% Wilson
               intervals, which treat details in the same note as independent and so run a little
-              narrow.
+              narrow. The redactor runs as the app runs it since{" "}
+              <Link href="/methods/decisions/DR-006-redact-address-book-names">DR-006</Link>: the
+              meeting contact&apos;s and the user&apos;s names, plus the full names in the
+              user&apos;s address book. For the evaluation that address book is fixed by a rule:
+              every meeting contact in the corpus plus the four directory accounts (
+              {CORPUS_ADDRESS_BOOK.length} people).
             </p>
             <Table
               label="Redaction results"
@@ -275,25 +338,43 @@ export default function MethodsPage() {
                 .map((o) => `"${o.text}"`)
                 .join(", ")}
               . False positives: {redaction.falsePositives.map((f) => `"${f.text}"`).join(", ")}.
-              The weak spot is names of third parties, which the rules cannot see. These numbers are
-              optimistic because the same person wrote the rules and the corpus.
+            </p>
+            <p>
+              With only the meeting contact&apos;s and the user&apos;s names (the{" "}
+              <Link href="/methods/decisions/DR-003-redact-before-llm">DR-003</Link> setting), names
+              were {contactOnly.categories.find((c) => c.category === "name")!.caught} of{" "}
+              {contactOnly.categories.find((c) => c.category === "name")!.labelled} and all details{" "}
+              {contactOnly.overall.caught} of {contactOnly.overall.labelled},{" "}
+              {ci(contactOnly.overall.recall)}. The address book adds one name, &ldquo;Sam
+              Patel&rdquo;, and only because he is one of the directory accounts; the intervals
+              overlap almost entirely, so this is a fix for a known leak, not a measured
+              improvement. People outside the address book and lone first names are still missed.
+              These numbers are optimistic because the same person wrote the rules and the corpus.
             </p>
 
             <h3>Follow-up suggestions: LLM against a rule-based baseline</h3>
             <p>
               32 synthetic notes with hand-labelled follow-ups, in two splits of 16. A suggestion
               matches a labelled follow-up when it contains a keyword from each of its keyword
-              groups. Metrics: mean recall per note with a seeded percentile bootstrap interval (
+              groups (&ldquo;e-mail&rdquo; is read as &ldquo;email&rdquo;; a test checks that every
+              labelled follow-up matches its own keywords). Metrics: mean recall per note and mean
+              F1 per note with seeded percentile bootstrap intervals (
               {EVAL_RESAMPLES.toLocaleString("en-AU")} resamples, seed {EVAL_SEED}), pooled recall
               and precision with Wilson intervals, and suggestions made on notes with nothing to do.
-              The two methods are compared note by note: paired bootstrap interval of the
-              difference, win / tie / loss counts and an exact sign test.
+              F1 is defined on every note (on a note with nothing to do it is 1 for no suggestions
+              and 0 for any), so padding the list with guesses does not pay. The two methods are
+              compared note by note on the same notes, for recall and for F1: paired bootstrap
+              interval of the difference, win / tie / loss counts and an exact sign test. A model
+              answer that is invalid, refused or cut off is scored as an empty answer; only
+              infrastructure failures (network, rate limits, provider errors) are left out, and they
+              are counted in the results and the exports.
             </p>
             <Table
               label="Baseline follow-up results"
               head={[
                 "Rule-based baseline",
                 "Mean recall per note",
+                "Mean F1 per note",
                 "Pooled recall",
                 "Precision",
                 "On no-action notes",
@@ -306,7 +387,9 @@ export default function MethodsPage() {
             <p>
               The baseline is perfect on the notes it was written against and finds roughly a third
               of the follow-ups in notes it has not seen. That gap is the reason for the split, and
-              the held-out row is the one to quote.
+              the held-out row is the one to quote. On the development split every note scored 100%,
+              so the bootstrap has no spread and no interval is shown for it; the pooled Wilson
+              interval next to it is the honest range.
             </p>
             <p>
               <strong>The LLM side is not published.</strong> The site has no AI budget, so the
@@ -352,8 +435,9 @@ export default function MethodsPage() {
             <ul>
               <li>
                 Fixed instructions, the meeting date and the note after redaction (e-mails, phone
-                numbers, addresses and the contact&apos;s and user&apos;s names removed). The
-                visitor sees the exact text before sending.
+                numbers, addresses, the contact&apos;s and user&apos;s names, and the full names of
+                everyone in the user&apos;s contacts removed). The visitor sees the exact text
+                before sending.
               </li>
               <li>
                 Sent from the visitor&apos;s browser straight to the provider they chose: Anthropic
@@ -361,6 +445,11 @@ export default function MethodsPage() {
                 id of their choice, default {DEFAULT_OPENAI_MODEL}). The API key stays in the
                 browser (sessionStorage unless they opt in to remembering it) and never reaches this
                 site.
+              </li>
+              <li>
+                A Content Security Policy (report-only for now) lists the only places the browser
+                may connect to: this site, the two AI providers and the map tiles. Violations are
+                reported back, so a script sending the key anywhere else would show up.
               </li>
             </ul>
             <h3>Human in the loop and audit trail</h3>
@@ -371,8 +460,20 @@ export default function MethodsPage() {
               <li>
                 Every call is written to the AI log: the redacted text sent, the answer, the
                 requested and served model, latency, token counts and the human decision, which can
-                be recorded once. The log is viewable and exportable at <code>/ai-log</code>, and
-                appears in <code>/admin/records</code> for the administrator.
+                be recorded once. The log is viewable and exportable at <code>/ai-log</code>. The
+                administrator sees these rows in <code>/admin/records</code> with the text masked,
+                except on the shared demo account.
+              </li>
+              <li>
+                &ldquo;Accepted&rdquo; means the model&apos;s logged answer, unchanged: the server
+                saves the answer already in the log and ignores any text sent with an accept. Any
+                change is recorded as &ldquo;edited&rdquo;, together with the final text.
+              </li>
+              <li>
+                Limit: entries are reported by the visitor&apos;s browser, because the call never
+                passes through this server. The server cannot verify what the provider actually
+                returned; it can only check the shape of the entry and refuse anything that looks
+                like an API key.
               </li>
             </ul>
             <p className="text-sm text-muted-foreground">
@@ -401,19 +502,32 @@ export default function MethodsPage() {
                 <strong>Your data page.</strong> Signed-in users can download everything stored
                 about them (JSON, plus CSV per table) and hard-delete their account. Deletion
                 removes the account and every contact, meeting, link, invitation, demo-inbox e-mail,
-                pending code, activity entry and AI-log entry that belongs to it, in one batch.
-                Other people&apos;s contacts that were linked to the account keep their own copy,
-                unlinked. One anonymous row (counts only) records that a deletion happened.
+                pending code, activity entry and AI-log entry that belongs to it, in one database
+                transaction (all of it or none of it). Other people&apos;s contacts that were linked
+                to the account keep their own copy, unlinked. One anonymous row (counts only)
+                records that a deletion happened.
               </li>
               <li>
-                <strong>Activity log.</strong> Append-only: views, creates, changes, deletes and
-                exports of contacts and meetings, profile changes and AI actions. It stores ids,
-                field names and counts, never the contents, and is purged after the retention
-                period.
+                <strong>Activity log.</strong> Append-only: views of contact and meeting pages;
+                creates, changes, deletes and exports; sign-ins, sign-outs, sign-ups and password
+                resets; profile changes and AI actions. List, search, map and Insights pages are not
+                logged as views. It stores ids, field names and counts, never the contents. Entries
+                past the retention period are never shown or exported, and are deleted at server
+                start and on routine clean-ups.
               </li>
               <li>
                 <strong>Ownership.</strong> Every read and write is scoped to the signed-in owner on
                 the server.
+              </li>
+              <li>
+                <strong>The public demo admin is untrusted</strong> (
+                <Link href="/methods/decisions/DR-005-mask-the-public-demo-admin">DR-005</Link>).
+                Anyone can sign in as it, so <code>/admin/records</code> always masks password
+                hashes, e-mail codes, invitation links and the inbox browser key, and shows names,
+                contact details, notes and AI text only for the seeded demo accounts. Guest and
+                registered visitors&apos; rows show ids, timestamps and counts only, and search does
+                not look inside them. Every admin view and export is written to the admin
+                account&apos;s activity log.
               </li>
             </ul>
             <Table
@@ -437,7 +551,13 @@ export default function MethodsPage() {
               </li>
               <li>
                 The shared <code>demo</code> account is shared: other visitors see its activity log,
-                AI log and inbox. Guest sandboxes are private and deleted after 24 hours.
+                AI log and inbox. Guest sandboxes are private (the demo admin sees only masked rows
+                for them) and deleted after 24 hours.
+              </li>
+              <li>
+                Until DR-005, the demo admin could read live password-reset codes and every
+                visitor&apos;s notes. That was found in review before this upgrade was merged and
+                fixed by masking; it is recorded rather than quietly removed.
               </li>
               <li>
                 E-mail verification is simulated by the demo inbox (DR-002); it does not prove that
@@ -502,8 +622,8 @@ export default function MethodsPage() {
                 Provision the hosted database first, and fail the deployment if production has none.
               </li>
               <li>
-                Detect third-party names in the browser before sending, and have someone else write
-                a held-out set of notes to evaluate it.
+                Detect names of people outside the address book in the browser before sending, and
+                have someone else write a held-out set of notes to evaluate it.
               </li>
               <li>
                 Replace the keyword matcher with a pre-registered rubric scored by two people, so
@@ -523,6 +643,7 @@ function summaryRow(name: string, s: MethodSummary): string[] {
   return [
     name,
     `${ci(s.meanRecall)}, n = ${s.meanRecall?.n ?? 0}`,
+    `${ci(s.meanF1)}, n = ${s.meanF1?.n ?? 0}`,
     `${s.pooledRecall ? Math.round(s.pooledRecall.estimate * s.goldItems) : 0} of ${s.goldItems}, ${ci(s.pooledRecall)}`,
     `${ci(s.pooledPrecision)} of ${s.predictions}`,
     String(s.spuriousOnEmptyNotes),

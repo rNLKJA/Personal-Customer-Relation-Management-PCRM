@@ -41,9 +41,12 @@ export const ACTIVITY_ACTIONS = [
   "ai-call",
   "ai-decision",
   "account-delete",
+  "sign-in",
+  "sign-out",
+  "password-reset",
 ] as const;
 export type ActivityAction = (typeof ACTIVITY_ACTIONS)[number];
-export const ACTIVITY_ENTITIES = ["contact", "meeting", "account", "data", "ai"] as const;
+export const ACTIVITY_ENTITIES = ["contact", "meeting", "account", "data", "ai", "admin"] as const;
 export type ActivityEntity = (typeof ACTIVITY_ENTITIES)[number];
 
 export const AI_DECISION_VALUES = [

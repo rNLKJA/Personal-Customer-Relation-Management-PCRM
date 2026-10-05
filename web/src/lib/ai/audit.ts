@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { FOLLOW_UP_EVAL_FEATURE, MEETING_ASSIST_FEATURE } from "./meeting-assist";
 
 /**

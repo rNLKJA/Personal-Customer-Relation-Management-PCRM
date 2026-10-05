@@ -1,5 +1,5 @@
 import "server-only";
-import { asc, count, eq, or } from "drizzle-orm";
+import { and, asc, count, eq, gte, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { deleteUsersCascade } from "@/db/cascade";
 import {
@@ -12,6 +12,7 @@ import {
   type User,
 } from "@/db/schema";
 import { toCsv } from "@/lib/csv";
+import { activityCutoff } from "@/lib/retention";
 import { allActivity, logActivity } from "./activity";
 import { allAiCalls } from "./ai-audit";
 import { isSharedDemo } from "./users";
@@ -182,7 +183,12 @@ export async function dataInventory(userId: string): Promise<DataInventory> {
   const [c, m, a, ai, inbox] = await Promise.all([
     n(db.select({ n: count() }).from(contacts).where(eq(contacts.ownerId, userId))),
     n(db.select({ n: count() }).from(records).where(eq(records.ownerId, userId))),
-    n(db.select({ n: count() }).from(activityLog).where(eq(activityLog.userId, userId))),
+    n(
+      db
+        .select({ n: count() })
+        .from(activityLog)
+        .where(and(eq(activityLog.userId, userId), gte(activityLog.createdAt, activityCutoff()))),
+    ),
     n(db.select({ n: count() }).from(aiAuditLog).where(eq(aiAuditLog.userId, userId))),
     n(
       db

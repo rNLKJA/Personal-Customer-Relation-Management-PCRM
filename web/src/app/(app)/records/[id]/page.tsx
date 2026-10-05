@@ -16,6 +16,7 @@ import { PersonAvatar } from "@/components/common/person-avatar";
 import { DeleteRecordButton } from "@/components/records/record-actions";
 import { StaticPinMap } from "@/components/maps/static-pin-map";
 import { getRecord } from "@/server/records";
+import { listContactNames } from "@/server/contacts";
 import { requireUser } from "@/server/session";
 import { logActivity } from "@/server/activity";
 import { MeetingAssistant } from "@/components/ai/meeting-assistant";
@@ -37,7 +38,10 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
   const { id } = await params;
   const r = await getRecord(user.id, id);
   if (!r) notFound();
-  await logActivity(user.id, "view", "meeting", r.id);
+  const [addressBook] = await Promise.all([
+    r.notes.trim() ? listContactNames(user.id) : Promise.resolve([]),
+    logActivity(user.id, "view", "meeting", r.id),
+  ]);
   const p = r.meetingPerson;
   const ai = r.aiSummary;
   const upcoming = r.dateTime.getTime() > requestNow();
@@ -213,6 +217,7 @@ export default async function RecordPage({ params }: PageProps<"/records/[id]">)
             notes={r.notes}
             meetingDay={formatDate(r.dateTime)}
             knownNames={[p.firstName, p.lastName, user.firstName ?? "", user.lastName ?? ""]}
+            addressBook={addressBook}
             hasAcceptedSummary={Boolean(ai)}
           />
 

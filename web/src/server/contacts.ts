@@ -31,6 +31,18 @@ export type ContactListItem = Contact & {
   linkedUserName: string | null;
 };
 
+/**
+ * Full names in the owner's address book ("First Last"), for the redactor's
+ * address-book rule before an AI call (DR-006). Owner-scoped like every query.
+ */
+export async function listContactNames(ownerId: string): Promise<string[]> {
+  const rows = await getDb()
+    .select({ first: contacts.firstName, last: contacts.lastName })
+    .from(contacts)
+    .where(eq(contacts.ownerId, ownerId));
+  return [...new Set(rows.map((r) => `${r.first} ${r.last}`.trim()))];
+}
+
 /** `showAllContact` - the owner's contact list, with meeting stats for the UI. */
 export async function listContacts(ownerId: string): Promise<ContactListItem[]> {
   const db = getDb();

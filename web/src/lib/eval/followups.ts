@@ -63,9 +63,15 @@ export function extractFollowUpsBaseline(note: string, max = 5): FollowUp[] {
 
 // ------------------------------------------------------------------ scorer --
 
-function tokens(text: string): string[] {
+/**
+ * Lower-case word tokens. "e-mail" is folded to "email" first: the app's house
+ * style (and Australian English) hyphenates it, and splitting it into "e" and
+ * "mail" would fail the "email" keyword (it did, for gold item 101).
+ */
+export function tokens(text: string): string[] {
   return text
     .toLowerCase()
+    .replace(/\be[\u2010\u2011-]mail/g, "email")
     .split(/[^a-z0-9]+/)
     .filter(Boolean);
 }
@@ -84,7 +90,21 @@ export interface NoteScore {
   /** null when the note has no gold follow-ups. */
   recall: number | null;
   precision: number | null;
+  /**
+   * Per-note F1, defined for every note: on a note with nothing to do it is 1
+   * for no suggestions and 0 for any; otherwise 0 when either side is empty.
+   * Unlike recall it penalises over-suggestion.
+   */
+  f1: number;
   missed: string[];
+}
+
+export function noteF1(gold: number, predicted: number, matched: number): number {
+  if (gold === 0) return predicted === 0 ? 1 : 0;
+  if (predicted === 0 || matched === 0) return 0;
+  const p = matched / predicted;
+  const r = matched / gold;
+  return (2 * p * r) / (p + r);
 }
 
 /** Greedy one-to-one matching of predictions to gold items. */
@@ -107,6 +127,7 @@ export function scoreNote(note: FollowUpNote, predictions: readonly FollowUp[]):
     matchedPredictions: used.size,
     recall: note.gold.length ? matched / note.gold.length : null,
     precision: predictions.length ? used.size / predictions.length : null,
+    f1: noteF1(note.gold.length, predictions.length, matched),
     missed,
   };
 }
@@ -115,6 +136,8 @@ export interface MethodSummary {
   notes: number;
   /** Mean of per-note recall over notes that have gold items, with a bootstrap CI. */
   meanRecall: BootstrapResult | null;
+  /** Mean per-note F1 over all notes (including no-action notes), with a bootstrap CI. */
+  meanF1: BootstrapResult | null;
   /** Pooled over all gold items (Wilson; ignores clustering within notes). */
   pooledRecall: Interval | null;
   pooledPrecision: Interval | null;
@@ -140,6 +163,11 @@ export function summarise(scores: readonly NoteScore[]): MethodSummary {
       mean,
       { seed: EVAL_SEED, resamples: EVAL_RESAMPLES },
     ),
+    meanF1: bootstrapCI(
+      scores.map((s) => s.f1),
+      mean,
+      { seed: EVAL_SEED, resamples: EVAL_RESAMPLES },
+    ),
     pooledRecall: wilsonInterval(matched, goldItems),
     pooledPrecision: wilsonInterval(matchedPred, predictions),
     spuriousOnEmptyNotes: scores.filter((s) => s.gold === 0).reduce((n, s) => n + s.predicted, 0),
@@ -148,10 +176,16 @@ export function summarise(scores: readonly NoteScore[]): MethodSummary {
   };
 }
 
+export type PairedMetric = "recall" | "f1";
+
 export interface PairedComparison {
-  /** Notes with gold items scored by both methods. */
+  metric: PairedMetric;
+  /**
+   * Notes scored by both methods: for recall, notes with gold items; for F1,
+   * every note (no-action notes included).
+   */
   n: number;
-  /** Mean per-note recall difference (candidate - baseline) with paired bootstrap CI. */
+  /** Mean per-note difference (candidate - baseline) with a paired bootstrap CI. */
   difference: BootstrapResult | null;
   wins: number;
   ties: number;
@@ -160,17 +194,28 @@ export interface PairedComparison {
   signTestP: number;
 }
 
+function metricOf(s: NoteScore, metric: PairedMetric): number | null {
+  return metric === "recall" ? s.recall : s.f1;
+}
+
 export function compare(
   candidate: readonly NoteScore[],
   baseline: readonly NoteScore[],
+  metric: PairedMetric = "recall",
 ): PairedComparison {
   const byId = new Map(baseline.map((s) => [s.noteId, s]));
   const pairs = candidate
-    .filter((c) => c.recall !== null && byId.get(c.noteId)?.recall != null)
-    .map((c) => [c.recall!, byId.get(c.noteId)!.recall!] as const);
+    .map((c) => {
+      const b = byId.get(c.noteId);
+      const x = metricOf(c, metric);
+      const y = b ? metricOf(b, metric) : null;
+      return x === null || y === null ? null : ([x, y] as const);
+    })
+    .filter((p): p is readonly [number, number] => p !== null);
   const wins = pairs.filter(([a, b]) => a > b).length;
   const losses = pairs.filter(([a, b]) => a < b).length;
   return {
+    metric,
     n: pairs.length,
     difference: pairedBootstrapCI(
       pairs.map((p) => p[0]),

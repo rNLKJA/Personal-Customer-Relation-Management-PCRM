@@ -8,12 +8,17 @@
  *     and +country international numbers)
  *   - street addresses (number + street name + street type, optional unit /
  *     level prefix and suburb / state / postcode tail) and PO boxes
- *   - names the app already knows (the meeting contact and the signed-in user)
+ *   - names the app already knows: the meeting contact's and the signed-in
+ *     user's first and last names (case-insensitive, each word on its own),
+ *     and the full names of everyone in the user's address book
+ *     (case-sensitive "First Last", so a contact called "May" or "Will" does
+ *     not blank out ordinary words) - see DR-006
  *
- * It does NOT detect names of other people, obfuscated contact details
- * ("jo at example dot com") or free-text locations. The evaluation in
- * `evaluate.ts` measures this on a labelled corpus and the numbers are shown
- * on /methods, including the misses.
+ * It does NOT detect people who are not in the address book, other contacts'
+ * first names on their own, obfuscated contact details ("jo at example dot
+ * com") or free-text locations. The evaluation in `evaluate.ts` measures this
+ * on a labelled corpus and the numbers are shown on /methods, including the
+ * misses.
  */
 
 export type RedactionCategory = "email" | "phone" | "address" | "name";
@@ -46,8 +51,16 @@ export interface RedactionResult {
 }
 
 export interface RedactionOptions {
-  /** Names to replace with [NAME] (e.g. the contact's first and last name). */
+  /**
+   * Names to replace with [NAME] wherever they appear as a word, ignoring
+   * case (the meeting contact's and the user's first and last names).
+   */
   knownNames?: readonly string[];
+  /**
+   * Full names from the user's address book ("Sam Patel"), replaced only when
+   * the whole name appears with the same capitalisation.
+   */
+  addressBook?: readonly string[];
 }
 
 const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
@@ -140,16 +153,36 @@ function collect(text: string, re: RegExp, category: RedactionCategory): Redacti
   return spans;
 }
 
-function knownNameSpans(text: string, names: readonly string[]): RedactionSpan[] {
-  const cleaned = [...new Set(names.map((n) => n.trim()).filter((n) => n.length >= 2))];
+function nameSpans(
+  text: string,
+  names: readonly string[],
+  { ignoreCase, minLength }: { ignoreCase: boolean; minLength: number },
+): RedactionSpan[] {
+  const cleaned = [
+    ...new Set(
+      names.map((n) => n.trim().replace(/\s+/g, " ")).filter((n) => n.length >= minLength),
+    ),
+  ];
   if (cleaned.length === 0) return [];
   // Longest first so "Mary Ann" wins over "Mary".
   cleaned.sort((a, b) => b.length - a.length);
+  // A single space in a name also matches a line break or several spaces.
+  const alternatives = cleaned.map((n) => escapeRegExp(n).replace(/ /g, String.raw`\s+`));
   const re = new RegExp(
-    String.raw`(?<![\p{L}\p{N}])(?:${cleaned.map(escapeRegExp).join("|")})(?![\p{L}\p{N}])`,
-    "giu",
+    String.raw`(?<![\p{L}\p{N}])(?:${alternatives.join("|")})(?![\p{L}\p{N}])`,
+    ignoreCase ? "giu" : "gu",
   );
   return collect(text, re, "name");
+}
+
+function knownNameSpans(text: string, names: readonly string[]): RedactionSpan[] {
+  return nameSpans(text, names, { ignoreCase: true, minLength: 2 });
+}
+
+/** Full names only ("First Last"): a lone first name of another contact is not enough. */
+function addressBookSpans(text: string, names: readonly string[]): RedactionSpan[] {
+  const full = names.filter((n) => /\S\s+\S/.test(n.trim()));
+  return nameSpans(text, full, { ignoreCase: false, minLength: 3 });
 }
 
 /** Keep the earliest, then longest span where detectors overlap. */
@@ -201,6 +234,7 @@ export function redact(text: string, options: RedactionOptions = {}): RedactionR
       ...collect(text, PO_BOX, "address"),
       ...collect(text, PHONE_CANDIDATE, "phone"),
       ...knownNameSpans(text, options.knownNames ?? []),
+      ...addressBookSpans(text, options.addressBook ?? []),
     ]),
   );
   const counts = emptyCounts();

@@ -10,6 +10,11 @@ import {
  */
 
 export const ACTIVITY_RETENTION_DAYS = 180;
+
+/** Activity entries created before this instant are past retention: never shown or exported. */
+export function activityCutoff(now: number = Date.now()): Date {
+  return new Date(now - ACTIVITY_RETENTION_DAYS * 864e5);
+}
 export const GUEST_TTL_HOURS = 24;
 
 export interface DataCategory {
@@ -32,9 +37,14 @@ export const DATA_INVENTORY: DataCategory[] = [
     kept: "Until you delete them or the account. Deleting a contact deletes its meetings.",
   },
   {
-    what: "Activity log (what was viewed, created, changed, deleted or exported, and AI actions)",
-    why: "Accountability: you can see every access to your records.",
-    kept: `${ACTIVITY_RETENTION_DAYS} days, then deleted automatically; or with the account.`,
+    what: "Activity log (contact and meeting pages viewed; anything created, changed, deleted or exported; sign-ins and password resets; AI actions)",
+    why: "Accountability: what was done through your account, and when. List, search and map pages are not logged as views.",
+    kept: `${ACTIVITY_RETENTION_DAYS} days (older entries are never shown or exported, and are deleted at server start); or with the account.`,
+  },
+  {
+    what: "Administrator access",
+    why: "The public demo admin sees your rows in /admin/records with names, contact details, notes and AI text masked, and never sees codes, links or password hashes. Each admin view and export is logged under the admin account.",
+    kept: "Admin log entries follow the activity-log retention above.",
   },
   {
     what: "AI audit log (redacted text sent to the provider, the answer, model, timing, tokens, your decision)",

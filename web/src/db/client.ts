@@ -88,3 +88,13 @@ export async function ensureSchema(): Promise<void> {
     console.error(`[pcrm] could not apply migrations (${getStorageMode()} storage)`, err);
   }
 }
+
+/** Server-start housekeeping: apply the activity-log retention rule (logged, not thrown). */
+export async function purgeAtStartup(): Promise<void> {
+  try {
+    const { purgeOldActivityEntries } = await import("./populate");
+    await purgeOldActivityEntries(getDb());
+  } catch (err) {
+    console.error("[pcrm] could not purge old activity entries", err);
+  }
+}

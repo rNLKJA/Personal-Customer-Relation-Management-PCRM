@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { createRateLimiter } from "@/lib/rate-limit";
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { DEMO_ACCOUNTS } from "@/db/demo-accounts";
 import { codeSchema, emailSchema, firstIssue, passwordSchema, userNameSchema } from "@/lib/schemas";
 import {
@@ -24,9 +24,11 @@ import {
   createSession,
   destroySession,
   getBrowserKey,
+  getCurrentUser,
   isKnownAccount,
   issueResetTicket,
 } from "../session";
+import { logActivity } from "../activity";
 import type { ActionResult } from "./types";
 
 // Abuse guards for the public demo (per server instance, per client IP).
@@ -55,6 +57,8 @@ export async function loginAction(
   const user = await authenticate(userName, password);
   if (!user) return { ok: false, error: "Incorrect user name or password." };
   await createSession(user);
+  // Account-security events are logged like everything else: no IP, no user agent.
+  await logActivity(user.id, "sign-in", "account", user.id, { via: "password" });
   redirect(safeNext(formData.get("next")));
 }
 
@@ -63,6 +67,7 @@ export async function demoLoginAction(formData: FormData): Promise<void> {
   const user = await authenticate(which.userName, which.password);
   if (!user) redirect("/login?error=demo-unavailable");
   await createSession(user);
+  await logActivity(user.id, "sign-in", "account", user.id, { via: "demo button" });
   redirect(which === DEMO_ACCOUNTS.admin ? "/admin/records" : "/home");
 }
 
@@ -70,10 +75,13 @@ export async function guestLoginAction(): Promise<void> {
   if (!allowGuest(await clientKey())) redirect("/login?error=slow-down");
   const user = await createGuest();
   await createSession(user);
+  await logActivity(user.id, "create", "account", user.id, { via: "guest sandbox" });
   redirect("/home?welcome=guest");
 }
 
 export async function logoutAction(): Promise<void> {
+  const user = await getCurrentUser();
+  if (user) await logActivity(user.id, "sign-out", "account", user.id);
   await destroySession();
   redirect("/");
 }
@@ -105,6 +113,7 @@ export async function registerAction(input: z.input<typeof registerSchema>): Pro
   const result = await register(parsed.data);
   if (!result.ok) return result;
   await createSession(result.user);
+  await logActivity(result.user.id, "create", "account", result.user.id, { via: "sign-up" });
   redirect("/home?welcome=1");
 }
 
@@ -142,6 +151,7 @@ export async function resetPasswordAction(
   const result = await setNewPassword(userId, parsed.data, rePassword);
   if (!result.ok) return result;
   await clearResetTicket();
+  await logActivity(userId, "password-reset", "account", userId, { via: "e-mailed code" });
   return { ok: true };
 }
 
@@ -163,6 +173,7 @@ export async function confirmInviteAction(
   const user = await authenticate(parsed.data.userName, parsed.data.password);
   if (user) {
     await createSession(user);
+    await logActivity(user.id, "create", "account", user.id, { via: "invitation" });
     redirect("/home?welcome=invite");
   }
   redirect("/login");

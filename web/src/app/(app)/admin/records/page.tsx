@@ -13,6 +13,7 @@ import {
   isTableName,
   tableCounts,
 } from "@/server/admin";
+import { logActivity } from "@/server/activity";
 import { requireAdmin } from "@/server/session";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +34,7 @@ function formatCell(value: unknown): string {
 }
 
 export default async function AdminRecordsPage({ searchParams }: PageProps<"/admin/records">) {
-  await requireAdmin();
+  const admin = await requireAdmin();
   const sp = await searchParams;
   const table: TableName =
     typeof sp.table === "string" && isTableName(sp.table) ? sp.table : "users";
@@ -43,6 +44,8 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
     tableCounts(),
     browseTable(table, { page, pageSize: PAGE_SIZE, q }),
   ]);
+  // Administrator reads are logged under the admin account (see DR-005).
+  await logActivity(admin.id, "view", "admin", null, { table, q: q || null, page: data.page });
   const link = (params: { table?: string; page?: number; q?: string }) => {
     const s = new URLSearchParams();
     s.set("table", params.table ?? table);
@@ -60,7 +63,7 @@ export default async function AdminRecordsPage({ searchParams }: PageProps<"/adm
           </span>
         }
         title="Records"
-        description="Every table in the database, read-only. Password hashes and image/HTML blobs are redacted."
+        description="Every table, read-only. Codes, links and password hashes are always masked; names, contact details, notes and AI text are shown only for the seeded demo accounts, never for guests or visitors. Views and exports are logged."
         actions={
           <Button asChild variant="outline">
             <a href={`/admin/records/export/${table}`} download>

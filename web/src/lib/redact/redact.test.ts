@@ -66,6 +66,19 @@ describe("redact", () => {
     expect(redact("nothing to see", { knownNames: ["", " "] }).text).toBe("nothing to see");
   });
 
+  it("redacts full address-book names case-sensitively, never lone first names", () => {
+    const addressBook = ["Sam Patel", "May Wong", "Solo"];
+    const r = redact(
+      "Intro Ava to Sam Patel. Sam's keen. In May Wong and I met; may wong is lower case. Solo trip.",
+      { knownNames: ["Ava"], addressBook },
+    );
+    expect(r.text).toBe(
+      "Intro [NAME] to [NAME]. Sam's keen. In [NAME] and I met; may wong is lower case. Solo trip.",
+    );
+    expect(redact("Sam\nPatel called", { addressBook }).text).toBe("[NAME] called");
+    expect(redact("Sam Patelson", { addressBook }).text).toBe("Sam Patelson");
+  });
+
   it("does not read the digits of an e-mail address as a phone number", () => {
     expect(redact("write to team0491570159@example.com").text).toBe("write to [EMAIL]");
   });
@@ -101,12 +114,24 @@ describe("evaluateRedaction", () => {
     expect(e.categories.reduce((n, c) => n + c.labelled, 0)).toBe(labelled);
   });
 
-  it("reports the known misses honestly (third-party names, spelled-out details)", () => {
+  it("reports the known misses honestly (people outside the address book, spelled-out details)", () => {
     const missed = e.outcomes.filter((o) => o.outcome !== "caught").map((o) => o.text);
     expect(missed).toEqual(
-      expect.arrayContaining(["Sam Patel", "0491 five seven zero 313", "Grace Okafor"]),
+      expect.arrayContaining(["0491 five seven zero 313", "Grace Okafor", "Leila", "Sienna"]),
     );
+    expect(missed).not.toContain("Sam Patel"); // a directory account, so in the address book
     expect(e.falsePositives.map((f) => f.text)).toContain("3 Collins Street");
+  });
+
+  it("keeps the DR-003 setting (meeting contact only) reproducible", () => {
+    const contactOnly = evaluateRedaction(REDACTION_CORPUS, { addressBook: [] });
+    const names = (x: typeof e) => x.categories.find((c) => c.category === "name")!;
+    expect([names(contactOnly).caught, names(contactOnly).labelled]).toEqual([12, 17]);
+    expect([contactOnly.overall.caught, contactOnly.overall.labelled]).toEqual([41, 49]);
+    expect(contactOnly.outcomes.find((o) => o.text === "Sam Patel")?.outcome).toBe("missed");
+    // The address book adds exactly that one name and no false positive.
+    expect(names(e).caught - names(contactOnly).caught).toBe(1);
+    expect(e.falsePositives).toEqual(contactOnly.falsePositives);
   });
 
   it("produces Wilson intervals that contain the point estimates", () => {

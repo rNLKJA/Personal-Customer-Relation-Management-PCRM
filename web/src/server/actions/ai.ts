@@ -28,7 +28,9 @@ export async function logAiCallAction(entry: AiAuditInput): Promise<ActionResult
   return result;
 }
 
-export async function decideAiCallAction(input: AiDecisionInput): Promise<ActionResult> {
+export async function decideAiCallAction(
+  input: AiDecisionInput,
+): Promise<ActionResult<{ decision: AiDecisionInput["decision"] }>> {
   const user = await getCurrentUser();
   if (!user) return SESSION_EXPIRED;
   const parsed = aiDecisionSchema.safeParse(input);
@@ -37,7 +39,7 @@ export async function decideAiCallAction(input: AiDecisionInput): Promise<Action
   if (!result.ok) return result;
   revalidatePath("/ai-log");
   if (result.recordId) revalidatePath(`/records/${result.recordId}`);
-  return { ok: true };
+  return { ok: true, decision: result.decision };
 }
 
 export async function removeAiSummaryAction(recordId: string): Promise<ActionResult> {

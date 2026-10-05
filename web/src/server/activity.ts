@@ -1,8 +1,9 @@
 import "server-only";
-import { and, count, desc, eq, gt, inArray, lt } from "drizzle-orm";
+import { and, count, desc, eq, gt, gte, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { ACTIVITY_RETENTION_DAYS } from "@/lib/retention";
+import { ACTIVITY_RETENTION_DAYS, activityCutoff } from "@/lib/retention";
 import { newId } from "@/db/ids";
+import { purgeOldActivityEntries } from "@/db/populate";
 import {
   activityLog,
   contacts,
@@ -59,10 +60,18 @@ export async function logActivity(
   }
 }
 
-/** Delete entries older than the retention period (all users). */
+/**
+ * Delete entries older than the retention period (all users). Runs at server
+ * start (instrumentation), on every guest sign-up and when /activity is opened;
+ * every reader also filters by the cutoff, so an entry past retention is never
+ * shown or exported even before it is purged.
+ */
 export async function purgeOldActivity(now = new Date()): Promise<void> {
-  const cutoff = new Date(now.getTime() - ACTIVITY_RETENTION_DAYS * 864e5);
-  await getDb().delete(activityLog).where(lt(activityLog.createdAt, cutoff));
+  await purgeOldActivityEntries(getDb(), now);
+}
+
+function withinRetention() {
+  return gte(activityLog.createdAt, activityCutoff());
 }
 
 export interface ActivityItem extends ActivityEntry {
@@ -79,12 +88,13 @@ export async function listActivity(
   opts: { page: number; pageSize: number; filter: ActivityFilter },
 ): Promise<{ items: ActivityItem[]; total: number; page: number; pages: number }> {
   const db = getDb();
+  const mine = and(eq(activityLog.userId, userId), withinRetention());
   const where =
     opts.filter === "all"
-      ? eq(activityLog.userId, userId)
+      ? mine
       : opts.filter === "account"
-        ? and(eq(activityLog.userId, userId), inArray(activityLog.entityType, ["account", "data"]))
-        : and(eq(activityLog.userId, userId), eq(activityLog.entityType, opts.filter));
+        ? and(mine, inArray(activityLog.entityType, ["account", "data", "admin"]))
+        : and(mine, eq(activityLog.entityType, opts.filter));
   const [{ n }] = await db.select({ n: count() }).from(activityLog).where(where);
   const total = Number(n);
   const pages = Math.max(1, Math.ceil(total / opts.pageSize));
@@ -136,6 +146,13 @@ export async function listActivity(
       return { ...r, label, href: label ? `/records/${r.entityId}` : null };
     }
     if (r.entityType === "ai") return { ...r, label: "AI call", href: "/ai-log" };
+    if (r.entityType === "admin" && typeof r.detail.table === "string") {
+      return {
+        ...r,
+        label: r.detail.table,
+        href: `/admin/records?table=${encodeURIComponent(r.detail.table)}`,
+      };
+    }
     return { ...r, label: null, href: null };
   });
   return { items, total, page, pages };
@@ -145,6 +162,6 @@ export async function allActivity(userId: string): Promise<ActivityEntry[]> {
   return getDb()
     .select()
     .from(activityLog)
-    .where(eq(activityLog.userId, userId))
+    .where(and(eq(activityLog.userId, userId), withinRetention()))
     .orderBy(desc(activityLog.createdAt));
 }

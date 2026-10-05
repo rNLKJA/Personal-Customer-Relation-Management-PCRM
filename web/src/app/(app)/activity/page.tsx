@@ -36,6 +36,9 @@ const ACTION_LABELS: Record<ActivityItem["action"], string> = {
   "ai-call": "AI call",
   "ai-decision": "AI decision",
   "account-delete": "Account deleted",
+  "sign-in": "Signed in",
+  "sign-out": "Signed out",
+  "password-reset": "Reset the password",
 };
 const ENTITY_LABELS: Record<ActivityItem["entityType"], string> = {
   contact: "contact",
@@ -43,7 +46,11 @@ const ENTITY_LABELS: Record<ActivityItem["entityType"], string> = {
   account: "account",
   data: "data export",
   ai: "AI",
+  admin: "admin table",
 };
+
+/** Actions whose label already says what happened ("Signed in", not "Signed in account"). */
+const SELF_DESCRIBING = new Set<ActivityItem["action"]>(["sign-in", "sign-out", "password-reset"]);
 
 function detailText(item: ActivityItem): string {
   const parts: string[] = [];
@@ -80,7 +87,7 @@ export default async function ActivityPage({ searchParams }: PageProps<"/activit
     <div className="animate-fade-up">
       <PageHeader
         title="Activity log"
-        description={`Every view, change, deletion, export and AI action on your records - append-only, kept for ${ACTIVITY_RETENTION_DAYS} days. It stores ids and field names, never the contents.`}
+        description={`Views of your contact and meeting pages, every change, deletion and export, sign-ins and AI actions - append-only, kept for ${ACTIVITY_RETENTION_DAYS} days. It stores ids and field names, never the contents.`}
         actions={
           <Button asChild variant="outline">
             <a href="/your-data/export/activity.csv" download>
@@ -140,7 +147,7 @@ export default async function ActivityPage({ searchParams }: PageProps<"/activit
                 </time>
                 <div className="min-w-0 text-sm">
                   <span className="font-medium">{ACTION_LABELS[item.action]}</span>{" "}
-                  {item.entityType !== "ai" && (
+                  {item.entityType !== "ai" && !SELF_DESCRIBING.has(item.action) && (
                     <span className="text-muted-foreground">{ENTITY_LABELS[item.entityType]} </span>
                   )}
                   {item.entityType === "ai" ? (

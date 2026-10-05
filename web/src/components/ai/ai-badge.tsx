@@ -2,7 +2,7 @@ import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TEXT = {
-  draft: "AI-generated draft · not saved",
+  draft: "AI-generated draft · not added to this meeting",
   editing: "AI-generated · you are editing it",
   accepted: "AI-generated · accepted by you",
   edited: "AI-generated · edited by you",

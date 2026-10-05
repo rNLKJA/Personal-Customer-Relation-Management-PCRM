@@ -63,12 +63,12 @@ const FEATURES = [
   {
     icon: FolderLock,
     title: "Your data, your call",
-    body: "Download everything as JSON or CSV, see every access in an append-only activity log, or delete the account and all of it for good.",
+    body: "Download everything as JSON or CSV, see what was done through your account in an append-only activity log, or delete the account and all of it for good.",
   },
   {
     icon: Sparkles,
     title: "Optional AI, your own key",
-    body: "Summarise a meeting note with Claude or OpenAI using your own key. Personal details are removed in your browser first, and nothing is saved until you accept it.",
+    body: "Summarise a meeting note with Claude or OpenAI using your own key. Personal details are removed in your browser first, and nothing is added to the meeting until you accept it.",
   },
 ];
 

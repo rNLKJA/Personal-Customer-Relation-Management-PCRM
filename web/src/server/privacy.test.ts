@@ -5,7 +5,16 @@ import { beforeAll, describe, expect, it } from "vitest";
 import { and, eq, isNull } from "drizzle-orm";
 import { createDb, runMigrations } from "@/db/client-core";
 import { purgeExpiredUsers, seedDatabase } from "@/db/populate";
-import { activityLog, aiAuditLog, contacts, emailOutbox, records, users } from "@/db/schema";
+import {
+  activityLog,
+  aiAuditLog,
+  contacts,
+  emailCodes,
+  emailOutbox,
+  records,
+  users,
+  type TableName,
+} from "@/db/schema";
 import { MEETING_ASSIST_PROMPT_VERSION } from "@/lib/ai/meeting-assist";
 import type { AiAuditInput } from "@/lib/ai/audit";
 import { redact } from "@/lib/redact/redact";
@@ -26,6 +35,7 @@ const svc = {
   activity: await import("./activity"),
   ai: await import("./ai-audit"),
   data: await import("./your-data"),
+  admin: await import("./admin"),
 };
 
 beforeAll(async () => {
@@ -59,14 +69,21 @@ describe("seed data", () => {
     const list = await svc.records.listRecords(demo.id);
     const rich = list.find((r) => r.notes.includes("Wattlebird Lane"))!;
     expect(rich).toBeDefined();
-    const r = redact(rich.notes, {
-      knownNames: [rich.meetingPerson.firstName, rich.meetingPerson.lastName],
-    });
-    expect(r.counts.email).toBe(1);
-    expect(r.counts.phone).toBe(2);
-    expect(r.counts.address).toBe(1);
+    const knownNames = [rich.meetingPerson.firstName, rich.meetingPerson.lastName];
+    const contactOnly = redact(rich.notes, { knownNames });
+    expect(contactOnly.counts.email).toBe(1);
+    expect(contactOnly.counts.phone).toBe(2);
+    expect(contactOnly.counts.address).toBe(1);
+    expect(contactOnly.text).not.toMatch(/@|0491|Wattlebird/);
+    expect(contactOnly.text).toContain("Sam Patel"); // the DR-003 leak
+
+    // DR-006: the meeting page also passes every full name in the address book.
+    const addressBook = await svc.contacts.listContactNames(demo.id);
+    expect(addressBook).toContain("Sam Patel");
+    const r = redact(rich.notes, { knownNames, addressBook });
+    expect(r.text).not.toContain("Sam Patel");
     expect(r.text).not.toMatch(/@|0491|Wattlebird/);
-    expect(r.text).toContain("Sam Patel"); // third-party names are not detected
+    expect(r.counts.name).toBe(contactOnly.counts.name + 1);
   });
 });
 
@@ -93,7 +110,7 @@ describe("AI audit log", () => {
         decision: "edited",
         finalOutput: final,
       }),
-    ).toEqual({ ok: true, recordId: meeting.id });
+    ).toEqual({ ok: true, recordId: meeting.id, decision: "edited" });
     const updated = await svc.records.getRecord(guest.id, meeting.id);
     expect(updated?.aiSummary).toMatchObject({
       summary: "Edited summary.",
@@ -111,6 +128,63 @@ describe("AI audit log", () => {
     ).toMatchObject({ ok: false });
     expect(await svc.ai.removeAiSummary(guest.id, meeting.id)).toBe(true);
     expect((await svc.records.getRecord(guest.id, meeting.id))?.aiSummary).toBeNull();
+  });
+
+  it('"accepted" saves the logged model output and ignores any text sent with it', async () => {
+    const guest = await svc.users.createGuest();
+    const [meeting] = await svc.records.listRecords(guest.id);
+    const logged = await svc.ai.recordAiCall(
+      guest.id,
+      entry({
+        recordId: meeting.id,
+        output: JSON.stringify({ summary: "Model said A.", follow_ups: [] }),
+      }),
+    );
+    if (!logged.ok) throw new Error(logged.error);
+    const result = await svc.ai.decideAiCall(guest.id, {
+      id: logged.id,
+      decision: "accepted",
+      finalOutput: JSON.stringify({ summary: "Human wrote B.", follow_ups: [] }),
+    });
+    expect(result).toEqual({ ok: true, recordId: meeting.id, decision: "accepted" });
+    const [row] = await db.select().from(aiAuditLog).where(eq(aiAuditLog.id, logged.id));
+    expect(row.decision).toBe("accepted");
+    expect(JSON.parse(row.finalOutput!)).toEqual({ summary: "Model said A.", follow_ups: [] });
+    const saved = await svc.records.getRecord(guest.id, meeting.id);
+    expect(saved?.aiSummary).toMatchObject({ summary: "Model said A.", decision: "accepted" });
+  });
+
+  it('records an "edited" draft identical to the model output as "accepted"', async () => {
+    const guest = await svc.users.createGuest();
+    const [meeting] = await svc.records.listRecords(guest.id);
+    const output = { summary: "Same text.", follow_ups: [{ action: "Call back", due: null }] };
+    const logged = await svc.ai.recordAiCall(
+      guest.id,
+      entry({ recordId: meeting.id, output: JSON.stringify(output) }),
+    );
+    if (!logged.ok) throw new Error(logged.error);
+    expect(
+      await svc.ai.decideAiCall(guest.id, {
+        id: logged.id,
+        decision: "edited",
+        finalOutput: JSON.stringify({ ...output, summary: "  Same text.  " }),
+      }),
+    ).toMatchObject({ ok: true, decision: "accepted" });
+  });
+
+  it("refuses to accept a logged answer that is not a valid draft", async () => {
+    const guest = await svc.users.createGuest();
+    const logged = await svc.ai.recordAiCall(guest.id, entry({ output: "not json" }));
+    if (!logged.ok) throw new Error(logged.error);
+    expect(
+      await svc.ai.decideAiCall(guest.id, {
+        id: logged.id,
+        decision: "accepted",
+        finalOutput: JSON.stringify({ summary: "Smuggled.", follow_ups: [] }),
+      }),
+    ).toMatchObject({ ok: false });
+    const [row] = await db.select().from(aiAuditLog).where(eq(aiAuditLog.id, logged.id));
+    expect(row.decision).toBe("pending");
   });
 
   it("rejects entries that look like they contain a key, or point at someone else's meeting", async () => {
@@ -193,6 +267,163 @@ describe("activity log", () => {
     expect(await db.select().from(activityLog).where(eq(activityLog.id, "old_entry"))).toHaveLength(
       0,
     );
+  });
+});
+
+describe("public demo admin (DR-005)", () => {
+  async function everythingTheAdminCanRead(
+    tables: readonly TableName[] = svc.admin.TABLE_NAMES,
+    q = "",
+  ): Promise<string> {
+    const parts: string[] = [];
+    for (const t of tables) {
+      const page = await svc.admin.browseTable(t, { page: 1, pageSize: 10_000, q });
+      parts.push(JSON.stringify(page.rows));
+      parts.push((await svc.admin.exportTableCsv(t)).csv);
+    }
+    return parts.join("\n");
+  }
+
+  it("classifies every column; only ids, states, counts and timestamps are always shown", () => {
+    const shown = Object.fromEntries(
+      svc.admin.TABLE_NAMES.map((t) => [
+        t,
+        Object.entries(svc.admin.columnPolicy(t))
+          .filter(([, p]) => p === "shown")
+          .map(([c]) => c),
+      ]),
+    );
+    // A new column fails this test until someone decides whether it is safe to show.
+    expect(shown).toEqual({
+      users: ["id", "status", "role", "is_demo", "expires_at", "created_at"],
+      contacts: ["id", "owner_id", "linked_user_id", "status", "add_date"],
+      contact_links: ["id", "user_id", "contact_id", "add_since"],
+      records: ["id", "owner_id", "contact_id", "linked_user_id", "date_time", "created_at"],
+      email_codes: ["id", "purpose", "attempts", "created_at", "expires_at"],
+      fast_register_codes: [
+        "id",
+        "register_account_id",
+        "invited_by_user_id",
+        "contact_id",
+        "created_at",
+        "expires_at",
+      ],
+      email_outbox: [
+        "id",
+        "kind",
+        "recipient_user_id",
+        "triggered_by_user_id",
+        "created_at",
+        "read_at",
+      ],
+      activity_log: ["id", "user_id", "action", "entity_type", "entity_id", "detail", "created_at"],
+      ai_audit_log: [
+        "id",
+        "user_id",
+        "feature",
+        "provider",
+        "model",
+        "served_model",
+        "prompt_version",
+        "record_id",
+        "redaction_counts",
+        "error",
+        "latency_ms",
+        "input_tokens",
+        "output_tokens",
+        "decision",
+        "decided_at",
+        "created_at",
+      ],
+    });
+  });
+
+  it("never exposes a password-reset code, even one no browser was shown", async () => {
+    const victim = await svc.users.createGuest();
+    const sent = await svc.users.sendResetCode(victim.userName, null);
+    expect(sent).toMatchObject({ ok: true, delivered: false });
+    const [code] = await db
+      .select()
+      .from(emailCodes)
+      .where(and(eq(emailCodes.email, victim.emails[0]), eq(emailCodes.purpose, "reset")));
+    expect(code.authCode).toMatch(/^\d{6}$/);
+
+    // Tables without free-form numbers (coordinates could contain any 6 digits by chance).
+    const visible = await everythingTheAdminCanRead([
+      "users",
+      "email_codes",
+      "email_outbox",
+      "fast_register_codes",
+      "activity_log",
+    ]);
+    expect(visible).not.toContain(code.authCode);
+    // Search must not act as an oracle for the code either.
+    for (const t of ["email_codes", "email_outbox"] as const) {
+      const hit = await svc.admin.browseTable(t, { page: 1, pageSize: 50, q: code.authCode });
+      expect(hit.total, t).toBe(0);
+    }
+    // The code itself still works for its owner.
+    expect(await svc.users.verifyResetCode(victim.userName, code.authCode)).toMatchObject({
+      ok: true,
+    });
+  });
+
+  it("masks visitors' personal details and notes, but shows the seeded demo data", async () => {
+    const guest = await svc.users.createGuest();
+    const [meeting] = await svc.records.listRecords(guest.id);
+    const secretNote = "Private note about Zanzibar Quokka-Smith";
+    await db.update(records).set({ notes: secretNote }).where(eq(records.id, meeting.id));
+    await svc.ai.recordAiCall(guest.id, entry({ input: "Meeting note: Zanzibar visitor text" }));
+
+    const visible = await everythingTheAdminCanRead();
+    expect(visible).not.toContain("Zanzibar");
+    expect(visible).not.toContain(guest.emails[0]);
+    expect(visible).not.toContain(guest.userName);
+    expect(visible).toContain(svc.admin.MASKED_PRIVATE);
+    expect(
+      (await svc.admin.browseTable("records", { page: 1, pageSize: 10, q: "Zanzibar" })).total,
+    ).toBe(0);
+
+    // Ids and timestamps stay visible, so persistence can still be checked.
+    const page = await svc.admin.browseTable("records", { page: 1, pageSize: 10_000, q: "" });
+    const row = page.rows.find((r) => r.id === meeting.id)!;
+    expect(row.notes).toBe(svc.admin.MASKED_PRIVATE);
+    expect(row.owner_id).toBe(guest.id);
+
+    // The shared demo account is public by design and stays readable.
+    const demo = (await svc.users.findUserByUserName("demo"))!;
+    const demoRows = await svc.admin.browseTable("users", { page: 1, pageSize: 50, q: "demo" });
+    expect(demoRows.rows.find((r) => r.id === demo.id)?.user_name).toBe("demo");
+  });
+});
+
+describe("activity retention", () => {
+  it("never shows or exports entries past the retention period, even before the purge", async () => {
+    const guest = await svc.users.createGuest();
+    await db.insert(activityLog).values({
+      id: "stale_entry",
+      userId: guest.id,
+      action: "view",
+      entityType: "contact",
+      entityId: null,
+      detail: {},
+      createdAt: new Date(Date.now() - 181 * 864e5),
+    });
+    const listed = await svc.activity.listActivity(guest.id, {
+      page: 1,
+      pageSize: 100,
+      filter: "all",
+    });
+    expect(listed.items.map((i) => i.id)).not.toContain("stale_entry");
+    expect((await svc.activity.allActivity(guest.id)).map((i) => i.id)).not.toContain(
+      "stale_entry",
+    );
+    const admin = await svc.admin.browseTable("activity_log", { page: 1, pageSize: 10_000, q: "" });
+    expect(admin.rows.map((r) => r.id)).not.toContain("stale_entry");
+    await svc.activity.purgeOldActivity();
+    expect(
+      await db.select().from(activityLog).where(eq(activityLog.id, "stale_entry")),
+    ).toHaveLength(0);
   });
 });
 

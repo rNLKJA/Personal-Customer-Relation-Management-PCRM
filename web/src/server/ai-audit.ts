@@ -69,15 +69,30 @@ export async function recordAiCall(
   return { ok: true, id };
 }
 
+function parseAssistOutput(text: string | null) {
+  if (!text) return null;
+  try {
+    const parsed = meetingAssistOutputSchema.safeParse(JSON.parse(text));
+    return parsed.success ? parsed.data : null;
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Record the person's decision on a pending draft (once). Accepting or editing
  * a meeting-assistant draft stores the final text on the meeting, labelled as
  * AI-generated.
+ *
+ * Integrity: "accepted" always saves the model output already in the log -
+ * any text the browser sends with it is ignored - so "accepted" can never
+ * label words a person wrote as unmodified model output. An "edited" draft
+ * that is identical to the model output is recorded as "accepted".
  */
 export async function decideAiCall(
   userId: string,
   input: AiDecisionInput,
-): Promise<Result<{ recordId: string | null }>> {
+): Promise<Result<{ recordId: string | null; decision: AiDecisionInput["decision"] }>> {
   const db = getDb();
   const entry = await db
     .select()
@@ -87,35 +102,42 @@ export async function decideAiCall(
   if (!entry) return { ok: false, error: "AI log entry not found." };
   if (entry.decision !== "pending") return { ok: false, error: "A decision was already recorded." };
 
+  let decision = input.decision;
   let summary: AcceptedAiSummary | null = null;
-  if (input.decision !== "rejected") {
-    if (!input.finalOutput) return { ok: false, error: "Nothing to save." };
-    let parsedJson: unknown;
-    try {
-      parsedJson = JSON.parse(input.finalOutput);
-    } catch {
-      return { ok: false, error: "The edited draft is not valid." };
+  let finalOutput: string | null = null;
+  if (decision !== "rejected") {
+    const original = parseAssistOutput(entry.output);
+    let kept = original;
+    if (decision === "accepted") {
+      if (!original) return { ok: false, error: "The logged answer cannot be saved as it is." };
+    } else {
+      if (!input.finalOutput) return { ok: false, error: "Nothing to save." };
+      let parsedJson: unknown;
+      try {
+        parsedJson = JSON.parse(input.finalOutput);
+      } catch {
+        return { ok: false, error: "The edited draft is not valid." };
+      }
+      const parsed = meetingAssistOutputSchema.safeParse(parsedJson);
+      if (!parsed.success) return { ok: false, error: "The summary cannot be empty." };
+      kept = parsed.data;
+      if (original && JSON.stringify(original) === JSON.stringify(kept)) decision = "accepted";
     }
-    const parsed = meetingAssistOutputSchema.safeParse(parsedJson);
-    if (!parsed.success) return { ok: false, error: "The summary cannot be empty." };
+    finalOutput = JSON.stringify(kept);
     summary = {
-      summary: parsed.data.summary,
-      followUps: parsed.data.follow_ups,
+      summary: kept!.summary,
+      followUps: kept!.follow_ups,
       auditId: entry.id,
       provider: entry.provider,
       model: entry.servedModel ?? entry.model,
-      decision: input.decision,
+      decision,
       decidedAt: Date.now(),
     };
   }
 
   const claimed = await db
     .update(aiAuditLog)
-    .set({
-      decision: input.decision,
-      finalOutput: input.decision === "rejected" ? null : input.finalOutput,
-      decidedAt: new Date(),
-    })
+    .set({ decision, finalOutput, decidedAt: new Date() })
     .where(and(eq(aiAuditLog.id, entry.id), eq(aiAuditLog.decision, "pending")))
     .returning({ id: aiAuditLog.id });
   if (claimed.length === 0) return { ok: false, error: "A decision was already recorded." };
@@ -126,14 +148,14 @@ export async function decideAiCall(
       .set({ aiSummary: summary })
       .where(and(eq(records.id, entry.recordId), eq(records.ownerId, userId)));
   }
-  await logActivity(userId, "ai-decision", "ai", entry.id, { decision: input.decision });
+  await logActivity(userId, "ai-decision", "ai", entry.id, { decision });
   if (summary && entry.recordId) {
     await logActivity(userId, "update", "meeting", entry.recordId, {
       fields: ["ai_summary"],
-      via: input.decision,
+      via: decision,
     });
   }
-  return { ok: true, recordId: entry.recordId };
+  return { ok: true, recordId: entry.recordId, decision };
 }
 
 /** Remove an accepted AI summary from a meeting (the audit entry stays). */

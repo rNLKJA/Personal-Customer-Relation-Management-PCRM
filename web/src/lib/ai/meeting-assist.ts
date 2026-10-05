@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 
 /**
  * The meeting-note assistant: prompt, output schema and request text. The

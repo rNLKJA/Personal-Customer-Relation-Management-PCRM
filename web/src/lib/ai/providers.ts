@@ -1,4 +1,4 @@
-import { z } from "zod";
+import { z } from "@/lib/zod";
 import { AiError, errorFromStatus } from "./errors";
 import { anthropicEffort, MAX_OUTPUT_TOKENS, type AiProvider } from "./models";
 

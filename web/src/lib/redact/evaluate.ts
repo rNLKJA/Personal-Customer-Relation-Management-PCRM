@@ -1,5 +1,5 @@
 import { wilsonInterval, type Interval } from "../stats";
-import { REDACTION_CORPUS, type LabelledNote } from "./corpus";
+import { CORPUS_ADDRESS_BOOK, REDACTION_CORPUS, type LabelledNote } from "./corpus";
 import { redact, type RedactionCategory } from "./redact";
 
 /**
@@ -82,8 +82,18 @@ function summarise(
   };
 }
 
+export interface EvaluationOptions {
+  /**
+   * Full names passed as the user's address book. Defaults to
+   * CORPUS_ADDRESS_BOOK (the app's behaviour since DR-006); pass [] for the
+   * DR-003 setting (meeting contact and user only).
+   */
+  addressBook?: readonly string[];
+}
+
 export function evaluateRedaction(
   corpus: readonly LabelledNote[] = REDACTION_CORPUS,
+  { addressBook = CORPUS_ADDRESS_BOOK }: EvaluationOptions = {},
 ): RedactionEvaluation {
   const outcomes: SpanOutcome[] = [];
   const falsePositives: FalsePositive[] = [];
@@ -92,7 +102,7 @@ export function evaluateRedaction(
   let withLabels = 0;
 
   for (const note of corpus) {
-    const { spans } = redact(note.text, { knownNames: note.known });
+    const { spans } = redact(note.text, { knownNames: note.known, addressBook });
     const covered = new Uint8Array(note.text.length);
     for (const s of spans) covered.fill(1, s.start, s.end);
     const gold = note.labels.map((l) => ({ ...l, range: locate(note, l.text) }));

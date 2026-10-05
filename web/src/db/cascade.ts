@@ -19,9 +19,8 @@ import {
  * Express controllers also removed dependent documents by hand).
  */
 
-export async function deleteContactsCascade(db: Db, contactIds: string[]) {
-  if (contactIds.length === 0) return;
-  await db.batch([
+function contactsCascadeStatements(db: Db, contactIds: string[]) {
+  return [
     db.delete(records).where(inArray(records.contactId, contactIds)),
     db.delete(contactLinks).where(inArray(contactLinks.contactId, contactIds)),
     db
@@ -29,7 +28,12 @@ export async function deleteContactsCascade(db: Db, contactIds: string[]) {
       .set({ contactId: null })
       .where(inArray(fastRegisterCodes.contactId, contactIds)),
     db.delete(contacts).where(inArray(contacts.id, contactIds)),
-  ]);
+  ] as const;
+}
+
+export async function deleteContactsCascade(db: Db, contactIds: string[]) {
+  if (contactIds.length === 0) return;
+  await db.batch(contactsCascadeStatements(db, contactIds));
 }
 
 /**
@@ -37,23 +41,20 @@ export async function deleteContactsCascade(db: Db, contactIds: string[]) {
  * meetings (with any accepted AI summaries), links, invitations, demo-inbox
  * e-mails, pending e-mail codes, the activity log and the AI audit log.
  * Other people's contacts that were linked to the account are kept but
- * unlinked (they are the other person's data).
+ * unlinked (they are the other person's data). Everything runs in ONE libSQL
+ * batch, which is a transaction: either all of it is deleted or none of it.
  */
 export async function deleteUsersCascade(db: Db, userIds: string[]) {
   if (userIds.length === 0) return;
   const addresses = (
     await db.select({ emails: users.emails }).from(users).where(inArray(users.id, userIds))
   ).flatMap((u) => u.emails);
-  const owned = await db
-    .select({ id: contacts.id })
-    .from(contacts)
-    .where(inArray(contacts.ownerId, userIds));
-  await deleteContactsCascade(
-    db,
-    owned.map((c) => c.id),
-  );
+  const owned = (
+    await db.select({ id: contacts.id }).from(contacts).where(inArray(contacts.ownerId, userIds))
+  ).map((c) => c.id);
   await db.batch([
     db.update(contacts).set({ linkedUserId: null }).where(inArray(contacts.linkedUserId, userIds)),
+    ...(owned.length ? contactsCascadeStatements(db, owned) : []),
     db.update(records).set({ linkedUserId: null }).where(inArray(records.linkedUserId, userIds)),
     db.delete(records).where(inArray(records.ownerId, userIds)),
     db.delete(contactLinks).where(inArray(contactLinks.userId, userIds)),

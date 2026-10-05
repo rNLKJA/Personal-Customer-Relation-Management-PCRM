@@ -27,9 +27,10 @@ export default async function EvaluatePage() {
           written while looking at the development split, so quote the held-out split.
         </Fact>
         <Fact title="Metric">
-          Recall of labelled follow-ups per note (keyword-group match), precision of suggestions,
-          and suggestions made on notes with nothing to do. 95% intervals: percentile bootstrap
-          (seeded) and Wilson.
+          Recall of labelled follow-ups per note (keyword-group match), F1 per note (which penalises
+          padding), precision, and suggestions on notes with nothing to do. 95% intervals:
+          percentile bootstrap (seeded) and Wilson. A model answer that fails validation counts as
+          an empty answer.
         </Fact>
         <Fact title="Caveats">
           Keyword matching under-credits paraphrases; 16 notes give wide intervals; the notes and

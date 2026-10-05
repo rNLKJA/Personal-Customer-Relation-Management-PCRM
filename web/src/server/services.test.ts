@@ -260,7 +260,7 @@ describe("admin records", () => {
     const page = await svc.admin.browseTable("users", { page: 1, pageSize: 5, q: "demo" });
     expect(page.rows.length).toBeGreaterThan(0);
     for (const row of page.rows) expect(String(row.password_hash)).not.toMatch(/^\$2/);
-    const csv = await svc.admin.exportTableCsv("contacts");
+    const { csv } = await svc.admin.exportTableCsv("contacts");
     expect(csv.split("\r\n")[0]).toContain("first_name");
   });
 });

@@ -1,3 +1,4 @@
+import { DIRECTORY_USERS } from "@/db/demo-accounts";
 import type { RedactionCategory } from "./redact";
 
 /**
@@ -10,8 +11,10 @@ import type { RedactionCategory } from "./redact";
  *
  * `known` lists the names the app would pass to the redactor for that note
  * (the meeting contact). Names of anyone else are labelled too, because they
- * are personal information the redactor is NOT able to find - the evaluation
- * reports that miss rather than hiding it.
+ * are personal information the redactor may NOT be able to find - the
+ * evaluation reports those misses rather than hiding them. Since DR-006 the
+ * app also passes the full names in the user's address book; the evaluation
+ * models that with CORPUS_ADDRESS_BOOK below.
  *
  * Bias warning: the rules and this corpus were written by the same person, so
  * the measured recall is optimistic. Notes 8, 9, 13, 17, 23, 30 and 31 are
@@ -292,4 +295,19 @@ export const REDACTION_CORPUS: LabelledNote[] = [
       { category: "name", text: "Sam Patel" },
     ],
   },
+];
+
+/**
+ * The address book assumed by the evaluation (DR-006): the full names of every
+ * meeting contact in the corpus plus the four directory accounts anyone can
+ * add by user name. It was fixed by that rule, not chosen note by note. Note
+ * that "Sam Patel" is caught only because he is a directory account; people
+ * outside this list ("Grace Okafor") and lone first names ("Leila", "Sienna",
+ * "Oliver") are still missed.
+ */
+export const CORPUS_ADDRESS_BOOK: readonly string[] = [
+  ...new Set([
+    ...REDACTION_CORPUS.map((n) => n.known.join(" ")),
+    ...DIRECTORY_USERS.map((u) => `${u.firstName} ${u.lastName}`),
+  ]),
 ];

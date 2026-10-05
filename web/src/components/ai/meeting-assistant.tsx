@@ -63,12 +63,16 @@ export function MeetingAssistant({
   notes,
   meetingDay,
   knownNames,
+  addressBook,
   hasAcceptedSummary,
 }: {
   recordId: string;
   notes: string;
   meetingDay: string;
+  /** The meeting contact's and the user's names (any word, any case). */
   knownNames: string[];
+  /** Full names of everyone in the user's contacts (DR-006). */
+  addressBook: string[];
   hasAcceptedSummary: boolean;
 }) {
   const router = useRouter();
@@ -77,7 +81,10 @@ export function MeetingAssistant({
   const [deciding, startDeciding] = useTransition();
   const abort = useRef<AbortController | null>(null);
 
-  const redaction = useMemo(() => redact(notes, { knownNames }), [notes, knownNames]);
+  const redaction = useMemo(
+    () => redact(notes, { knownNames, addressBook }),
+    [notes, knownNames, addressBook],
+  );
   const userMessage = meetingAssistUserMessage(meetingDay, redaction.text);
   const model = activeModel(settings);
   const modelLabel =
@@ -143,13 +150,15 @@ export function MeetingAssistant({
         toast.error(res.error);
         return;
       }
-      if (decision === "rejected") {
+      if (res.decision === "rejected") {
         toast.success("Draft discarded. The call stays in your AI log.");
       } else {
         toast.success(
-          decision === "edited"
+          res.decision === "edited"
             ? "Your edited summary was saved to this meeting."
-            : "Summary saved to this meeting, labelled as AI-generated.",
+            : decision === "edited"
+              ? "Nothing was changed, so it was saved as accepted, labelled as AI-generated."
+              : "Summary saved to this meeting, labelled as AI-generated.",
         );
       }
       setPhase({ kind: "idle" });
@@ -232,8 +241,9 @@ export function MeetingAssistant({
             </pre>
           </details>
           <p className="text-xs text-muted-foreground">
-            Not detected automatically: names of other people and details written out in words. Edit
-            the note first if it contains anything else you would not share.
+            Not detected automatically: people who are not in your contacts, first names of contacts
+            other than this one, and details written out in words. Edit the note first if it
+            contains anything else you would not share.
           </p>
           <div className="flex flex-wrap items-center gap-2">
             {hasKey ? (
@@ -298,7 +308,7 @@ export function MeetingAssistant({
             {phase.meta.tokens != null
               ? ` · ${phase.meta.tokens.toLocaleString("en-AU")} tokens`
               : ""}{" "}
-            · nothing is saved until you decide
+            · kept in your AI log; nothing is added to the meeting until you decide
           </p>
           <div className="flex flex-wrap gap-2">
             <Button

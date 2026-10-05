@@ -5,13 +5,26 @@ import {
   compare,
   extractFollowUpsBaseline,
   matchesGold,
+  noteF1,
   notesInSplit,
   scoreNote,
   summarise,
+  tokens,
   type FollowUp,
 } from "./followups";
 
 describe("follow-up corpus", () => {
+  it("every gold label is matched by its own keyword groups", () => {
+    for (const n of FOLLOW_UP_CORPUS) {
+      if (!n.gold.length) continue;
+      const self = scoreNote(
+        n,
+        n.gold.map((g) => ({ action: g.label, due: null })),
+      );
+      expect(self.recall, `note ${n.id}: ${self.missed.join("; ")}`).toBe(1);
+    }
+  });
+
   it("has unique ids, both splits and only redacted placeholders", () => {
     const ids = FOLLOW_UP_CORPUS.map((n) => n.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -61,6 +74,23 @@ describe("scorer", () => {
     expect(matchesGold("Prepare slides", gold)).toBe(false);
   });
 
+  it('reads "e-mail" as "email" (the house style must not be penalised)', () => {
+    expect(tokens("E-mail [NAME] the dataset link")).toEqual([
+      "email",
+      "name",
+      "the",
+      "dataset",
+      "link",
+    ]);
+    const note101 = FOLLOW_UP_CORPUS.find((n) => n.id === 101)!;
+    expect(
+      scoreNote(note101, [{ action: "E-mail [NAME] the dataset link", due: null }]).recall,
+    ).toBe(1);
+    expect(
+      scoreNote(note101, [{ action: "Owe her an email with the dataset link", due: null }]).recall,
+    ).toBe(1);
+  });
+
   it("matches predictions to gold items one-to-one", () => {
     const note = {
       id: 1,
@@ -81,6 +111,15 @@ describe("scorer", () => {
       missed: ["Book a room"],
     });
     expect(scoreNote({ ...note, gold: [] }, []).recall).toBeNull();
+    expect(scoreNote(note, preds).f1).toBeCloseTo(0.5);
+  });
+
+  it("defines per-note F1 on every note, penalising over-suggestion", () => {
+    expect(noteF1(0, 0, 0)).toBe(1); // nothing to do, nothing suggested
+    expect(noteF1(0, 2, 0)).toBe(0); // spurious suggestions
+    expect(noteF1(2, 0, 0)).toBe(0);
+    expect(noteF1(2, 2, 2)).toBe(1);
+    expect(noteF1(1, 5, 1)).toBeCloseTo((2 * 0.2 * 1) / 1.2);
   });
 });
 
@@ -116,5 +155,24 @@ describe("summaries and paired comparison", () => {
     const self = compare(base, base);
     expect([self.wins, self.losses, self.signTestP]).toEqual([0, 0, 1]);
     expect(self.difference!.estimate).toBe(0);
+  });
+
+  it("pairs F1 over every note, so padding with extra suggestions does not pay", () => {
+    const notes = notesInSplit("held-out");
+    const base = baselineScores(notes);
+    // Recall-maximising "spray": every gold item plus five spurious suggestions on every note.
+    const spray = notes.map((n) =>
+      scoreNote(n, [
+        ...n.gold.map((g) => ({ action: g.groups.map((grp) => grp[0]).join(" "), due: null })),
+        ...Array.from({ length: 5 }, (_, i) => ({ action: `Spurious idea ${i}`, due: null })),
+      ]),
+    );
+    const recall = compare(spray, base, "recall");
+    const f1 = compare(spray, base, "f1");
+    expect(f1.metric).toBe("f1");
+    expect(f1.n).toBe(notes.length);
+    expect(recall.difference!.estimate).toBeGreaterThan(0.5);
+    expect(f1.difference!.estimate).toBeLessThan(recall.difference!.estimate);
+    expect(f1.losses).toBeGreaterThan(0); // no-action notes the baseline got right
   });
 });
