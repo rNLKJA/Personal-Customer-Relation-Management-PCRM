@@ -70,6 +70,23 @@ const kb = (n) => `${(n / 1024).toFixed(0)} KB`;
 const mb = (n) => `${(n / 1024 / 1024).toFixed(2)} MB`;
 const round2 = (x) => Math.round(x * 100) / 100;
 
+/** Length of a video file in seconds (the encoder can hold the last frame a little longer). */
+function probeDuration(file) {
+  return Number(
+    execFileSync("ffprobe", [
+      "-v",
+      "error",
+      "-show_entries",
+      "format=duration",
+      "-of",
+      "csv=p=0",
+      file,
+    ])
+      .toString()
+      .trim(),
+  );
+}
+
 /** Width and height of an image or video file. */
 function dimensions(file) {
   const out = execFileSync("ffprobe", [
@@ -217,6 +234,8 @@ function buildRecording(slug) {
     if (size(mp4) <= MP4_MAX) break;
   }
 
+  const length = probeDuration(mp4);
+
   // Poster: the frame one second into the chosen step.
   const steps = marks.filter((m) => m.kind === "step");
   const starts = steps.map((m) => editedTime(kept, m.t));
@@ -229,7 +248,7 @@ function buildRecording(slug) {
 
   // Captions track: the on-screen step captions as WebVTT cues.
   const cues = steps.map((m, i) => {
-    const to = i + 1 < starts.length ? starts[i + 1] : total;
+    const to = i + 1 < starts.length ? starts[i + 1] : length;
     return `${i + 1}\n${vttTime(starts[i])} --> ${vttTime(to)}\nStep ${i + 1} of ${steps.length}. ${m.label}`;
   });
   const vtt = path.join(PUBLIC_DIR, `${slug}.vtt`);
@@ -279,7 +298,7 @@ function buildRecording(slug) {
   manifest.workflows[slug] = {
     recordedAt: timeline.recordedAt ?? null,
     baseUrl: timeline.baseUrl ?? null,
-    duration: round2(total),
+    duration: round2(length),
     steps: starts.map(round2),
     width: 1280,
     height: 800,

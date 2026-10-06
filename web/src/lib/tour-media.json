@@ -3,7 +3,7 @@
     "workflow-1-contacts": {
       "recordedAt": "2026-10-06T09:02:59.359Z",
       "baseUrl": "https://comp30022-personal-crm.vercel.app",
-      "duration": 40.86,
+      "duration": 42,
       "steps": [0, 3.51, 7.62, 11.96, 16.3, 21.68, 26.37, 29.67, 36.84],
       "width": 1280,
       "height": 800,
@@ -14,7 +14,7 @@
     "workflow-2-meeting": {
       "recordedAt": "2026-10-06T09:04:02.634Z",
       "baseUrl": "https://comp30022-personal-crm.vercel.app",
-      "duration": 52.59,
+      "duration": 55.24,
       "steps": [0, 5.22, 9.08, 11.41, 16.67, 21.56, 33.15, 40.78, 47.95],
       "width": 1280,
       "height": 800,
@@ -25,7 +25,7 @@
     "workflow-3-ai": {
       "recordedAt": "2026-10-06T09:05:15.707Z",
       "baseUrl": "https://comp30022-personal-crm.vercel.app",
-      "duration": 65.98,
+      "duration": 67.24,
       "steps": [0, 7.65, 13.36, 26.61, 31.43, 38.38, 43.1, 47.31, 51.36, 57.96],
       "width": 1280,
       "height": 800,
