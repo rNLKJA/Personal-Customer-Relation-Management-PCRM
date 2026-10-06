@@ -1,0 +1,41 @@
+WEBVTT
+
+1
+00:00:00.000 --> 00:00:07.648
+Step 1 of 10. Open the meeting just logged. Its note contains a phone number, an e-mail and names.
+
+2
+00:00:07.648 --> 00:00:13.359
+Step 2 of 10. Before anything is sent, personal details are removed in the browser and you see the exact text.
+
+3
+00:00:13.359 --> 00:00:26.606
+Step 3 of 10. Bring your own key: Anthropic (default) or OpenAI. The key stays in this browser, never on 4399 CRM. A placeholder is typed here.
+
+4
+00:00:26.606 --> 00:00:31.433
+Step 4 of 10. Send. Mocked AI response for illustration: the provider is intercepted in this recording, so no model is called.
+
+5
+00:00:31.433 --> 00:00:38.383
+Step 5 of 10. The draft is labelled “AI-generated”. Nothing is saved until a person accepts, edits or rejects it.
+
+6
+00:00:38.383 --> 00:00:43.096
+Step 6 of 10. Accepted: the summary is stored on the meeting with the AI label and can be removed.
+
+7
+00:00:43.096 --> 00:00:47.312
+Step 7 of 10. The AI log keeps every call: the redacted input, the answer, the model, the latency and the decision.
+
+8
+00:00:47.312 --> 00:00:51.363
+Step 8 of 10. The activity log records what was done through the account: ids and counts, never contents.
+
+9
+00:00:51.363 --> 00:00:57.963
+Step 9 of 10. Your data: download everything as JSON or CSV, or delete the account and all of it.
+
+10
+00:00:57.963 --> 00:01:05.979
+Step 10 of 10. Forget the key when you are done. Signing out forgets it too.

@@ -6,7 +6,7 @@
 Built by Team 4399 for COMP30022 IT Project (The University of Melbourne, 2021 Semester 2), revived in 2026 as a single Next.js app,
 then extended with insights that show their uncertainty, data rights, an activity log and an optional bring-your-own-key AI assistant.
 
-**Live demo: [comp30022-personal-crm.vercel.app](https://comp30022-personal-crm.vercel.app)**
+**Live demo: [comp30022-personal-crm.vercel.app](https://comp30022-personal-crm.vercel.app) · [Guided tour](https://comp30022-personal-crm.vercel.app/tour)**
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
@@ -18,6 +18,84 @@ then extended with insights that show their uncertainty, data rights, an activit
 </div>
 
 ---
+
+## Showcase
+
+![Highlights from the recorded walkthroughs: searching contacts, scanning a QR code, searching for a venue on the map, the redaction preview, and an AI-labelled draft waiting for a decision](docs/showcase/00-hero.gif)
+
+Highlights from three screen recordings of the live site. Watch them with chapters, captions and a transcript on the
+**[tour page](https://comp30022-personal-crm.vercel.app/tour)**, or below as GIFs. In workflow 3 the AI reply is a
+**mocked response for illustration**: the provider request is intercepted inside the test browser, so no model was
+called and no key was used ([how these were made](#how-the-showcase-was-recorded)).
+
+### Key features
+
+| | |
+| --- | --- |
+| ![Landing page](docs/showcase/01-landing-light.png)<br>**Landing page.** What the project is, with a one-click guest sandbox and no sign-up. | ![Dark mode](docs/showcase/02-landing-dark.png)<br>**Dark mode.** Every page has a dark theme, which follows the system setting. |
+| ![Home dashboard](docs/showcase/03-home.png)<br>**Home dashboard.** Up next, time to reconnect, and the latest meetings. | ![Contacts](docs/showcase/04-contacts.png)<br>**Contacts.** Search any field, sort, and filter to linked contacts. |
+| ![A linked contact](docs/showcase/05-contact.png)<br>**A linked contact.** A contact linked to a registered account, with their meetings. | ![Add by QR code](docs/showcase/06-add-by-qr.png)<br>**Add by QR code.** Your own code to show; scan or upload someone else's. |
+| ![Log a meeting](docs/showcase/07-log-meeting.png)<br>**Log a meeting.** Place search and a map pin for where you met. | ![Records map](docs/showcase/08-records-map.png)<br>**Records map.** Every meeting as a pin, with date presets and clustering. |
+| ![Calendar](docs/showcase/09-calendar.png)<br>**Calendar.** Meetings by day, month by month. | ![Insights](docs/showcase/10-insights.png)<br>**Insights.** Meetings per week with a seeded bootstrap interval, and a weekday by hour heatmap. |
+| ![What the AI would receive](docs/showcase/11-ai-redaction.png)<br>**What the AI would receive.** Redaction preview: the exact text that would be sent, before any key is used. | ![Bring your own key](docs/showcase/12-ai-settings.png)<br>**Bring your own key.** AI settings: provider, model, and a key that stays in this browser. |
+| ![Your data](docs/showcase/13-your-data.png)<br>**Your data.** Export everything as JSON or CSV, see retention, delete the account. | ![Methods](docs/showcase/14-methods.png)<br>**Methods.** Evaluation results with intervals, including the weak ones. |
+
+| | | |
+| --- | --- | --- |
+| <img src="docs/showcase/15-mobile-contacts.png" width="240" alt="Contacts on a phone"><br>**Contacts on a phone.** Designed phone-first, like the 2021 app (390 px wide). | <img src="docs/showcase/16-mobile-meeting.png" width="240" alt="A meeting on a phone"><br>**A meeting on a phone.** Meeting detail with the map pin and notes. | <img src="docs/showcase/17-mobile-calendar.png" width="240" alt="Calendar on a phone"><br>**Calendar on a phone.** The month grid and the meetings of the selected day. |
+
+### Workflow walkthrough
+
+Each recording is a narrated end-to-end run of one journey; the numbered steps are the captions shown on screen.
+
+#### 1. Contacts
+
+Open a private guest sandbox with one click, search the address book, and add people by user name and by scanning a QR code.
+
+![Contacts: screen recording](docs/showcase/workflow-1-contacts.gif)
+
+1. One click on “Try it as a guest” opens a private 24-hour sandbox. No sign-up.
+2. Home: who you are meeting next and who is due a catch-up.
+3. Contacts: 25 sample people. The search covers every field, ported from the 2021 app.
+4. Filter to the people who have their own 4399 CRM account (linked contacts).
+5. Add someone by user name: @demo is the shared demo account, Jordan Lee.
+6. Their own profile is copied in and stays linked, so one tap syncs it later.
+7. Every account has a QR code to show when you meet in person.
+8. Scan someone else's code. The camera here is a simulated feed showing a second sandbox's code.
+9. The scanned person is added and opened: Lena Park, linked to her own account.
+
+#### 2. Log a meeting
+
+Record who you met, when and where: search for the venue, check the pin on the map, then find the meeting on the records map and the calendar.
+
+![Log a meeting: screen recording](docs/showcase/workflow-2-meeting.gif)
+
+1. Log a meeting from the “New” menu.
+2. Choose who you met from your contacts.
+3. Set when it happened (Melbourne time).
+4. Search for the venue. Place search uses Photon on OpenStreetMap data, with a bundled Melbourne fallback.
+5. The map flies to the venue and drops a pin you can drag or move with a click.
+6. Add the notes, then log the meeting.
+7. The meeting page: the pin, the distance from the CBD and the notes.
+8. The records map: filter to the last 30 days and open the new meeting from the list.
+9. The calendar: the same meeting on today's date.
+
+#### 3. AI with a human in the loop
+
+The optional meeting-note assistant with your own key: see exactly what would be sent, review an AI-labelled draft, accept it, then check the AI log, the activity log and your data export.
+
+![AI with a human in the loop: screen recording](docs/showcase/workflow-3-ai.gif)
+
+1. Open the meeting just logged. Its note contains a phone number, an e-mail and names.
+2. Before anything is sent, personal details are removed in the browser and you see the exact text.
+3. Bring your own key: Anthropic (default) or OpenAI. The key stays in this browser, never on 4399 CRM. A placeholder is typed here.
+4. Send. Mocked AI response for illustration: the provider is intercepted in this recording, so no model is called.
+5. The draft is labelled “AI-generated”. Nothing is saved until a person accepts, edits or rejects it.
+6. Accepted: the summary is stored on the meeting with the AI label and can be removed.
+7. The AI log keeps every call: the redacted input, the answer, the model, the latency and the decision.
+8. The activity log records what was done through the account: ids and counts, never contents.
+9. Your data: download everything as JSON or CSV, or delete the account and all of it.
+10. Forget the key when you are done. Signing out forgets it too.
 
 ## What it is
 
@@ -129,17 +207,37 @@ their own key, and every call lands in their AI log.
 
 ### How the showcase was recorded
 
-When these features were built, production had no persistent database ([DR-004](docs/decisions/DR-004-turso-vs-tmp-fallback.md)):
-writes lived in one serverless instance's `/tmp` copy and could disappear between requests. The live demo has since moved to a
-hosted Turso database ([DR-007](docs/decisions/DR-007-turso-in-production.md)), but the screenshots below are still from the
-earlier run. The journeys for these
-features (sign-up through the demo inbox, contact and meeting create / edit / search / delete, add by user name, password
-reset, the assistant's redaction preview and Accept / Edit / Reject, the evaluation harness, export and account deletion
-with the admin tombstone) were therefore recorded against a **local production build** (`pnpm build && pnpm start -p 3211`)
-with Playwright. In that run the AI provider was mocked inside the browser test, so no real key or AI output was used; the
-screenshots below show only real, non-AI content.
+The [showcase](#showcase) above and the [tour page](https://comp30022-personal-crm.vercel.app/tour) come from one
+reproducible Playwright script, [`web/e2e/showcase.spec.ts`](web/e2e/showcase.spec.ts), which is also an end-to-end
+test of the three journeys (it fails if a step does not work):
 
-## Screenshots
+```bash
+cd web
+pnpm showcase                                   # record against production, then encode the media
+BASE_URL=http://localhost:3000 pnpm showcase    # or against a local build
+```
+
+- It drives the locally installed Google Chrome (`channel: "chrome"`; no Playwright browser download) at 1280 x 800
+  for the recordings and 1440 x 900 / 390 x 844 (2x) for the screenshots, with a caption banner, a visible cursor and
+  human pacing injected into the page.
+- The screenshots use the shared, seeded demo account and change nothing. The workflows run in a fresh guest sandbox
+  (deleted after 24 hours) and only add fixed, fictional data: a second sandbox renamed "Lena Park" whose QR code is
+  shown to Chrome's simulated camera, and one meeting with Ava Chen whose note uses an `example.org` e-mail and an
+  ACMA fiction-range phone number.
+- **The AI response is mocked for illustration.** The browser's request to `api.anthropic.com` is intercepted and
+  answered with a fixed reply that says it is mocked; the "key" typed is a placeholder. The redaction preview, the
+  AI-generated label, Accept / Edit / Reject, the AI log, the activity log and the export are the real app.
+- [`web/scripts/showcase-media.mjs`](web/scripts/showcase-media.mjs) trims the start and long network waits, then
+  uses ffmpeg and cwebp to write H.264 MP4s (crf 28, faststart), WebVTT caption tracks and posters to
+  `web/public/showcase/` for the site, and 960 px palette GIFs and optimised PNGs to `docs/showcase/` for this README.
+  The step times and file sizes go to `web/src/lib/tour-media.json`, which the tour page and the tests read.
+
+The older screenshots below are from an earlier run against a local production build (`pnpm build && pnpm start`),
+made while production had no persistent database ([DR-004](docs/decisions/DR-004-turso-vs-tmp-fallback.md),
+[DR-007](docs/decisions/DR-007-turso-in-production.md)). In that run the AI provider was also mocked inside the
+browser test, and the screenshots show only real, non-AI content.
+
+## More screenshots (mobile and dark mode)
 
 | Home (desktop) | Map (dark) |
 | --- | --- |
@@ -188,7 +286,8 @@ screenshots below show only real, non-AI content.
 ├── docs/
 │   ├── decisions/                DR-001 ... DR-008 (rendered at /methods/decisions/...)
 │   ├── model-card.md             meeting-note assistant + redactor (rendered at /methods/model-card)
-│   └── screenshots/              images used in this README
+│   ├── showcase/                 README showcase: hero + workflow GIFs, feature screenshots (pnpm showcase)
+│   └── screenshots/              earlier screenshots used in this README
 ├── scripts/
 │   ├── build_geodata.py          builds the offline basemap + Melbourne gazetteer (uv, PEP 723)
 │   └── stats_reference.py        scipy reference values for the statistics unit tests (uv, PEP 723)
@@ -196,10 +295,13 @@ screenshots below show only real, non-AI content.
     ├── content/docs/             copies of docs/decisions + docs/model-card.md (Vercel deploys web/ only; a test checks they match)
     ├── data/seed.db              committed seed snapshot (open it with any SQLite browser)
     ├── drizzle/                  generated SQL migrations
+    ├── e2e/                      Playwright showcase tour (screenshots + narrated recordings, also e2e tests)
+    ├── public/showcase/          tour videos (MP4 + WebVTT + posters) and screenshots (WebP) for /tour
     ├── public/data/              basemap.geojson (generated)
     ├── scripts/copy-assets.mjs   copies the MapLibre worker + ZXing wasm into public/vendor
+    ├── scripts/showcase-media.mjs  encodes the tour recordings and screenshots (ffmpeg, cwebp)
     └── src/
-        ├── app/                  routes: landing, methods (public docs), (auth) login/signup/reset/invite,
+        ├── app/                  routes: landing, tour, methods (public docs), (auth) login/signup/reset/invite,
         │                         (app) home, contacts, records, map, calendar, insights, profile, inbox,
         │                         your-data, activity, ai-log (+ evaluate), admin/records; api/ route handlers
         ├── components/           ui/ (shadcn), layout/, contacts/, records/, maps/, auth/, inbox/, ...
@@ -234,6 +336,7 @@ No environment variables are needed locally, for `pnpm dev` or for a local `pnpm
 | `pnpm db:migrate` / `pnpm db:seed` | Apply migrations / seed `DATABASE_URL` (e.g. a fresh Turso database) |
 | `pnpm db:studio` | Browse the database with Drizzle Studio |
 | `pnpm docs:sync` | Copy `docs/decisions` and `docs/model-card.md` into `web/content/docs` (also runs before `pnpm build`) |
+| `pnpm showcase` | Record the showcase tour with Playwright and local Chrome (`BASE_URL`, default production), then encode the media (needs `ffmpeg` and `cwebp`) |
 
 ### Deployment notes
 

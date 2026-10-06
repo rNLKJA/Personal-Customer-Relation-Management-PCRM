@@ -9,6 +9,7 @@ import {
   Inbox,
   MapPinned,
   NotebookPen,
+  CirclePlay,
   QrCode,
   ShieldCheck,
   Sparkles,
@@ -135,6 +136,12 @@ export default function LandingPage() {
               About
             </a>
             <Link
+              href="/tour"
+              className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline"
+            >
+              Tour
+            </Link>
+            <Link
               href="/methods"
               className="hidden rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground sm:inline"
             >
@@ -198,7 +205,11 @@ export default function LandingPage() {
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
                 No sign-up needed: the guest sandbox is a private copy of 25 contacts and 40
-                Melbourne meetings, deleted after 24 hours.
+                Melbourne meetings, deleted after 24 hours. Or{" "}
+                <Link href="/tour" className="font-medium text-primary hover:underline">
+                  watch the three-minute tour
+                </Link>
+                .
               </p>
             </div>
 
@@ -283,12 +294,13 @@ export default function LandingPage() {
         <section className="mx-auto max-w-6xl px-5 pb-20 sm:px-8">
           <div className="relative overflow-hidden rounded-3xl border bg-[linear-gradient(135deg,oklch(0.5_0.2_278),oklch(0.42_0.2_290))] px-6 py-12 text-white shadow-(--shadow-lifted) sm:px-12">
             <div className="bg-dots absolute inset-0 opacity-30" aria-hidden="true" />
-            <div className="relative grid items-center gap-8 lg:grid-cols-[1.4fr_1fr]">
+            <div className="relative grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_auto]">
               <div>
                 <h2 className="text-3xl font-semibold tracking-tight">Take it for a spin</h2>
                 <p className="mt-3 max-w-xl text-white/80">
                   Open your own guest sandbox, add someone by scanning a QR code, log a meeting on
-                  the map, then check the demo inbox when you sign up or invite a contact.
+                  the map, then check the demo inbox when you sign up or invite a contact. Or watch
+                  the same journeys first in the recorded tour.
                 </p>
               </div>
               <div className="flex flex-wrap gap-3 lg:justify-end">
@@ -302,6 +314,16 @@ export default function LandingPage() {
                     <Sparkles aria-hidden="true" /> Try as guest
                   </SubmitButton>
                 </form>
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="h-11 border-white/40 bg-transparent px-5 text-white hover:bg-white/10 hover:text-white dark:border-white/40 dark:bg-transparent dark:hover:bg-white/10"
+                >
+                  <Link href="/tour">
+                    <CirclePlay aria-hidden="true" /> Watch the tour
+                  </Link>
+                </Button>
                 <Button
                   asChild
                   size="lg"

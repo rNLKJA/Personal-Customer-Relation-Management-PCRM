@@ -3,7 +3,16 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { ReactNode } from "react";
-import { BookOpenText, Inbox, LogOut, Plus, QrCode, UserPlus, NotebookPen } from "lucide-react";
+import {
+  BookOpenText,
+  Inbox,
+  LogOut,
+  NotebookPen,
+  CirclePlay,
+  Plus,
+  QrCode,
+  UserPlus,
+} from "lucide-react";
 import { Logo } from "@/components/brand/logo";
 import { PersonAvatar } from "@/components/common/person-avatar";
 import { Button } from "@/components/ui/button";
@@ -91,6 +100,13 @@ export function AppShell({
           >
             <BookOpenText className="size-4 text-muted-foreground group-hover:text-foreground" />
             Methods
+          </Link>
+          <Link
+            href="/tour"
+            className="group flex h-9 items-center gap-3 rounded-lg px-3 text-sm font-medium text-sidebar-foreground/80 transition-colors hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground"
+          >
+            <CirclePlay className="size-4 text-muted-foreground group-hover:text-foreground" />
+            Tour
           </Link>
         </nav>
         <div className="space-y-3 border-t border-sidebar-border p-3">

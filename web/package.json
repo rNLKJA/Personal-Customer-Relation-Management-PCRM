@@ -19,7 +19,10 @@
     "db:reset": "tsx src/db/reset.ts",
     "db:snapshot": "tsx src/db/reset.ts --snapshot",
     "db:studio": "drizzle-kit studio",
-    "docs:sync": "node scripts/sync-docs.mjs"
+    "docs:sync": "node scripts/sync-docs.mjs",
+    "showcase": "playwright test && node scripts/showcase-media.mjs",
+    "showcase:record": "playwright test",
+    "showcase:media": "node scripts/showcase-media.mjs"
   },
   "dependencies": {
     "@libsql/client": "^0.18.0",
@@ -48,6 +51,7 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.19.1",
     "@types/qrcode": "^1.5.6",

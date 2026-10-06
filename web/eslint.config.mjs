@@ -25,6 +25,9 @@ const eslintConfig = defineConfig([
     "public/**",
     "data/**",
     "drizzle/**",
+    ".showcase/**",
+    "test-results/**",
+    "playwright-report/**",
   ]),
 ]);
 
