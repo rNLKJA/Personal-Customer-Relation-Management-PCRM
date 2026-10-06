@@ -24,6 +24,7 @@ import { CustomFieldsEditor } from "@/components/common/custom-fields-editor";
 import type { LocationValue } from "@/components/maps/location-picker";
 import { saveRecordAction } from "@/server/actions/records";
 import { dataValidator, type CustomField } from "@/lib/legacy/validation";
+import { formatDateTime, fromZonedInputValue } from "@/lib/time";
 import { cn } from "@/lib/utils";
 
 const LocationPicker = dynamic(
@@ -73,6 +74,7 @@ export function RecordForm({
   const [pickerOpen, setPickerOpen] = useState(false);
   const [pending, start] = useTransition();
   const selected = contacts.find((c) => c.id === values.contactId);
+  const when = fromZonedInputValue(values.dateTime);
   const set = <K extends keyof RecordFormValues>(key: K, v: RecordFormValues[K]) =>
     setValues((s) => ({ ...s, [key]: v }));
 
@@ -190,7 +192,11 @@ export function RecordForm({
             onChange={(e) => set("dateTime", e.target.value)}
             required
           />
-          <p className="text-xs text-muted-foreground">Melbourne time</p>
+          {/* The native picker's format follows the browser's language (10/06 may be
+              6 October or 10 June), so echo the date unambiguously. */}
+          <p className="text-xs text-muted-foreground" aria-live="polite">
+            {when ? `${formatDateTime(when)}, Melbourne time` : "Melbourne time"}
+          </p>
         </div>
       </div>
 
