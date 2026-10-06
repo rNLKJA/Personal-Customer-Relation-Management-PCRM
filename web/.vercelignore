@@ -1,0 +1,12 @@
+# Not part of the deployment. The Vercel CLI uploads this directory as it is on
+# disk (.gitignore does not apply), so keep local-only material out explicitly.
+
+# showcase tour working files: raw frames, recordings, a guest session (pnpm showcase)
+.showcase
+test-results
+playwright-report
+
+# local development database (production uses Turso; previews copy data/seed.db)
+data/app.db
+data/app.db-*
+data/*.db-journal

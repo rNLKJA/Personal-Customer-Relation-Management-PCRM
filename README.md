@@ -1,126 +1,427 @@
 <div align="center">
 
-# Personal Customer Relationship Management (PCRM)
+# 4399 CRM - Personal Customer Relationship Management
 
-A mobile-first web app for managing your personal network — contacts, interactions and where you met them.
+**A mobile-first personal CRM: contacts, geo-tagged meetings, a map, a calendar and QR-code contact exchange.**
+Built by Team 4399 for COMP30022 IT Project (The University of Melbourne, 2021 Semester 2), revived in 2026 as a single Next.js app,
+then extended with insights that show their uncertainty, data rights, an activity log and an optional bring-your-own-key AI assistant.
 
-<!-- badges -->
+**Live demo: [comp30022-personal-crm.vercel.app](https://comp30022-personal-crm.vercel.app) · [Guided tour](https://comp30022-personal-crm.vercel.app/tour)**
 
-![React](https://img.shields.io/badge/React-16-61DAFB?logo=react&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?logo=javascript&logoColor=black)
-![Material UI](https://img.shields.io/badge/Material%20UI-5-007FFF?logo=mui&logoColor=white)
-![Node.js](https://img.shields.io/badge/Node.js-16-339933?logo=node.js&logoColor=white)
-![University of Melbourne](https://img.shields.io/badge/University%20of%20Melbourne-COMP30022-094183)
-![Semester](https://img.shields.io/badge/Semester%202-2021-blue)
+![Next.js](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-libSQL%20%2B%20Drizzle-003B57?logo=sqlite)
+![MapLibre](https://img.shields.io/badge/MapLibre-OpenFreeMap-396CB2)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
 </div>
 
 ---
 
-## Overview
+## Showcase
 
-PCRM is a Personal Customer Relationship Management web application built for the University of Melbourne **COMP30022 IT Project** (Semester 2, 2021). It helps an individual keep track of the people in their network — not just names and contact details, but the history of how and where they have interacted.
+![Highlights from the recorded walkthroughs: searching contacts, scanning a QR code, searching for a venue on the map, the redaction preview, and an AI-labelled draft waiting for a decision](docs/showcase/00-hero.gif)
 
-This repository holds the **front-end client** (a Create React App single-page application). It talks to a separate Express + MongoDB back-end over a JWT-authenticated REST API. The app is designed for a mobile viewport (best viewed at 375 x 812px, iPhone X size).
+Highlights from three screen recordings of the live site. Watch them with chapters, captions and a transcript on the
+**[tour page](https://comp30022-personal-crm.vercel.app/tour)**, or below as GIFs. In workflow 3 the AI reply is a
+**mocked response for illustration**: the provider request is intercepted inside the test browser, so no model was
+called and no key was used ([how these were made](#how-the-showcase-was-recorded)).
 
-> **Note:** This is an archived university project. The original deployment at `crm4399.herokuapp.com` (back-end) and `pcrm4399.herokuapp.com` (front-end) was hosted on Heroku and may no longer be live.
+### Key features
 
-## Features
+| | |
+| --- | --- |
+| ![Landing page](docs/showcase/01-landing-light.png)<br>**Landing page.** What the project is, with a one-click guest sandbox and no sign-up. | ![Dark mode](docs/showcase/02-landing-dark.png)<br>**Dark mode.** Every page has a dark theme, which follows the system setting. |
+| ![Home dashboard](docs/showcase/03-home.png)<br>**Home dashboard.** Up next, time to reconnect, and the latest meetings. | ![Contacts](docs/showcase/04-contacts.png)<br>**Contacts.** Search any field, sort, and filter to linked contacts. |
+| ![A linked contact](docs/showcase/05-contact.png)<br>**A linked contact.** A contact linked to a registered account, with their meetings. | ![Add by QR code](docs/showcase/06-add-by-qr.png)<br>**Add by QR code.** Your own code to show; scan or upload someone else's. |
+| ![Log a meeting](docs/showcase/07-log-meeting.png)<br>**Log a meeting.** Place search and a map pin for where you met. | ![Records map](docs/showcase/08-records-map.png)<br>**Records map.** Every meeting as a pin, with date presets and clustering. |
+| ![Calendar](docs/showcase/09-calendar.png)<br>**Calendar.** Meetings by day, month by month. | ![Insights](docs/showcase/10-insights.png)<br>**Insights.** Meetings per week with a seeded bootstrap interval, and a weekday by hour heatmap. |
+| ![What the AI would receive](docs/showcase/11-ai-redaction.png)<br>**What the AI would receive.** Redaction preview: the exact text that would be sent, before any key is used. | ![Bring your own key](docs/showcase/12-ai-settings.png)<br>**Bring your own key.** AI settings: provider, model, and a key that stays in this browser. |
+| ![Your data](docs/showcase/13-your-data.png)<br>**Your data.** Export everything as JSON or CSV, see retention, delete the account. | ![Methods](docs/showcase/14-methods.png)<br>**Methods.** Evaluation results with intervals, including the weak ones. |
 
-- **Authentication** — register, log in, reset password, and a "fast register" flow via a shareable invite link (`/fastRegister/:id/:authCode`). Sessions are held with a JWT stored in the browser, and protected routes guard the app.
-- **Contacts** — view your contact list, open a contact for full detail, and add new contacts three ways: manual entry, scanning another user's QR code, or entering their user ID.
-- **Interaction records** — log and browse a timeline of interactions, each able to capture a location so you remember where a meeting happened.
-- **Map view** — see contacts and interaction locations on a Google Map with places autocomplete.
-- **Your profile** — view and manage your own profile and generate a personal QR code so others can add you quickly.
-- **Mobile-first UI** — built with Material UI and Bootstrap, tuned for a phone-sized screen.
+| | | |
+| --- | --- | --- |
+| <img src="docs/showcase/15-mobile-contacts.png" width="240" alt="Contacts on a phone"><br>**Contacts on a phone.** Designed phone-first, like the 2021 app (390 px wide). | <img src="docs/showcase/16-mobile-meeting.png" width="240" alt="A meeting on a phone"><br>**A meeting on a phone.** Meeting detail with the map pin and notes. | <img src="docs/showcase/17-mobile-calendar.png" width="240" alt="Calendar on a phone"><br>**Calendar on a phone.** The month grid and the meetings of the selected day. |
 
-## Tech Stack
+### Workflow walkthrough
 
-| Layer                    | Technology                                                                  |
-| ------------------------ | --------------------------------------------------------------------------- |
-| Framework                | React 16 (Create React App, `react-scripts`)                                |
-| Routing                  | React Router DOM 5                                                          |
-| UI                       | Material UI (MUI 5 + Material-UI 4), React Bootstrap, Emotion, Font Awesome |
-| Maps                     | Google Maps via `@react-google-maps/api` and `use-places-autocomplete`      |
-| QR codes                 | `qrcode`, `react-qr-reader`, `react-qr-scanner`                             |
-| HTTP client              | Axios (with a JWT request interceptor)                                      |
-| Auth                     | JWT stored in `localStorage`                                                |
-| Testing                  | Jest, React Testing Library, Enzyme, Taiko (end-to-end)                     |
-| Back-end (separate repo) | Node.js, Express, MongoDB                                                   |
-| Hosting                  | Heroku (original deployment)                                                |
+Each recording is a narrated end-to-end run of one journey; the numbered steps are the captions shown on screen.
 
-## Project Structure
+#### 1. Contacts
 
-```
-Personal-Customer-Relation-Management-PCRM/
-├── public/              Static assets (icons, images, index.html)
-├── src/
-│   ├── API/             React components grouped by feature
-│   │   ├── auth/        Login, registration, password reset, protected routes
-│   │   ├── contact/     Contact list, detail, and add flows (manual / QR / user ID)
-│   │   ├── record/      Interaction records and record detail
-│   │   ├── map/         Google Maps view
-│   │   ├── person/      User profile and personal QR code
-│   │   ├── fastRegister/ Invite-link registration
-│   │   ├── nav/ heading/ home/ error/  Shared UI and shell
-│   │   └── axiosClient/ Configured Axios instance with JWT interceptor
-│   ├── BackEndAPI/      Functions and hooks that call the REST back-end
-│   ├── hooks/           Auth/session hooks (useAuth, useFindUser, UserContext)
-│   ├── App.js           Route definitions
-│   └── index.js         App entry point
-└── netlify.toml         SPA redirect config
-```
+Open a private guest sandbox with one click, search the address book, and add people by user name and by scanning a QR code.
 
-## Getting Started
+![Contacts: screen recording](docs/showcase/workflow-1-contacts.gif)
 
-### Prerequisites
+1. One click on “Try it as a guest” opens a private 24-hour sandbox. No sign-up.
+2. Home: who you are meeting next and who is due a catch-up.
+3. Contacts: 25 sample people. The search covers every field, ported from the 2021 app.
+4. Filter to the people who have their own 4399 CRM account (linked contacts).
+5. Add someone by user name: @demo is the shared demo account, Jordan Lee.
+6. Their own profile is copied in and stays linked, so one tap syncs it later.
+7. Every account has a QR code to show when you meet in person.
+8. Scan someone else's code. The camera here is a simulated feed showing a second sandbox's code.
+9. The scanned person is added and opened: Lena Park, linked to her own account.
 
-- Node.js 16 and npm 6
-- A Google Maps JavaScript API key
-- A running instance of the PCRM back-end (Express + MongoDB), or access to the original deployed API
+#### 2. Log a meeting
 
-### Environment Variables
+Record who you met, when and where: search for the venue, check the pin on the map, then find the meeting on the records map and the calendar.
 
-Create a `.env` file in the project root:
+![Log a meeting: screen recording](docs/showcase/workflow-2-meeting.gif)
+
+1. Log a meeting from the “New” menu.
+2. Choose who you met from your contacts.
+3. Set when it happened (Melbourne time).
+4. Search for the venue. Place search uses Photon on OpenStreetMap data, with a bundled Melbourne fallback.
+5. The map flies to the venue and drops a pin you can drag or move with a click.
+6. Add the notes, then log the meeting.
+7. The meeting page: the pin, the distance from the CBD and the notes.
+8. The records map: filter to the last 30 days and open the new meeting from the list.
+9. The calendar: the same meeting on today's date.
+
+#### 3. AI with a human in the loop
+
+The optional meeting-note assistant with your own key: see exactly what would be sent, review an AI-labelled draft, accept it, then check the AI log, the activity log and your data export.
+
+![AI with a human in the loop: screen recording](docs/showcase/workflow-3-ai.gif)
+
+1. Open the meeting just logged. Its note contains a phone number, an e-mail and names.
+2. Before anything is sent, personal details are removed in the browser and you see the exact text.
+3. Bring your own key: Anthropic (default) or OpenAI. The key stays in this browser, never on 4399 CRM. A placeholder is typed here.
+4. Send. Mocked AI response for illustration: the provider is intercepted in this recording, so no model is called.
+5. The draft is labelled “AI-generated”. Nothing is saved until a person accepts, edits or rejects it.
+6. Accepted: the summary is stored on the meeting with the AI label and can be removed.
+7. The AI log keeps every call: the redacted input, the answer, the model, the latency and the decision.
+8. The activity log records what was done through the account: ids and counts, never contents.
+9. Your data: download everything as JSON or CSV, or delete the account and all of it.
+10. Forget the key when you are done. Signing out forgets it too.
+
+## What it is
+
+The coursework asked teams of five to build, with a client, a **personal customer relationship manager**: a web
+app where one person can keep track of the people in their network and their interactions with them, with
+secure accounts, search, testing and a real deployment. Team 4399 built a phone-first single-page app (designed
+at 375 x 812) on an Express + MongoDB REST API.
+
+That deployment (Heroku, MongoDB Atlas, Gmail SMTP, Google Maps) no longer exists. This repository keeps the
+original submission in [`coursework/`](coursework) and adds [`web/`](web), a faithful port to a free, modern,
+self-contained stack:
+
+| Feature | 2021 | 2026 revival |
+| --- | --- | --- |
+| Accounts | Register with e-mail code, login, reset password, change password, "fast register" invite links | Same flows; e-mails land in an on-screen **demo inbox** (`email_outbox` table) instead of Gmail |
+| Contacts | Multiple phones / e-mails, notes, custom fields, photo; search any field, sort, "More" paging | Same rules (ported search/sort/validation), generated initials avatars + optional small photo |
+| Add contacts | By hand, by user name, by scanning the other person's QR code | Same; camera scanning via `BarcodeDetector` / ZXing-wasm, or upload a photo of the code |
+| Linked contacts | Duplicate detection, link to registered accounts, sync details from the account | Same identity rules (ordered phone/e-mail list equality), one-tap sync |
+| Meeting records | Who, when, where (Google Places), notes, custom fields | MapLibre + OpenFreeMap location picker with Photon search, reverse geocoding |
+| Views | Records list, Google map with date range | List, **map** with date presets, **calendar**, home dashboard ("Up next", "Time to reconnect") |
+| Data | MongoDB Atlas | SQLite via libSQL + Drizzle (Turso in production), deterministic seed |
+| Admin | - | `/admin/records`: every table with counts, search, pagination and CSV export; secrets always masked, visitors' personal data masked, every read logged |
+| Insights | - | `/insights`: meetings per week with a seeded bootstrap interval, weekday x hour heatmap, contacts by recency |
+| Your data | - | `/your-data`: export everything (JSON + CSV), hard-delete the account; `/activity`: append-only access log |
+| AI | - | Optional meeting-note assistant with your own Anthropic or OpenAI key, redaction before sending, Accept / Edit / Reject, `/ai-log` audit trail |
+| Methods | - | [`/methods`](https://comp30022-personal-crm.vercel.app/methods): parity map of all 40 endpoints, evaluation results, AI use statement, decision records, model card |
+
+Try it without signing up: **"Try as guest"** creates a private 24-hour sandbox with 25 contacts and 40 meetings
+around Melbourne. The shared demo credentials (`demo` / `admin`) are shown on the login page.
+
+## 2026 upgrade: statistics, privacy and human-in-the-loop AI
+
+The revival kept the 2021 behaviour (see [Faithfulness to the original](#faithfulness-to-the-original)) and then added
+features that are meant to be checked, not taken on trust. Everything below is on the [methods page](https://comp30022-personal-crm.vercel.app/methods),
+including the weak results.
+
+- **Functional parity map.** All 40 REST endpoints of the 2021 Express API are mapped to their Server Action or
+  Server Component replacement: 15 implemented as before, 24 changed (with the reason) and 1 dropped. A unit test
+  (`web/src/lib/methods/parity.test.ts`) reads the original router files, checks the table covers every endpoint and checks
+  that every named replacement is really exported.
+- **Insights** (`/insights`). Meetings per complete week with the trailing 8-week mean and its 95% percentile bootstrap
+  interval (2,000 resamples, seed 4399, both shown on the page), a weekday x hour heatmap, and contacts grouped by time since
+  the last meeting (a census, so deliberately no confidence intervals). Assumptions and a table view sit under each chart.
+- **Statistics helpers** (`web/src/lib/stats`): normal quantile (AS 241), Wilson score interval, exact sign test,
+  type-7 quantiles, percentile and paired bootstrap. Unit-tested against scipy and R values from
+  [`scripts/stats_reference.py`](scripts/stats_reference.py).
+- **Your data** (`/your-data`). Download everything stored about the account (one JSON file, or CSV per table), see what
+  is stored, why and for how long, and hard-delete the account. Deletion removes the account and every contact, meeting,
+  link, invitation, demo-inbox e-mail, pending code, activity entry and AI-log entry in one database transaction; one
+  anonymous row (counts only) records that it happened. Signing out or deleting the account also forgets any AI key in the browser.
+- **Activity log** (`/activity`, and `activity_log` in `/admin/records`). Append-only: views of contact and meeting pages
+  (repeat views within a minute are logged once), creates, changes, deletes and exports, sign-ins, sign-outs, sign-ups and
+  password resets, profile changes, AI actions, and every admin table view or export (under the admin account). It stores
+  ids, field names and counts, never the contents. Entries older than 180 days are never shown or exported and are deleted
+  at server start.
+- **The public demo admin is treated as untrusted** ([DR-005](docs/decisions/DR-005-mask-the-public-demo-admin.md)).
+  Anyone can press "Demo admin", so `/admin/records` always masks password hashes, e-mail codes, invitation links and the
+  inbox browser key, and shows names, contact details, notes and AI text only for the seeded demo accounts. A review
+  before merge found that the first version let anyone read live password-reset codes; the decision record says so.
+- **Meeting-note assistant (optional, bring your own key).** On a meeting page: summarise the note and suggest follow-ups.
+  Before anything is sent, e-mail addresses, phone numbers, street addresses, the contact's and user's names and the full
+  names of everyone in the address book ([DR-006](docs/decisions/DR-006-redact-address-book-names.md)) are removed in the
+  browser, and the visitor sees the exact text and the fixed instructions. The answer is labelled "AI-generated" and is
+  only a draft until the person accepts, edits or rejects it; "accepted" always stores the logged answer unchanged.
+- **Evaluation harness** (`/ai-log/evaluate`). The same 32 labelled notes go through a rule-based baseline and the LLM
+  (the assistant's exact prompt), scored by one matcher and compared note by note on the same notes: mean recall and mean F1
+  per note with seeded bootstrap intervals, Wilson intervals for pooled recall and precision, and for recall and F1 a paired
+  bootstrap interval of the difference, win / tie / loss counts and an exact sign test. Invalid, refused or cut-off model
+  answers count as empty answers; only infrastructure failures are excluded, and they are counted. Results export as JSON or CSV.
+- **Decision records and a model card** in [`docs/decisions`](docs/decisions) and [`docs/model-card.md`](docs/model-card.md),
+  rendered at `/methods/decisions/...` and `/methods/model-card`.
+
+### Results, including the weak ones
+
+| What | Result (95% interval) |
+| --- | --- |
+| Redaction recall, 49 labelled details in 34 synthetic notes (with the address book, DR-006) | 42 of 49, 86% (73-93%); names only 13 of 17, 76% (53-90%) |
+| Redaction recall with the meeting contact's and user's names only (DR-003) | 41 of 49, 84% (71-91%); names 12 of 17, 71% (47-87%) |
+| Redaction precision | 45 of 48, 94% (83-98%) |
+| Notes fully cleaned | 21 of 28, 75% (57-87%) |
+| Rule-based follow-up baseline, development split (rules written on it) | mean recall 100%, n = 14 notes (every note scored 100%, so no bootstrap interval; pooled 24 of 24, 86-100%) |
+| Rule-based follow-up baseline, held-out split (rules frozen first) | mean recall 31% (12-54%), n = 13 notes; mean F1 42% (21-63%), n = 16; precision 6 of 8, 75% (41-93%) |
+
+People who are not in the address book are not redacted at all, and the corpora were written by the same person who wrote
+the rules, so the redaction numbers are optimistic. The address book's gain is one name ("Sam Patel", a directory account),
+so it is a fixed leak rather than a measured improvement. The baseline's drop from the development to the held-out split is
+the reason the split exists. **No LLM results are published:** the site has no AI budget, so the comparison runs in a visitor's browser with
+their own key, and every call lands in their AI log.
+
+### Bring your own key
+
+- Open **AI settings** (sidebar, profile page, or the assistant itself). Choose Anthropic (default; Claude Haiku 4.5, or
+  Claude Sonnet 5.5) or OpenAI (any model id; default `gpt-5-mini`) and paste your own API key.
+- The key is kept in `sessionStorage` (gone when the tab closes) unless you tick "remember on this device"
+  (`localStorage`). "Forget keys" removes it; signing out does too.
+- Calls go **directly from your browser** to `api.anthropic.com` (with the `anthropic-dangerous-direct-browser-access`
+  header) or `api.openai.com`. The key is never sent to this site's server, never logged and never committed. The server
+  rejects any audit entry that contains something shaped like an API key.
+- Everything else in the app works without a key.
+
+### Viewing the AI audit log
+
+- **As a user:** `/ai-log` lists every call made with your key: the redacted text sent, the answer, requested and
+  served model, latency, token usage and your decision (accepted, edited, rejected, or not applicable for evaluation runs).
+  Export it as JSON or CSV from that page, or with everything else from `/your-data`.
+- **As the admin:** sign in with **Demo admin** and open `/admin/records?table=ai_audit_log` (and `activity_log`). The
+  text sent and received is masked for every account except the seeded demo accounts.
+- **Locally:** `sqlite3 web/data/app.db "select created_at, feature, model, decision from ai_audit_log"`.
+
+### How the showcase was recorded
+
+The [showcase](#showcase) above and the [tour page](https://comp30022-personal-crm.vercel.app/tour) come from one
+reproducible Playwright script, [`web/e2e/showcase.spec.ts`](web/e2e/showcase.spec.ts), which is also an end-to-end
+test of the three journeys (it fails if a step does not work):
 
 ```bash
-REACT_APP_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-PORT=3000
-BACK_END_API_PATH="http://localhost:5000"
-SKIP_PREFLIGHT_CHECK=true
+cd web
+pnpm showcase                                   # record against production, then encode the media
+BASE_URL=http://localhost:3000 pnpm showcase    # or against a local build
 ```
 
-### Install and Run (Front-End)
+- It drives the locally installed Google Chrome (`channel: "chrome"`; no Playwright browser download) at 1280 x 800
+  for the recordings and 1440 x 900 / 390 x 844 (2x) for the screenshots, with a caption banner, a visible cursor and
+  human pacing injected into the page.
+- The screenshots use the shared, seeded demo account and change nothing. The workflows run in a fresh guest sandbox
+  (deleted after 24 hours) and only add fixed, fictional data: a second sandbox renamed "Lena Park" whose QR code is
+  shown to Chrome's simulated camera, and one meeting with Ava Chen whose note uses an `example.org` e-mail and an
+  ACMA fiction-range phone number.
+- **The AI response is mocked for illustration.** The browser's request to `api.anthropic.com` is intercepted and
+  answered with a fixed reply that says it is mocked; the "key" typed is a placeholder. The redaction preview, the
+  AI-generated label, Accept / Edit / Reject, the AI log, the activity log and the export are the real app.
+- [`web/scripts/showcase-media.mjs`](web/scripts/showcase-media.mjs) trims the start and long network waits, then
+  uses ffmpeg and cwebp to write H.264 MP4s (crf 28, faststart), WebVTT caption tracks and posters to
+  `web/public/showcase/` for the site, and 960 px palette GIFs and optimised PNGs to `docs/showcase/` for this README.
+  The step times and file sizes go to `web/src/lib/tour-media.json`, which the tour page and the tests read.
+
+The older screenshots below are from an earlier run against a local production build (`pnpm build && pnpm start`),
+made while production had no persistent database ([DR-004](docs/decisions/DR-004-turso-vs-tmp-fallback.md),
+[DR-007](docs/decisions/DR-007-turso-in-production.md)). In that run the AI provider was also mocked inside the
+browser test, and the screenshots show only real, non-AI content.
+
+## More screenshots (mobile and dark mode)
+
+| Home (desktop) | Map (dark) |
+| --- | --- |
+| ![Home dashboard](docs/screenshots/home-desktop.webp) | ![Records map in dark mode](docs/screenshots/map-desktop-dark.webp) |
+
+| Contacts | Meeting | Calendar | Add by QR |
+| --- | --- | --- | --- |
+| ![Contacts on mobile](docs/screenshots/contacts-mobile.webp) | ![Meeting detail on mobile](docs/screenshots/record-detail-mobile.webp) | ![Calendar on mobile](docs/screenshots/calendar-mobile.webp) | ![Own QR code](docs/screenshots/contact-add-mobile.webp) |
+
+2026 upgrade (local production build):
+
+| Insights | What the AI would receive |
+| --- | --- |
+| ![Insights with bootstrap band, heatmap and recency bars](docs/screenshots/insights-desktop.webp) | ![Redaction preview before an AI call](docs/screenshots/ai-redaction-preview.webp) |
+
+| Your data | Methods: evaluation | Insights (mobile, dark) |
+| --- | --- | --- |
+| ![Your data page](docs/screenshots/your-data-desktop.webp) | ![Evaluation results on the methods page](docs/screenshots/methods-evaluation.webp) | ![Insights on mobile in dark mode](docs/screenshots/insights-mobile-dark.webp) |
+
+## Tech stack
+
+- **Framework:** Next.js 16 (App Router, Server Components, Server Actions, Route Handlers, `proxy.ts`), React 19, TypeScript (strict)
+- **UI:** Tailwind CSS 4, shadcn/ui (Radix), lucide-react, next-themes (light / dark / system), Geist + Instrument Serif via `next/font`, sonner
+- **Data:** SQLite through `@libsql/client` + Drizzle ORM; Turso (hosted libSQL, Tokyo) in production, `/tmp` copy of the seed snapshot as a fallback on Vercel previews
+- **Auth:** bcrypt (`bcryptjs`, cost 10 as in the original) + signed httpOnly session cookies (`jose`), zod-validated actions
+- **Maps & places:** MapLibre GL via `react-map-gl/maplibre`, OpenFreeMap vector tiles, Photon geocoding (Nominatim / bundled gazetteer fallbacks), haversine distances, offline GeoJSON basemap
+- **QR:** `qrcode` (generation), native `BarcodeDetector` or the `barcode-detector` ZXing-wasm ponyfill (scanning)
+- **Statistics:** small, dependency-free helpers in `web/src/lib/stats` (Wilson, bootstrap, sign test, quantiles), verified against scipy and R
+- **AI (optional):** browser-direct `fetch` to the Anthropic Messages API or OpenAI Chat Completions with the visitor's key, JSON-schema structured outputs validated with zod; no AI SDK or server proxy
+- **Docs:** decision records and the model card rendered from Markdown with `marked`
+- **Testing:** Vitest - parity tests that run the original 2021 functions next to the ports, integration tests of the server layer against a temporary SQLite database, stats tests against scipy / R values, AI-client tests with mocked `fetch`, and the redaction and follow-up evaluations
+- **Tooling:** pnpm, ESLint (flat config), Prettier, GitHub Actions CI, `uv` for the Python data script
+
+## Repository structure
+
+```
+.
+├── README.md
+├── LICENSE
+├── .github/workflows/ci.yml      lint, typecheck, test and build web/ on every push and PR
+├── coursework/                   the original 2021 submission (moved with git mv, history preserved)
+│   ├── frontend/                 React 16 client (CRA)
+│   ├── backend/                  Express 4 + Mongoose 5 API (copied from the team repository, secrets redacted)
+│   ├── _archive/                 the original README of this repository
+│   └── README.md
+├── docs/
+│   ├── decisions/                DR-001 ... DR-008 (rendered at /methods/decisions/...)
+│   ├── model-card.md             meeting-note assistant + redactor (rendered at /methods/model-card)
+│   ├── showcase/                 README showcase: hero + workflow GIFs, feature screenshots (pnpm showcase)
+│   └── screenshots/              earlier screenshots used in this README
+├── scripts/
+│   ├── build_geodata.py          builds the offline basemap + Melbourne gazetteer (uv, PEP 723)
+│   └── stats_reference.py        scipy reference values for the statistics unit tests (uv, PEP 723)
+└── web/                          the deployable Next.js app (Vercel root)
+    ├── content/docs/             copies of docs/decisions + docs/model-card.md (Vercel deploys web/ only; a test checks they match)
+    ├── data/seed.db              committed seed snapshot (open it with any SQLite browser)
+    ├── drizzle/                  generated SQL migrations
+    ├── e2e/                      Playwright showcase tour (screenshots + narrated recordings, also e2e tests)
+    ├── public/showcase/          tour videos (MP4 + WebVTT + posters) and screenshots (WebP) for /tour
+    ├── public/data/              basemap.geojson (generated)
+    ├── scripts/copy-assets.mjs   copies the MapLibre worker + ZXing wasm into public/vendor
+    ├── scripts/showcase-media.mjs  encodes the tour recordings and screenshots (ffmpeg, cwebp)
+    └── src/
+        ├── app/                  routes: landing, tour, methods (public docs), (auth) login/signup/reset/invite,
+        │                         (app) home, contacts, records, map, calendar, insights, profile, inbox,
+        │                         your-data, activity, ai-log (+ evaluate), admin/records; api/ route handlers
+        ├── components/           ui/ (shadcn), layout/, contacts/, records/, maps/, auth/, inbox/, ...
+        ├── db/                   schema.ts, client.ts, migrate/seed/reset scripts, demo accounts
+        ├── server/               server-only services (ported controllers) and actions/
+        ├── lib/                  framework-free domain logic; lib/legacy/ holds the 1:1 ports; lib/stats,
+        │                         lib/ai (BYOK clients), lib/redact, lib/eval, lib/methods (parity map)
+        └── hooks/
+```
+
+## Local development
+
+Requirements: Node.js 20+ (CI uses 22) and pnpm 10.
 
 ```bash
-# install dependencies
-npm install
-
-# start the development server (http://localhost:3000)
-npm start
-
-# create a production build
-npm run build
-
-# run unit tests
-npm test
-
-# run the Taiko end-to-end test
-npm run taiko
+cd web
+pnpm install          # also copies the MapLibre worker and ZXing wasm into public/vendor
+pnpm dev              # http://localhost:3000 - uses data/app.db, created from data/seed.db on first run
 ```
 
-### Back-End
+No environment variables are needed locally, for `pnpm dev` or for a local `pnpm build && pnpm start` (without
+`SESSION_SECRET` a fixed development signing key is used and `pnpm start` logs a warning). On Vercel
+`SESSION_SECRET` is **required**. See [`web/.env.example`](web/.env.example) for every variable
+(`DATABASE_URL`, `DATABASE_AUTH_TOKEN`, `SESSION_SECRET`).
 
-The back-end (Node.js, Express, MongoDB) lives in a separate repository and must be running for authentication, contacts, records, and profiles to work. Point `BACK_END_API_PATH` (and the base URL in `src/API/axiosClient/axiosClient.js`) at your back-end instance.
+| Script | What it does |
+| --- | --- |
+| `pnpm lint` / `pnpm typecheck` / `pnpm test` / `pnpm build` | Quality gates (all run in CI) |
+| `pnpm db:reset` | Rebuild `data/app.db` from migrations + seed |
+| `pnpm db:snapshot` | Rebuild the committed `data/seed.db` snapshot |
+| `pnpm db:generate` | Generate a migration after editing `src/db/schema.ts` |
+| `pnpm db:migrate` / `pnpm db:seed` | Apply migrations / seed `DATABASE_URL` (e.g. a fresh Turso database) |
+| `pnpm db:studio` | Browse the database with Drizzle Studio |
+| `pnpm docs:sync` | Copy `docs/decisions` and `docs/model-card.md` into `web/content/docs` (also runs before `pnpm build`) |
+| `pnpm showcase` | Record the showcase tour with Playwright and local Chrome (`BASE_URL`, default production), then encode the media (needs `ffmpeg` and `cwebp`) |
 
-## Notes
+### Deployment notes
 
-- This project was produced by COMP30022 Team 4399. Sunchuangyu (Rin) Huang served as Scrum Master.
-- The API base URL is currently hard-coded to the original Heroku deployment in a few files (for example `src/API/axiosClient/axiosClient.js`); update these to your own back-end before running locally.
-- The repository's `.gitignore` excludes `package.json` and `*.json` files, so the front-end dependency manifest is not tracked here. The dependency list is preserved in the bundled `COMP30022-49-Front-End.zip` archive.
-- This is a student project kept for reference and portfolio purposes; it is not actively maintained.
+- Production: <https://comp30022-personal-crm.vercel.app> (Vercel project `comp30022-personal-crm`, deployed from
+  `web/` with `vercel deploy --prod`). Production uses the Turso database `comp30022-personal-crm` (AWS
+  `ap-northeast-1`, Tokyo).
+- Functions run in `syd1` (Sydney), set by `regions` in `web/vercel.json`. Moving them from the default `iad1` cut the
+  median time to first byte of signed-in pages from 0.74 s to 0.45 s, measured from Australia
+  ([DR-008](docs/decisions/DR-008-functions-in-sydney.md)).
+- Vercel project root: `web/`. Set `SESSION_SECRET` (required, 32+ characters), and for persistent shared data `DATABASE_URL` +
+  `DATABASE_AUTH_TOKEN` of a Turso database (run `pnpm db:migrate && pnpm db:seed` against it once).
+- Pending Drizzle migrations are also applied when each server instance starts (`src/instrumentation.ts`), so the `/tmp`
+  copy, an older local `data/app.db` or a newly attached Turso database pick up new tables such as `activity_log` and
+  `ai_audit_log`.
+- No AI key is configured on the server, by design: AI calls use the visitor's own key in their browser.
+- Without a database URL the app copies `data/seed.db` to `/tmp/app.db` on cold start (writable but ephemeral)
+  and shows a "demo storage resets periodically" notice. Each serverless instance has its own copy, so a change
+  made in one request is not guaranteed to show up in the next one. The live demo left this mode on 6 October 2026:
+  production now uses a Turso database (Production environment only, so preview deployments still use the `/tmp`
+  copy; see [DR-007](docs/decisions/DR-007-turso-in-production.md)).
+- The shared `demo` account's dates follow the calendar: on the first request of a new (UTC) day its meetings,
+  contacts and inbox slide forward so "Up next" and the calendar never go stale.
+
+### Viewing the records
+
+- **On the site:** sign in with the one-click **Demo admin** button (credentials are on the login page) and open
+  [`/admin/records`](https://comp30022-personal-crm.vercel.app/admin/records): every table with row counts, search,
+  pagination and a CSV export per table. Password hashes, codes, invitation links and the inbox browser key are always
+  masked; names, contact details, notes and AI text are shown only for the seeded demo accounts (DR-005). Every view and
+  export is logged under the admin account. `activity_log` and `ai_audit_log` hold the access log and the AI audit trail.
+- **Turso (production):** `turso db shell comp30022-personal-crm "select count(*) from contacts"`.
+- **Locally:** open `web/data/seed.db` (committed snapshot) or `web/data/app.db` (your local copy) in any SQLite
+  browser, or run `pnpm db:studio` in `web/`.
+
+## How the data artefacts are generated
+
+| Artefact | Source | Command |
+| --- | --- | --- |
+| `web/public/data/basemap.geojson` | Natural Earth admin-1 boundaries (public domain), simplified; Victoria clipped to Greater Melbourne | `uv run scripts/build_geodata.py --basemap` |
+| `web/src/lib/data/melbourne-places.json` | ~100 Melbourne suburbs and landmarks looked up once via Photon (data © OpenStreetMap contributors, ODbL) | `uv run scripts/build_geodata.py --places` |
+| `web/data/seed.db` | Drizzle migrations + `src/db/seed` (deterministic synthetic data: fictional names, `example.*` e-mails, ACMA fiction-range phone numbers) | `cd web && pnpm db:snapshot` |
+
+Downloads are cached in `scripts/.cache/` (git-ignored). No course-provided data, assignment specs or personal
+photos are used or hosted.
+
+## Faithfulness to the original
+
+The ported logic lives in [`web/src/lib/legacy`](web/src/lib/legacy) and the server layer in
+[`web/src/server`](web/src/server). `src/lib/legacy/parity.test.ts` loads the original functions straight out of
+`coursework/` (`convert`, `listCompare`, `autoCodeGenerator`, `passwordValidation`, `dataValidator`, the contact and
+record search filters and `sortContact`) and checks the ports return identical results. Other tests replay
+fixtures from the team's Jest suites (e.g. the `synchronizationContactInfo` and record integration tests).
+
+Deliberate, documented deviations:
+
+- **Security fixes:** queries are scoped to the signed-in owner (the original trusted any `_id` from the client);
+  the reset endpoint no longer accepts a constant `codeVerified: "4399CRMVerified"`; e-mail codes allow 5 attempts;
+  sessions are httpOnly cookies instead of a JWT in `localStorage`.
+- **Bug fixes:** "sort by time / add date" compares timestamps rather than 12-hour strings; a missing meeting time
+  defaults to the real current instant (the original stored wall-clock time labelled as UTC); the "new password
+  must differ" rule actually works; the fast-register verifier's inverted check is corrected.
+- **Demo adaptations:** e-mails go to the demo inbox; reset codes are only shown to browsers that signed in to the
+  account before; avatars are generated initials (optional photos are stored as small data URLs).
+
+## Credits
+
+**Team 4399 (Group 49), COMP30022 IT Project, 2021 Semester 2**
+
+| Name | Role |
+| --- | --- |
+| Bin Liang | Back-end lead |
+| Hongji (Harrison) Huang | Communication lead, original repository owner |
+| Wei Zhao | Front-end lead |
+| Yixiao Tian | Communication lead |
+| Sunchuangyu (Rin) Huang | Scrum Master, front-end (contacts, records, map) |
+
+The original back-end lives at [Harrison-Huang666/COMP30022-49](https://github.com/Harrison-Huang666/COMP30022-49)
+(branch `Back-End`). Map data © OpenStreetMap contributors; tiles by OpenFreeMap; geocoding by Photon (komoot).
+
+## Academic integrity
+
+This is a portfolio revival of a completed 2021 university project, not a resubmission. The original submission
+is preserved for reference in [`coursework/`](coursework) - unchanged apart from removed credentials (see
+[`coursework/README.md`](coursework/README.md)). The assignment specification is paraphrased, not reproduced.
 
 ## License
 
-Released under the [MIT License](LICENSE).
+[MIT](LICENSE) © 2021 UNIMELB COMP30022 Team 049

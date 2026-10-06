@@ -1,32 +1,37 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
+# OS / editor
 .DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
 
+# Node
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
 
-/.vscode
-/.idea
-.vscode/settings.json
-.vscode/settings.json
-*.json
-*.txt
+# Environment (never commit secrets; .env.example files are documentation)
+.env
+.env*
+!.env.example
 
-/.cspell
+# Deploy tooling
+.vercel
+
+# Python (scripts/)
+__pycache__/
+*.py[cod]
+.venv/
+.uv-cache/
+scripts/.cache/
+
+# Next.js app (web/) build output and local database
+web/.next/
+web/out/
+web/coverage/
+web/data/app.db
+web/data/app.db-*
+web/public/vendor/
