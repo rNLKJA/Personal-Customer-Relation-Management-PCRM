@@ -1,6 +1,6 @@
 # DR-002: Deliver e-mail to an on-screen demo inbox instead of sending real e-mail
 
-- **Status:** Partly superseded by DR-005
+- **Status:** Partly superseded by DR-005, and by DR-007 for the live site (the hosted database now exists, so codes no longer go missing between instances)
 - **Date:** 2026-10-06 (records the choice made during the 2026 revival)
 - **Author:** Sunchuangyu (Rin) Huang
 

@@ -387,9 +387,9 @@ export default function MethodsPage() {
             <p>
               The baseline is perfect on the notes it was written against and finds roughly a third
               of the follow-ups in notes it has not seen. That gap is the reason for the split, and
-              the held-out row is the one to quote. On the development split every note scored 100%,
-              so the bootstrap has no spread and no interval is shown for it; the pooled Wilson
-              interval next to it is the honest range.
+              the held-out row is the one to quote. On the development split every note&apos;s
+              recall was 100%, so the recall bootstrap has no spread and no interval is shown for
+              it; the pooled Wilson interval next to it is the honest range.
             </p>
             <p>
               <strong>The LLM side is not published.</strong> The site has no AI budget, so the

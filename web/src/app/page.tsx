@@ -75,7 +75,7 @@ const FEATURES = [
 
 const NUMBERS = [
   { value: "40", label: "REST endpoints in the Express back-end, ported to Server Actions" },
-  { value: "6 → 7", label: "Mongoose models re-modelled as SQLite tables" },
+  { value: "6 → 9", label: "Mongoose models re-modelled as SQLite tables, three of them new" },
   { value: "21", label: "Jest test files in the original back-end" },
   { value: "375 px", label: "the iPhone X viewport the team designed for" },
 ];
@@ -204,8 +204,8 @@ export default function LandingPage() {
                 </Button>
               </div>
               <p className="mt-3 text-xs text-muted-foreground">
-                No sign-up needed: the guest sandbox is a private copy of 25 contacts and 40
-                Melbourne meetings, deleted after 24 hours. Or{" "}
+                No sign-up needed: the guest sandbox is a private copy of 25 fictional contacts and
+                40 Melbourne meetings, deleted after 24 hours. Or{" "}
                 <Link href="/tour" className="font-medium text-primary hover:underline">
                   watch the three-minute tour
                 </Link>
