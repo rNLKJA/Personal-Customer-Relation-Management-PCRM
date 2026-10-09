@@ -1,6 +1,6 @@
 # DR-001: Merge the React front-end and the Express back-end into one Next.js app
 
-- **Status:** Accepted
+- **Status:** Accepted; its closing note that the hosted database is still not provisioned is superseded by DR-007
 - **Date:** 2026-10-06 (records the choice made during the 2026 revival)
 - **Author:** Sunchuangyu (Rin) Huang
 
